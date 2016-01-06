@@ -1,0 +1,92 @@
+.button
+{
+    font-family: Helvetica, Arial, sans-serif;
+
+    background: rgba(0, 0, 0, .2);
+    color: #000;
+    border: 0;
+    outline: 0;
+
+    display: inline-block;
+    position: relative;
+
+    text-align: center;
+    white-space: nowrap;
+
+    margin: 0;
+    padding: 0;
+
+    user-select: none;
+
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.button::before
+{
+    background: #fff;
+
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    bottom: 1px;
+    right: 1px;
+
+    content: '';
+}
+
+.text
+{
+    display: inline-block;
+
+    position: relative;
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    vertical-align: top;
+}
+
+.hovered
+{
+    background: rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+}
+
+.focused
+{
+    z-index: 1;
+
+    background: rgba(178, 142, 0, 0.6);
+    box-shadow: 0 0 0 1px #ffcc00, inset 0 0 0 1px #ffcc00;
+}
+
+.pressed::before
+{
+    background: #f6f5f3;
+}
+
+.disabled
+{
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.disabled::before
+{
+    display: none;
+}
+
+.disabled .text
+{
+    color: #aaa;
+}
+
+.size-s
+{
+    font-size: 13px;
+    line-height: 24px;
+}
+
+.size-s .text
+{
+    margin: 0 10px;
+}
