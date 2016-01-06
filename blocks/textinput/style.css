@@ -82,6 +82,16 @@
     display: none;
 }
 
+.has-clear .box
+{
+    padding-right: 28px;
+}
+
+.hovered
+{
+
+}
+
 .focused
 {
     z-index: 1;

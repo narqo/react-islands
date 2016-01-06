@@ -1,9 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
-import Component from '../component';
+import Control from '../control';
 import style from './style.css';
 
-class Link extends Component {
+class Link extends Control {
     constructor(props) {
         super(props);
         this._isPointerPressInProgress = false;
@@ -23,8 +23,6 @@ class Link extends Component {
         const listeners = {
             onMouseDown: e => this.handleMouseDown(e),
             onClick: e => this.handleClick(e),
-            onFocus: e => this.handleFocus(e),
-            onBlur: e => this.handleBlur(e),
             onKeyDown: e => this.handleKeyDown(e),
             onKeyUp: e => this.handleKeyUp(e),
         };
@@ -36,6 +34,7 @@ class Link extends Component {
 
     renderLink(className, listeners) {
         return <a
+            ref="control"
             className={className}
             href={this.props.url}
             target={this.props.target}
@@ -47,6 +46,7 @@ class Link extends Component {
     renderPseudoLink(className, listeners) {
         const tabIndex = this.state.disabled ? -1 : 0;
         return <span
+            ref="control"
             className={className}
             tabIndex={tabIndex}
             title={this.props.title}

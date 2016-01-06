@@ -1,9 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
-import Component from '../component';
+import Control from '../control';
 import style from './style.css';
 
-class Button extends Component {
+class Button extends Control {
     constructor(props) {
         super(props);
         Object.assign(this.state, {
@@ -35,21 +35,15 @@ class Button extends Component {
         );
 
         const listerners = {
-            onMouseEnter: e => this.handleMouseEnter(e),
-            onMouseLeave: e => this.handleMouseLeave(e),
             onMouseDown: e => this.handleMouseDown(e),
             onMouseUp: e => this.handleMouseUp(e),
-            onFocus: e => this.handleFocus(e),
-            onBlur: e => this.handleBlur(e),
             onKeyDown: e => this.handleKeyDown(e),
             onKeyUp: e => this.handleKeyUp(e),
         };
 
-        return (
-            <button className={className} name={this.props.name} disabled={this.state.disabled} {...listerners}>
-                <span className={style.text}>{this.props.children}</span>
-            </button>
-        );
+        return <button ref="control" className={className} name={this.props.name} disabled={this.state.disabled} {...listerners}>
+            <span className={style.text}>{this.props.children}</span>
+        </button>;
     }
 
     /** @override */

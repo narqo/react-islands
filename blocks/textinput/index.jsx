@@ -1,9 +1,10 @@
 import React from 'react';
 import classNames from 'classnames';
-import Component from '../component';
+import Control from '../control';
+import Clear from './clear';
 import style from './style.css';
 
-class TextInput extends Component {
+class TextInput extends Control {
     constructor(props) {
         super(props);
         Object.assign(this.state, {
@@ -12,7 +13,7 @@ class TextInput extends Component {
     }
 
     render() {
-        const { size } = this.props;
+        const { size, hasClear } = this.props;
         const className = classNames(
             style.textinput,
             style[`size-${size}`],
@@ -20,36 +21,47 @@ class TextInput extends Component {
                 [style.hovered]: this.state.hovered,
                 [style.disabled]: this.state.disabled,
                 [style.focused]: this.state.focused,
+                [style['has-clear']]: hasClear,
             }
         );
-
-        const listeners = {
-            onChange: e => this.handleChange(e),
-            onMouseEnter: e => this.handleMouseEnter(e),
-            onMouseLeave: e => this.handleMouseLeave(e),
-            onFocus: e => this.handleFocus(e),
-            onBlur: e => this.handleBlur(e),
-        };
-
-        const { placeholder, type = 'text' } = this.props;
 
         return (
             <span className={className}>
                 <span className={style.box}>
-                    <input
-                        className={style.control}
-                        value={this.state.value}
-                        {...{type, placeholder}}
-                        {...listeners}
-                    />
+                    {this.renderControl()}
+                    {hasClear && this.renderClear()}
                 </span>
             </span>
         );
     }
 
-    handleChange(e) {
+    renderControl() {
+        const { placeholder, type = 'text' } = this.props;
+        const { value } = this.state;
+        const listeners = {
+            onChange: e => this.handleInputChange(e),
+        };
+        return (
+            <input ref="control" className={style.control} {...{ type, value, placeholder }} {...listeners} />
+        );
+    }
+
+    renderClear() {
+        return <Clear visible={!!this.state.value} onClick={() => this.handleClearClick()}/>;
+    }
+
+    handleInputChange(e) {
         this.setState({ value: e.target.value });
-        this.props.onChange.call(this, e);
+        this.handleChange();
+    }
+
+    handleClearClick() {
+        this.setState({ value: '', focused: true });
+        this.handleChange({ source: 'clear' });
+    }
+
+    handleChange(data) {
+        this.props.onChange.call(this, data);
     }
 }
 
