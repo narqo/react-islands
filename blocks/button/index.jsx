@@ -1,15 +1,15 @@
 import React from 'react';
 import classNames from 'classnames';
-import Control from '../control';
+import BaseComponent, { Control } from '../control';
 import style from './style.css';
 
-class Button extends Control {
+class Button extends BaseComponent {
     constructor(props) {
         super(props);
         Object.assign(this.state, {
             pressed: false,
         });
-        this._isPointerPressInProgress = false;
+        this.isPointerPressInProgress = false;
     }
 
     /** @override */
@@ -21,70 +21,76 @@ class Button extends Control {
     }
 
     render() {
+        const { disabled, hovered, pressed, focused } = this.state;
         const { size, view } = this.props;
+
         const className = classNames(
             style.button,
             style[`size-${size}`],
             style[view],
             {
-                [style.disabled]: this.state.disabled,
-                [style.hovered]: this.state.hovered,
-                [style.pressed]: this.state.pressed,
-                [style.focused]: this.state.focused,
+                [style.disabled]: disabled,
+                [style.hovered]: hovered,
+                [style.pressed]: pressed,
+                [style.focused]: focused,
             }
         );
 
         const listerners = {
-            onMouseDown: e => this.handleMouseDown(e),
-            onMouseUp: e => this.handleMouseUp(e),
-            onKeyDown: e => this.handleKeyDown(e),
-            onKeyUp: e => this.handleKeyUp(e),
+            onMouseDown: e => this.onMouseDown(e),
+            onMouseUp: e => this.onMouseUp(e),
+            onKeyDown: e => this.onKeyDown(e),
+            onKeyUp: e => this.onKeyUp(e),
         };
 
-        return <button ref="control" className={className} name={this.props.name} disabled={this.state.disabled} {...listerners}>
-            <span className={style.text}>{this.props.children}</span>
-        </button>;
+        return (
+            <Control {...this.state}>
+                <button className={className} name={this.props.name} disabled={disabled} {...listerners}>
+                    <span className={style.text}>{this.props.children}</span>
+                </button>
+            </Control>
+        );
     }
 
     /** @override */
-    handleMouseLeave() {
-        this.handlePointerRelease();
-        super.handleMouseLeave();
+    onControlMouseLeave() {
+        this.onPointerRelease();
+        super.onControlMouseLeave();
         this.setState({ pressed: false });
     }
 
-    handleMouseDown() {
+    onMouseDown() {
         if (!this.state.disabled) {
-            this._isPointerPressInProgress = true;
+            this.isPointerPressInProgress = true;
             this.setState({ pressed: true });
         }
     }
 
-    handleMouseUp() {
-        this.handlePointerRelease();
+    onMouseUp() {
+        this.onPointerRelease();
         if (this.state.pressed) {
             this.setState({ pressed: false });
-            this.handleClick();
+            this.onClick();
         }
     }
 
-    handlePointerRelease() {
-        this._isPointerPressInProgress = false;
+    onPointerRelease() {
+        this.isPointerPressInProgress = false;
     }
 
-    handleClick() {
+    onClick() {
         this.props.onClick();
     }
 
     /** @override */
-    handleFocus() {
-        if (this._isPointerPressInProgress) {
+    onControlFocus() {
+        if (this.isPointerPressInProgress) {
             return;
         }
-        super.handleFocus();
+        super.onControlFocus();
     }
 
-    handleKeyDown(e) {
+    onKeyDown(e) {
         if (this.state.disabled || !this.state.focused) {
             return;
         }
@@ -93,10 +99,10 @@ class Button extends Control {
         }
     }
 
-    handleKeyUp() {
+    onKeyUp() {
         if (this.state.pressed && this.state.focused) {
             this.setState({ pressed: false });
-            this.handleClick();
+            this.onClick();
         }
     }
 }

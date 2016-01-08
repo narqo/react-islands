@@ -1,10 +1,10 @@
 import React from 'react';
 import classNames from 'classnames';
-import Control from '../control';
+import BaseComponent, { Control } from '../control';
 import Clear from './clear';
 import style from './style.css';
 
-class TextInput extends Control {
+class TextInput extends BaseComponent {
     constructor(props) {
         super(props);
         Object.assign(this.state, {
@@ -13,14 +13,16 @@ class TextInput extends Control {
     }
 
     render() {
+        const { disabled, focused, hovered } = this.state;
         const { size, hasClear } = this.props;
+
         const className = classNames(
             style.textinput,
             style[`size-${size}`],
             {
-                [style.hovered]: this.state.hovered,
-                [style.disabled]: this.state.disabled,
-                [style.focused]: this.state.focused,
+                [style.hovered]: hovered,
+                [style.disabled]: disabled,
+                [style.focused]: focused,
                 [style['has-clear']]: hasClear,
             }
         );
@@ -36,31 +38,33 @@ class TextInput extends Control {
     }
 
     renderControl() {
-        const { placeholder, type = 'text' } = this.props;
+        const { type = 'text', placeholder} = this.props;
         const { value } = this.state;
         const listeners = {
-            onChange: e => this.handleInputChange(e),
+            onChange: e => this.onInputChange(e),
         };
         return (
-            <input ref="control" className={style.control} {...{ type, value, placeholder }} {...listeners} />
+            <Control {...this.state}>
+                <input className={style.control} {...{ type, value, placeholder }} {...listeners} />
+            </Control>
         );
     }
 
     renderClear() {
-        return <Clear visible={!!this.state.value} onClick={() => this.handleClearClick()}/>;
+        return <Clear visible={!!this.state.value} onClick={() => this.onClearClick()}/>;
     }
 
-    handleInputChange(e) {
+    onInputChange(e) {
         this.setState({ value: e.target.value });
-        this.handleChange();
+        this.onChange();
     }
 
-    handleClearClick() {
+    onClearClick() {
         this.setState({ value: '', focused: true });
-        this.handleChange({ source: 'clear' });
+        this.onChange({ source: 'clear' });
     }
 
-    handleChange(data) {
+    onChange(data) {
         this.props.onChange.call(this, data);
     }
 }

@@ -1,30 +1,32 @@
 import React from 'react';
 import classNames from 'classnames';
-import Control from '../control';
+import BaseComponent, { Control } from '../control';
 import style from './style.css';
 
-class Link extends Control {
+class Link extends BaseComponent {
     constructor(props) {
         super(props);
-        this._isPointerPressInProgress = false;
+        this.isPointerPressInProgress = false;
     }
 
     render() {
+        const { disabled, focused } = this.state;
         const { size } = this.props;
+
         const className = classNames(
             style.link,
             style[`size-${size}`],
             {
-                [style.disabled]: this.state.disabled,
-                [style.focused]: this.state.focused,
+                [style.disabled]: disabled,
+                [style.focused]: focused,
             }
         );
 
         const listeners = {
-            onMouseDown: e => this.handleMouseDown(e),
-            onClick: e => this.handleClick(e),
-            onKeyDown: e => this.handleKeyDown(e),
-            onKeyUp: e => this.handleKeyUp(e),
+            onMouseDown: e => this.onMouseDown(e),
+            onClick: e => this.onClick(e),
+            onKeyDown: e => this.onKeyDown(e),
+            onKeyUp: e => this.onKeyUp(e),
         };
 
         return this.props.url ?
@@ -33,35 +35,41 @@ class Link extends Control {
     }
 
     renderLink(className, listeners) {
-        return <a
-            ref="control"
-            className={className}
-            href={this.props.url}
-            target={this.props.target}
-            title={this.props.title}
-            {...listeners}
-        >{this.props.children}</a>;
+        return (
+            <Control {...this.state}>
+                <a
+                    className={className}
+                    href={this.props.url}
+                    target={this.props.target}
+                    title={this.props.title}
+                    {...listeners}
+                >{this.props.children}</a>
+            </Control>
+        );
     }
 
     renderPseudoLink(className, listeners) {
         const tabIndex = this.state.disabled ? -1 : 0;
-        return <span
-            ref="control"
-            className={className}
-            tabIndex={tabIndex}
-            title={this.props.title}
-            {...listeners}
-        >{this.props.children}</span>;
+        return (
+            <Control {...this.state}>
+                <span
+                    className={className}
+                    tabIndex={tabIndex}
+                    title={this.props.title}
+                    {...listeners}
+                >{this.props.children}</span>
+            </Control>
+        );
     }
 
-    handleMouseDown() {
+    onMouseDown() {
         if (!this.state.disabled) {
-            this._isPointerPressInProgress = true;
+            this.isPointerPressInProgress = true;
         }
     }
 
-    handleClick(e) {
-        this._isPointerPressInProgress = false;
+    onClick(e) {
+        this.isPointerPressInProgress = false;
         if (this.state.disabled) {
             e.preventDefault();
         } else {
@@ -70,14 +78,14 @@ class Link extends Control {
     }
 
     /** @override */
-    handleFocus() {
-        if (this._isPointerPressInProgress) {
+    onControlFocus() {
+        if (this.isPointerPressInProgress) {
             return;
         }
-        super.handleFocus()
+        super.onControlFocus()
     }
 
-    handleKeyDown(e) {
+    onKeyDown(e) {
         if (this.state.disabled || !this.state.focused) {
             return;
         }
@@ -86,10 +94,10 @@ class Link extends Control {
         }
     }
 
-    handleKeyUp() {
+    onKeyUp() {
         if (this.state.pressed && this.state.focused) {
             this.setState({ pressed: false });
-            this.handleClick();
+            this.onClick();
         }
     }
 }
