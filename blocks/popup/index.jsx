@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import Overlay from './overlay';
+import Layer from './layer';
 import style from './style.css';
 
 class Popup extends Component {
@@ -9,6 +10,7 @@ class Popup extends Component {
         super(props, context);
         this.state = {
             visible: props.visible,
+            zIndex: 0,
         };
         this.shouldRenderToOverlay = false;
         this.isPopupVisible = this.isPopupVisible.bind(this);
@@ -38,23 +40,33 @@ class Popup extends Component {
     }
 
     render() {
+        const { visible } = this.state;
+
         const className = classNames(
             style.popup,
             {
-                [style.visible]: this.state.visible
+                [style.visible]: visible
             }
         );
 
-        const popup = this.renderPopup(className);
-        return this.shouldRenderToOverlay ?
-            <Overlay>
-                {popup}
-            </Overlay> :
-            popup;
+        if (this.shouldRenderToOverlay) {
+            let popupStyle = {
+                zIndex: this.state.zIndex,
+            };
+            return (
+                <Overlay>
+                    <Layer visible={visible} onOrderChange={zIndex => this.onLayerOrderChange(zIndex)}>
+                        {this.renderPopup(className, popupStyle)}
+                    </Layer>
+                </Overlay>
+            );
+        } else {
+            return this.renderPopup(className);
+        }
     }
 
-    renderPopup(className) {
-        return <div className={className}>{this.props.children}</div>;
+    renderPopup(className, popupStyle = {}) {
+        return <div className={className} style={popupStyle}>{this.props.children}</div>;
     }
 
     handleParentPopupHide() {
@@ -62,6 +74,10 @@ class Popup extends Component {
         if (typeof isParentPopupVisible === 'function' && isParentPopupVisible() === false) {
             this.setState({ visible: false });
         }
+    }
+
+    onLayerOrderChange(zIndex) {
+        this.setState({ zIndex });
     }
 
     isPopupVisible() {
