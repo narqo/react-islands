@@ -1,0 +1,11 @@
+.popup
+{
+    position: absolute;
+
+    display: none;
+}
+
+.visible
+{
+    display: block;
+}

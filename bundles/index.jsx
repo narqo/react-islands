@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import Button from '../blocks/button';
 import Link from '../blocks/link';
 import TextInput from '../blocks/textinput';
-//import Popup from '../blocks/popup';
+import Popup from '../blocks/popup';
 
 class Example extends React.Component {
     constructor(...args) {
@@ -32,7 +32,7 @@ class Example extends React.Component {
         this.setState({ popup3Visible: !this.state.popup3Visible });
     }
 
-    handlePopup3VisibleChange(val) {
+    handlePopup3VisibilityChange(val) {
         this.setState({ popup3Visible: val });
     }
 
@@ -42,9 +42,9 @@ class Example extends React.Component {
                 {this.renderButton()}
                 {this.renderLink()}
                 {this.renderTextInput()}
+                {this.renderPopup()}
             </div>
         );
-                //{this.renderPopup()}
     }
 
     renderButton() {
@@ -78,18 +78,18 @@ class Example extends React.Component {
         return (
             <div>
                 <div>
-                    <Button size="s" onClick={() => this.handlePopup1AnchorClick()}>Open popup</Button>
+                    <Button size="s" onClick={() => this.handlePopup1AnchorClick()}>Toggle popup 1</Button>
                     <Popup id="p1" visible={this.state.popup1Visible}>
                         <Link size="s">Yandex</Link>
                     </Popup>
                 </div>
                 <div>
-                    <Button size="s" onClick={() => this.handlePopup2AnchorClick()}>Open popup</Button>
+                    <Button size="s" onClick={() => this.handlePopup2AnchorClick()}>Toggle popup 2</Button>
                     <Popup visible={this.state.popup2Visible}>
-                        <Link size="s" onClick={() => this.handlePopup3AnchorClick()}>Open popup</Link>
+                        <Link size="s" onClick={() => this.handlePopup3AnchorClick()}>Toggle popup 3</Link>
                         <Popup
                             visible={this.state.popup3Visible}
-                            onVisibleChange={v => this.handlePopup3VisibleChange(v)}
+                            onVisibilityChange={v => this.handlePopup3VisibilityChange(v)}
                         >
                             <Link size="s">Yandex</Link>
                         </Popup>
