@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import BaseComponent, { Control } from '../control';
-import style from './style.css';
+import style from './button.css';
 
 class Button extends BaseComponent {
     constructor(props) {

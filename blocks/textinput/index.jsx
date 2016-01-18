@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import BaseComponent, { Control } from '../control';
 import Clear from './clear';
-import style from './style.css';
+import style from './textinput.css';
 
 class TextInput extends BaseComponent {
     constructor(props) {

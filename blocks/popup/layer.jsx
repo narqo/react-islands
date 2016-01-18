@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 const zIndexFactor = 1000;
-const visibleLayersZIndexes = {};
+const visibleLayersZIndexes = new Map();
 
 class Layer extends Component {
     constructor(...args) {
@@ -34,10 +34,16 @@ class Layer extends Component {
 
     captureZIndex() {
         const level = this.props.zIndexGroupLevel;
-        const zIndexes = visibleLayersZIndexes[level] ||
-            (visibleLayersZIndexes[level] = [(level + 1) * zIndexFactor]);
-        const prevZIndex = this.zIndex;
 
+        var zIndexes;
+        if (visibleLayersZIndexes.has(level)) {
+            zIndexes = visibleLayersZIndexes.get(level);
+        } else {
+            zIndexes = [(level + 1) * zIndexFactor];
+            visibleLayersZIndexes.set(level, zIndexes);
+        }
+
+        const prevZIndex = this.zIndex;
         this.zIndex = zIndexes[zIndexes.push(zIndexes[zIndexes.length - 1] + 1) - 1];
         if (this.zIndex !== prevZIndex) {
             this.props.onOrderChange(this.zIndex);
@@ -45,7 +51,7 @@ class Layer extends Component {
     }
 
     releaseZIndex() {
-        const zIndexes = visibleLayersZIndexes[this.props.zIndexGroupLevel];
+        const zIndexes = visibleLayersZIndexes.get(this.props.zIndexGroupLevel);
         zIndexes.splice(zIndexes.indexOf(this.zIndex), 1);
     }
 }
