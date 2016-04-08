@@ -8,32 +8,30 @@ module.exports = {
     entry: {
         jsx: './index.jsx',
         html: './index.html',
-        vendor: ['react']
+        vendor: ['react'],
     },
     output: {
         path: path.join(__dirname, './build'),
-        filename: 'bundle.js'
+        filename: 'bundle.js',
     },
     module: {
         loaders: [
             {
                 test: /\.html$/,
-                loader: 'file?name=[name].[ext]'
+                loader: 'file?name=[name].[ext]',
             },
             {
                 test: /\.css$/,
                 loaders: [
                     'style-loader',
                     'css-loader?modules&sourceMap&importLoaders=1&localIdentName=[name]--[local]--[hash:base64:5]',
-                    'postcss-loader'
+                    'postcss-loader',
                 ]
             },
             {
                 test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
-                loaders: [
-                    'babel-loader'
-                ]
+                loaders: ['babel'],
             },
         ],
     },
@@ -46,7 +44,12 @@ module.exports = {
     ],
     plugins: [
         new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.bundle.js'),
+        new webpack.NoErrorsPlugin(),
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': JSON.stringify('development'),
+        }),
     ],
+    devtool: 'inline-source-map',
     devServer: {
         contentBase: './bundles',
         hot: true,
