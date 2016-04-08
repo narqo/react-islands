@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React, { Component } from 'react';
 import Overlay from './overlay';
 import Layer from './layer';
-import style from './popup.css';
+import style from './style.css';
 
 class Popup extends Component {
     constructor(props, context) {

@@ -6,7 +6,7 @@ var precss = require('precss');
 module.exports = {
     context: path.join(__dirname, './bundles'),
     entry: {
-        jsx: './index.jsx',
+        jsx: './index.js',
         html: './index.html',
         vendor: ['react'],
     },

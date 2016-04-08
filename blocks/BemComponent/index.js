@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import Control from './control';
-import { getControlContextTypes } from './util';
+import Control from './Control';
 
-class BaseComponent extends Component {
+export default class BemComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -10,18 +9,18 @@ class BaseComponent extends Component {
             disabled: props.disabled,
             hovered: false,
         };
-        this.onControlMouseEnter = this.onControlMouseEnter.bind(this);
-        this.onControlMouseLeave = this.onControlMouseLeave.bind(this);
-        this.onControlFocus = this.onControlFocus.bind(this);
-        this.onControlBlur = this.onControlBlur.bind(this);
+        this.handleControlMouseEnter = () => this.onControlMouseEnter();
+        this.handleControlMouseLeave = () => this.onControlMouseLeave();
+        this.handleControlFocus = () => this.onControlFocus();
+        this.handleControlBlur = () => this.onControlBlur();
     }
 
     getChildContext() {
         return {
-            onControlMouseEnter: this.onControlMouseEnter,
-            onControlMouseLeave: this.onControlMouseLeave,
-            onControlFocus: this.onControlFocus,
-            onControlBlur: this.onControlBlur,
+            handleControlMouseEnter: this.handleControlMouseEnter,
+            handleControlMouseLeave: this.handleControlMouseLeave,
+            handleControlFocus: this.handleControlFocus,
+            handleControlBlur: this.handleControlBlur,
         };
     }
 
@@ -55,7 +54,11 @@ class BaseComponent extends Component {
     }
 }
 
-BaseComponent.childContextTypes = getControlContextTypes();
+BemComponent.childContextTypes = {
+    handleControlMouseEnter: React.PropTypes.func.isRequired,
+    handleControlMouseLeave: React.PropTypes.func.isRequired,
+    handleControlFocus: React.PropTypes.func.isRequired,
+    handleControlBlur: React.PropTypes.func.isRequired,
+};
 
-export default BaseComponent;
-export { Control };
+export { Control as BemControl };

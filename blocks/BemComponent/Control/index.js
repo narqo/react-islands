@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
-import { getControlContextTypes } from './util';
 
-class Control extends Component {
+export default class Control extends Component {
     componentDidUpdate(prevProps) {
         if (this.props.focused && prevProps.focused !== this.props.focused) {
             findDOMNode(this).focus();
@@ -19,22 +18,25 @@ class Control extends Component {
     }
 
     onMouseEnter(e) {
-        this.context.onControlMouseEnter(e);
+        this.context.handleControlMouseEnter(e);
     }
 
     onMouseLeave(e) {
-        this.context.onControlMouseLeave(e);
+        this.context.handleControlMouseLeave(e);
     }
 
     onFocus(e) {
-        this.context.onControlFocus(e);
+        this.context.handleControlFocus(e);
     }
 
     onBlur(e) {
-        this.context.onControlBlur(e);
+        this.context.handleControlBlur(e);
     }
 }
 
-Control.contextTypes = getControlContextTypes();
-
-export default Control;
+Control.contextTypes = {
+    handleControlMouseEnter: React.PropTypes.func.isRequired,
+    handleControlMouseLeave: React.PropTypes.func.isRequired,
+    handleControlFocus: React.PropTypes.func.isRequired,
+    handleControlBlur: React.PropTypes.func.isRequired,
+};

@@ -1,10 +1,10 @@
 import React from 'react';
 import classNames from 'classnames';
-import BaseComponent, { Control } from '../control';
-import Clear from './clear';
-import style from './textinput.css';
+import BemComponent, { BemControl } from '../BemComponent';
+import Clear from './Clear';
+import style from './style.css';
 
-class TextInput extends BaseComponent {
+class TextInput extends BemComponent {
     constructor(props) {
         super(props);
         Object.assign(this.state, {
@@ -40,13 +40,13 @@ class TextInput extends BaseComponent {
     renderControl() {
         const { type = 'text', placeholder} = this.props;
         const { value } = this.state;
-        const listeners = {
-            onChange: e => this.onInputChange(e),
-        };
         return (
-            <Control {...this.state}>
-                <input className={style.control} {...{ type, value, placeholder }} {...listeners} />
-            </Control>
+            <BemControl>
+                <input
+                    className={style.control}
+                    onChange={e => this.onInputChange(e)}
+                    {...{ type, value, placeholder }} />
+            </BemControl>
         );
     }
 

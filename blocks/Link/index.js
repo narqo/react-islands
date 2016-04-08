@@ -1,9 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
-import BaseComponent, { Control } from '../control';
-import style from './link.css';
+import BemComponent, { BemControl } from '../BemComponent';
+import style from './style.css';
 
-class Link extends BaseComponent {
+class Link extends BemComponent {
     constructor(props) {
         super(props);
         this.isPointerPressInProgress = false;
@@ -11,7 +11,7 @@ class Link extends BaseComponent {
 
     render() {
         const { disabled, focused } = this.state;
-        const { size } = this.props;
+        const { size, url } = this.props;
 
         const className = classNames(
             style.link,
@@ -29,14 +29,14 @@ class Link extends BaseComponent {
             onKeyUp: e => this.onKeyUp(e),
         };
 
-        return this.props.url ?
+        return url ?
             this.renderLink(className, listeners) :
             this.renderPseudoLink(className, listeners);
     }
 
     renderLink(className, listeners) {
         return (
-            <Control {...this.state}>
+            <BemControl>
                 <a
                     className={className}
                     href={this.props.url}
@@ -44,21 +44,21 @@ class Link extends BaseComponent {
                     title={this.props.title}
                     {...listeners}
                 >{this.props.children}</a>
-            </Control>
+            </BemControl>
         );
     }
 
     renderPseudoLink(className, listeners) {
         const tabIndex = this.state.disabled ? -1 : 0;
         return (
-            <Control {...this.state}>
+            <BemControl>
                 <span
                     className={className}
                     tabIndex={tabIndex}
                     title={this.props.title}
                     {...listeners}
                 >{this.props.children}</span>
-            </Control>
+            </BemControl>
         );
     }
 

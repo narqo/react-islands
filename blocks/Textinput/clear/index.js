@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import style from './clear.css';
+import style from './style.css';
 
 export default function(props) {
     var className = classNames(

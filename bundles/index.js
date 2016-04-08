@@ -1,9 +1,9 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import Button from '../blocks/button';
-import Link from '../blocks/link';
-import TextInput from '../blocks/textinput';
-import Popup from '../blocks/popup';
+import { render } from 'react-dom';
+import Button from '../blocks/Button';
+import Link from '../blocks/Link';
+import TextInput from '../blocks/TextInput';
+import Popup from '../blocks/Popup';
 
 class Example extends React.Component {
     constructor(...args) {
@@ -100,4 +100,4 @@ class Example extends React.Component {
     }
 }
 
-ReactDOM.render(React.createElement(Example), document.getElementById('root'));
+render(React.createElement(Example), document.getElementById('root'));

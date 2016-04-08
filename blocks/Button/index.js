@@ -1,9 +1,12 @@
 import React from 'react';
 import classNames from 'classnames';
-import BaseComponent, { Control } from '../control';
-import style from './button.css';
+import BemComponent, { BemControl } from '../BemComponent';
+import style from './style.css';
 
-class Button extends BaseComponent {
+const KEY_SPACE = ' ',
+    KEY_ENTER = 'Enter';
+
+class Button extends BemComponent {
     constructor(props) {
         super(props);
         Object.assign(this.state, {
@@ -22,7 +25,7 @@ class Button extends BaseComponent {
 
     render() {
         const { disabled, hovered, pressed, focused } = this.state;
-        const { size, view } = this.props;
+        const { size, view, name } = this.props;
 
         const className = classNames(
             style.button,
@@ -44,11 +47,11 @@ class Button extends BaseComponent {
         };
 
         return (
-            <Control {...this.state}>
-                <button className={className} name={this.props.name} disabled={disabled} {...listerners}>
+            <BemControl>
+                <button className={className} name={name} disabled={disabled} {...listerners}>
                     <span className={style.text}>{this.props.children}</span>
                 </button>
-            </Control>
+            </BemControl>
         );
     }
 
@@ -94,7 +97,7 @@ class Button extends BaseComponent {
         if (this.state.disabled || !this.state.focused) {
             return;
         }
-        if (e.key === ' ' || e.key === 'Enter') {
+        if (e.key === KEY_SPACE || e.key === KEY_ENTER) {
             this.setState({ pressed: true });
         }
     }
