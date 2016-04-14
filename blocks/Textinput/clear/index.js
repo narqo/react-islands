@@ -1,13 +1,8 @@
 import React from 'react';
-import classNames from 'classnames';
+import bem from 'b_';
 import style from './style.css';
 
 export default function(props) {
-    var className = classNames(
-        style.clear,
-        {
-            [style.visible]: props.visible
-        }
-    );
+    const className = bem('input', 'clear', { visible: props.visible });
     return <i className={className} onClick={props.onClick}/>;
 }

@@ -1,7 +1,8 @@
 import React from 'react';
-import classNames from 'classnames';
+import bem from 'b_';
 import BemComponent, { BemControl } from '../BemComponent';
-import style from './style.css';
+
+const b = bem.with('link');
 
 class Link extends BemComponent {
     constructor(props) {
@@ -11,16 +12,14 @@ class Link extends BemComponent {
 
     render() {
         const { disabled, focused } = this.state;
-        const { size, url } = this.props;
+        const { theme, size, url } = this.props;
 
-        const className = classNames(
-            style.link,
-            style[`size-${size}`],
-            {
-                [style.disabled]: disabled,
-                [style.focused]: focused,
-            }
-        );
+        const className = b({
+            theme,
+            size,
+            disabled,
+            focused,
+        });
 
         const listeners = {
             onMouseDown: e => this.onMouseDown(e),

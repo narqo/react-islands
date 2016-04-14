@@ -60,8 +60,8 @@ class Example extends React.Component {
     renderLink() {
         return (
             <div>
-                <p>Link: <Link size="s" url="#/https://yandex.ru">Yandex</Link></p>
-                <p>Pseudo link: <Link size="s" onClick={this.handleClick}>Yandex</Link></p>
+                <p>Link: <Link theme="islands" size="s" url="#/https://yandex.ru">Yandex</Link></p>
+                <p>Pseudo link: <Link theme="islands" size="s" onClick={this.handleClick}>Yandex</Link></p>
             </div>
         )
     }
@@ -69,7 +69,7 @@ class Example extends React.Component {
     renderTextInput() {
         return (
             <p>
-                <TextInput size="s" value="islands" placeholder="Fill me!" hasClear={true}/>
+                <TextInput theme="islands" size="s" value="islands" placeholder="Fill me!" hasClear={true}/>
             </p>
         );
     }
@@ -79,15 +79,16 @@ class Example extends React.Component {
             <div>
                 <div>
                     <Button theme="islands" size="s" onClick={() => this.handlePopup1AnchorClick()}>Toggle popup 1</Button>
-                    <Popup id="p1" visible={this.state.popup1Visible}>
-                        <Link size="s">Yandex</Link>
+                    <Popup theme="islands" id="p1" visible={this.state.popup1Visible}>
+                        <Link theme="islands" size="s">Yandex</Link>
                     </Popup>
                 </div>
                 <div>
                     <Button theme="islands" size="s" onClick={() => this.handlePopup2AnchorClick()}>Toggle popup 2</Button>
-                    <Popup visible={this.state.popup2Visible}>
-                        <Link size="s" onClick={() => this.handlePopup3AnchorClick()}>Toggle popup 3</Link>
+                    <Popup theme="islands" visible={this.state.popup2Visible}>
+                        <Link theme="islands" size="s" onClick={() => this.handlePopup3AnchorClick()}>Toggle popup 3</Link>
                         <Popup
+                            theme="islands"
                             visible={this.state.popup3Visible}
                             onVisibilityChange={v => this.handlePopup3VisibilityChange(v)}
                         >

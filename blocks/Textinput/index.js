@@ -1,8 +1,9 @@
 import React from 'react';
-import classNames from 'classnames';
+import bem from 'b_';
 import BemComponent, { BemControl } from '../BemComponent';
 import Clear from './Clear';
-import style from './style.css';
+
+const b = bem.with('input');
 
 class TextInput extends BemComponent {
     constructor(props) {
@@ -14,22 +15,20 @@ class TextInput extends BemComponent {
 
     render() {
         const { disabled, focused, hovered } = this.state;
-        const { size, hasClear } = this.props;
+        const { theme, size, hasClear } = this.props;
 
-        const className = classNames(
-            style.textinput,
-            style[`size-${size}`],
-            {
-                [style.hovered]: hovered,
-                [style.disabled]: disabled,
-                [style.focused]: focused,
-                [style['has-clear']]: hasClear,
-            }
-        );
+        const className = b({
+            'has-clear': hasClear,
+            theme,
+            size,
+            hovered,
+            disabled,
+            focused,
+        });
 
         return (
             <span className={className}>
-                <span className={style.box}>
+                <span className={b('box')}>
                     {this.renderControl()}
                     {hasClear && this.renderClear()}
                 </span>
@@ -43,7 +42,7 @@ class TextInput extends BemComponent {
         return (
             <BemControl>
                 <input
-                    className={style.control}
+                    className={b('control')}
                     onChange={e => this.onInputChange(e)}
                     {...{ type, value, placeholder }} />
             </BemControl>

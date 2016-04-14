@@ -1,10 +1,11 @@
 import React from 'react';
-import classNames from 'classnames';
+import bem from 'b_';
 import BemComponent, { BemControl } from '../BemComponent';
-import style from './style.css';
 
-const KEY_SPACE = ' ',
-    KEY_ENTER = 'Enter';
+const b = bem.with('button');
+
+const KEY_SPACE = ' ';
+const KEY_ENTER = 'Enter';
 
 class Button extends BemComponent {
     constructor(props) {
@@ -25,19 +26,17 @@ class Button extends BemComponent {
 
     render() {
         const { disabled, hovered, pressed, focused } = this.state;
-        const { size, view, name } = this.props;
+        const { theme, size, view, name } = this.props;
 
-        const className = classNames(
-            style.button,
-            style[`size-${size}`],
-            style[view],
-            {
-                [style.disabled]: disabled,
-                [style.hovered]: hovered,
-                [style.pressed]: pressed,
-                [style.focused]: focused,
-            }
-        );
+        const className = b({
+            theme,
+            size,
+            view,
+            disabled,
+            hovered,
+            pressed,
+            focused,
+        });
 
         const listerners = {
             onMouseDown: e => this.onMouseDown(e),
@@ -49,7 +48,7 @@ class Button extends BemComponent {
         return (
             <BemControl>
                 <button className={className} name={name} disabled={disabled} {...listerners}>
-                    <span className={style.text}>{this.props.children}</span>
+                    <span className={b('text')}>{this.props.children}</span>
                 </button>
             </BemControl>
         );
