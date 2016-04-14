@@ -12,9 +12,7 @@
   "author": "Vladimir Varankin <nek.narqo@gmail.com> (http://github.com/narqo)",
   "license": "WTFPL",
   "dependencies": {
-    "b_": "^1.3.3",
     "babel-runtime": "^6.3.19",
-    "classnames": "^2.2.3",
     "react": "^15.0.0",
     "react-dom": "^15.0.0"
   },

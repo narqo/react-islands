@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-const zIndexFactor = 1000;
+const ZINDEX_FACTOR = 1000;
 const visibleLayersZIndexes = new Map();
 
-class Layer extends Component {
+class Layer extends React.Component {
     constructor(...args) {
         super(...args);
         this.zIndex = null;
@@ -39,7 +39,7 @@ class Layer extends Component {
         if (visibleLayersZIndexes.has(level)) {
             zIndexes = visibleLayersZIndexes.get(level);
         } else {
-            zIndexes = [(level + 1) * zIndexFactor];
+            zIndexes = [(level + 1) * ZINDEX_FACTOR];
             visibleLayersZIndexes.set(level, zIndexes);
         }
 

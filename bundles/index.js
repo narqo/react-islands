@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from 'react-dom';
+import { render, findDOMNode } from 'react-dom';
 import Button from '../blocks/Button';
 import Link from '../blocks/Link';
 import Popup from '../blocks/Popup';
@@ -199,7 +199,7 @@ class CheckboxGroupExample extends React.Component {
     }
 }
 
-class Example extends React.Component {
+class PopupExample extends React.Component {
     constructor(...args) {
         super(...args);
         this.state = {
@@ -207,29 +207,85 @@ class Example extends React.Component {
             popup2Visible: false,
             popup3Visible: false,
         };
-        this.handleClick = this.handleClick.bind(this);
-    }
-
-    handleClick() {
-        console.log('click!');
     }
 
     handlePopup1AnchorClick() {
         this.setState({ popup1Visible: !this.state.popup1Visible });
     }
 
+    handlePopup1ClickOutside() {
+        this.setState({ popup1Visible: false });
+    }
+
+    handlePopup1VisibilityChange(val) {
+        this.setState({ popup1Visible: val });
+    }
+
     handlePopup2AnchorClick() {
         this.setState({ popup2Visible: !this.state.popup2Visible });
+    }
+
+    handlePopup2ClickOutside() {
+        this.setState({ popup2Visible: false });
+    }
+
+    handlePopup2VisibilityChange(val) {
+        this.setState({ popup2Visible: val });
     }
 
     handlePopup3AnchorClick() {
         this.setState({ popup3Visible: !this.state.popup3Visible });
     }
 
+    handlePopup3ClickOutside() {
+        this.setState({ popup3Visible: false });
+    }
+
     handlePopup3VisibilityChange(val) {
         this.setState({ popup3Visible: val });
     }
 
+    render() {
+        return (
+            <div style={{paddingBottom: '10px'}}>
+                <Button ref="popup1Anchor" theme="islands" size="s" onClick={() => this.handlePopup1AnchorClick()}>Toggle popup 1</Button>
+                <Popup
+                    theme="islands"
+                    id="p1"
+                    target={() => findDOMNode(this.refs.popup1Anchor)}
+                    visible={this.state.popup1Visible}
+                    onVisible={v => this.handlePopup1VisibilityChange(v)}
+                    onClickOutside={() => this.handlePopup1ClickOutside()}
+                >
+                    <Link theme="islands" size="s">Yandex</Link>
+                </Popup>
+                <span>&nbsp;</span>
+                <Button ref="popup2Anchor" theme="islands" size="s" onClick={() => this.handlePopup2AnchorClick()}>Toggle popup 2</Button>
+                <Popup
+                    theme="islands"
+                    directions={['right-top', 'bottom-left']}
+                    target={() => findDOMNode(this.refs.popup2Anchor)}
+                    visible={this.state.popup2Visible}
+                    onVisible={v => this.handlePopup2VisibilityChange(v)}
+                    onClickOutside={() => this.handlePopup2ClickOutside()}
+                >
+                    <Link theme="islands" size="s" onClick={() => this.handlePopup3AnchorClick()}>Toggle popup 3</Link>
+                    <Popup
+                        theme="islands"
+                        target={() => ({ left: 150, top: 550 })}
+                        visible={this.state.popup3Visible}
+                        onVisible={v => this.handlePopup3VisibilityChange(v)}
+                        onClickOutside={() => this.handlePopup3ClickOutside()}
+                    >
+                        <Link size="s">Yandex</Link>
+                    </Popup>
+                </Popup>
+            </div>
+        );
+    }
+}
+
+class Example extends React.Component {
     render() {
         return (
             <div className="example">
@@ -273,25 +329,8 @@ class Example extends React.Component {
     renderPopup() {
         return (
             <div className="example">
-                <div>
-                    <Button theme="islands" size="s" onClick={() => this.handlePopup1AnchorClick()}>Toggle popup 1</Button>
-                    <Popup theme="islands" id="p1" visible={this.state.popup1Visible}>
-                        <Link theme="islands" size="s">Yandex</Link>
-                    </Popup>
-                </div>
-                <div>
-                    <Button theme="islands" size="s" onClick={() => this.handlePopup2AnchorClick()}>Toggle popup 2</Button>
-                    <Popup theme="islands" visible={this.state.popup2Visible}>
-                        <Link theme="islands" size="s" onClick={() => this.handlePopup3AnchorClick()}>Toggle popup 3</Link>
-                        <Popup
-                            theme="islands"
-                            visible={this.state.popup3Visible}
-                            onVisibilityChange={v => this.handlePopup3VisibilityChange(v)}
-                        >
-                            <Link size="s">Yandex</Link>
-                        </Popup>
-                    </Popup>
-                </div>
+                <h1>Popup Example</h1>
+                <PopupExample />
             </div>
         )
     }
