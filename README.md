@@ -7,7 +7,7 @@
 › npm start
 ~~~
 
-Open `http://lcoalhost:3000/index.html`.
+Open `http://localhost:3000/index.html`.
 
 ## License
 
