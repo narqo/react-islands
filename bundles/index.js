@@ -2,8 +2,8 @@ import React from 'react';
 import { render } from 'react-dom';
 import Button from '../blocks/Button';
 import Link from '../blocks/Link';
-import TextInput from '../blocks/TextInput';
 import Popup from '../blocks/Popup';
+import TextInput from '../blocks/TextInput';
 
 class Example extends React.Component {
     constructor(...args) {
@@ -50,9 +50,9 @@ class Example extends React.Component {
     renderButton() {
         return (
             <div>
-                <Button name="btn1" size="s">Click me!</Button>
+                <Button name="btn1" theme="islands" size="s">Click me!</Button>
                 <span>&nbsp;</span>
-                <Button name="btn2-disabled" size="s" disabled="true" onClick={this.handleClick}>Try click me!</Button>
+                <Button name="btn2-disabled" theme="islands" size="s" disabled={true} onClick={this.handleClick}>Try click me!</Button>
             </div>
         );
     }
@@ -69,7 +69,7 @@ class Example extends React.Component {
     renderTextInput() {
         return (
             <p>
-                <TextInput size="s" value="islands" placeholder="Fill me!" hasClear="true"/>
+                <TextInput size="s" value="islands" placeholder="Fill me!" hasClear={true}/>
             </p>
         );
     }
@@ -78,13 +78,13 @@ class Example extends React.Component {
         return (
             <div>
                 <div>
-                    <Button size="s" onClick={() => this.handlePopup1AnchorClick()}>Toggle popup 1</Button>
+                    <Button theme="islands" size="s" onClick={() => this.handlePopup1AnchorClick()}>Toggle popup 1</Button>
                     <Popup id="p1" visible={this.state.popup1Visible}>
                         <Link size="s">Yandex</Link>
                     </Popup>
                 </div>
                 <div>
-                    <Button size="s" onClick={() => this.handlePopup2AnchorClick()}>Toggle popup 2</Button>
+                    <Button theme="islands" size="s" onClick={() => this.handlePopup2AnchorClick()}>Toggle popup 2</Button>
                     <Popup visible={this.state.popup2Visible}>
                         <Link size="s" onClick={() => this.handlePopup3AnchorClick()}>Toggle popup 3</Link>
                         <Popup
