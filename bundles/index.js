@@ -6,6 +6,8 @@ import Popup from '../blocks/Popup';
 import TextInput from '../blocks/TextInput';
 import Radio from '../blocks/Radio';
 import RadioGroup from '../blocks/RadioGroup';
+import Checkbox from '../blocks/Checkbox';
+import CheckboxGroup from '../blocks/CheckboxGroup';
 
 class RadioGroupExample extends React.Component {
     constructor( props ) {
@@ -29,6 +31,38 @@ class RadioGroupExample extends React.Component {
                     <Radio value="50">50</Radio>
                 </RadioGroup>
                 <div>Вы выбрали: <b>{ this.state.value }</b></div>
+            </div>
+        );
+    }
+
+    onChange( value ) {
+        this.setState( { value } );
+    }
+
+}
+
+class CheckboxGroupExample extends React.Component {
+    constructor( props ) {
+        super( props );
+
+        this.state = {
+            value: [ '30', '40' ]
+        };
+
+        this.onChange = this.onChange.bind( this );
+    }
+
+    render() {
+        return (
+            <div>
+                <CheckboxGroup name="phones" value={ this.state.value } theme="islands" size="l" type="button" onChange={ this.onChange }>
+                    <Checkbox value="10">10</Checkbox>
+                    <Checkbox value="20" disabled>20</Checkbox>
+                    <Checkbox value="30">30</Checkbox>
+                    <Checkbox value="40">40</Checkbox>
+                    <Checkbox value="50">50</Checkbox>
+                </CheckboxGroup>
+                <div>Вы выбрали: <b>{ this.state.value.join( ', ' ) }</b></div>
             </div>
         );
     }
@@ -78,6 +112,7 @@ class Example extends React.Component {
                 {this.renderTextInput()}
                 {this.renderPopup()}
                 {this.renderRadioGroup()}
+                {this.renderCheckboxGroup()}
             </div>
         );
     }
@@ -143,6 +178,19 @@ class Example extends React.Component {
                 </div>
                 <div className="example">
                     <Radio theme="islands" type="button" size="l" name="foo" value="70">70</Radio>
+                </div>
+            </div>
+        );
+    }
+
+    renderCheckboxGroup() {
+        return (
+            <div>
+                <div className="example">
+                    <CheckboxGroupExample/>
+                </div>
+                <div className="example">
+                    <Checkbox theme="islands" type="button" size="l" name="foo" value="70">70</Checkbox>
                 </div>
             </div>
         );
