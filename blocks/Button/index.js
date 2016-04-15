@@ -11,7 +11,7 @@ class Button extends BemComponent {
     constructor(props) {
         super(props);
         Object.assign(this.state, {
-            pressed: false,
+            pressed: false
         });
         this.isPointerPressInProgress = false;
     }
@@ -26,13 +26,14 @@ class Button extends BemComponent {
 
     render() {
         const { disabled, hovered, pressed, focused } = this.state;
-        const { theme, size, view, name } = this.props;
+        const { theme, size, view, name, checked } = this.props;
 
         const className = b({
             theme,
             size,
             view,
             disabled,
+            checked,
             hovered,
             pressed,
             focused,
