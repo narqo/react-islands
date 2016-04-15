@@ -16,6 +16,14 @@ class Radio extends BemComponent {
         this.onClick = this.onClick.bind( this );
     }
 
+    componentWillReceiveProps( props ) {
+        super.componentWillReceiveProps( props );
+
+        Object.assign( this.state, {
+            checked: props.checked
+        } );
+    }
+
     render() {
         var name = this.props.name || this.context.name;
         var value = this.props.value;
