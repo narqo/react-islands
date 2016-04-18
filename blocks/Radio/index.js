@@ -22,6 +22,7 @@ class Radio extends Control {
     }
 
     render() {
+        //  FIXME: А как бы сделать так, чтобы это сделать один раз, положить куда-нибудь и везде брать оттуда?
         var name = this.props.name || this.context.name;
         var theme = this.props.theme || this.context.theme;
         var size = this.props.size || this.context.size;
@@ -73,24 +74,33 @@ class Radio extends Control {
         return className;
     }
 
-    onClick() {
-        //  this.refs.control.checked = true;
-        this.setState({checked: true});
+    onClick(e) {
+        if (this.props.onClick) {
+            //  FIXME: Может передавать туда name, value?
+            this.props.onClick(e);
+        }
 
-        this.props.onCheck(this.props.value);
+        if (!this.state.checked) {
+            this.refs.control.checked = true;
+
+            this.setState({checked: true});
+
+            if (this.props.onCheck) {
+                this.props.onCheck(this.props.value);
+            }
+        }
     }
 }
-
-Radio.defaultProps = {
-    onCheck() {}
-};
 
 Radio.contextTypes = {
     theme: React.PropTypes.string,
     size: React.PropTypes.string,
     type: React.PropTypes.string,
     name: React.PropTypes.string,
-    value: React.PropTypes.any
+    value: React.PropTypes.any,
+    disabled: React.PropTypes.bool,
+    onClick: React.PropTypes.func,
+    onCheck: React.PropTypes.func
 };
 
 module.exports = Radio;
