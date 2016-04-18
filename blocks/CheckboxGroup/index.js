@@ -1,25 +1,23 @@
 import React from 'react';
 import bem from 'b_';
-import BemComponent, { BemControl } from '../BemComponent';
 
 const b = bem.with('checkbox-group');
 
-class CheckboxGroup extends BemComponent {
+class CheckboxGroup extends React.Component {
     constructor( props ) {
         super( props );
 
+        var value = [];
         if ( this.props.value ) {
-            var value = [].concat( this.props.value );
-            Object.assign( this.state, { value } );
+            value = value.concat( this.props.value );
         }
+        this.state = { value };
 
         this.onCheck = this.onCheck.bind( this );
     }
 
     render() {
-        var theme = this.props.theme;
-        var size = this.props.size;
-        var type = this.props.type;
+        var { theme, size, type } = this.props;
 
         var className = b({ theme, size, type }) + ' control-group';
 

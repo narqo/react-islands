@@ -7,7 +7,6 @@ export default class BemComponent extends Component {
         this.state = {
             focused: props.focused,
             disabled: props.disabled,
-            checked: props.checked,
             hovered: false,
         };
         this.handleControlMouseEnter = () => this.onControlMouseEnter();
