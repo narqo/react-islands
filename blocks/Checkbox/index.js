@@ -6,22 +6,22 @@ import Button from '../Button';
 const b = bem.with('checkbox');
 
 class Checkbox extends BemComponent {
-    constructor( props ) {
-        super( props );
+    constructor(props) {
+        super(props);
 
-        Object.assign( this.state, {
+        Object.assign(this.state, {
             checked: props.checked
-        } );
+        });
 
-        this.onClick = this.onClick.bind( this );
+        this.onClick = this.onClick.bind(this);
     }
 
-    componentWillReceiveProps( props ) {
-        super.componentWillReceiveProps( props );
+    componentWillReceiveProps(props) {
+        super.componentWillReceiveProps(props);
 
-        Object.assign( this.state, {
+        Object.assign(this.state, {
             checked: props.checked
-        } );
+        });
     }
 
     render() {
@@ -39,27 +39,27 @@ class Checkbox extends BemComponent {
 
         return (
             <BemControl>
-                <label className={ className }>
-                    <Button theme={ theme } size={ size } type={ type } checked={ checked } disabled={ disabled } onClick={ this.onClick }>
-                        { this.props.children }
+                <label className={className}>
+                    <Button theme={theme} size={size} type={type} checked={checked} disabled={disabled} onClick={this.onClick}>
+                        {this.props.children}
                     </Button>
-                    <input ref='control' className={ b('control') } type='checkbox' autoComplete='off' name={ name } value={ value } disabled={ disabled }/>
+                    <input ref="control" className={b('control')} type="checkbox" autoComplete="off" name={name} value={value} disabled={disabled}/>
                 </label>
             </BemControl>
         );
     }
 
     onClick() {
-        //this.refs.control.checked = true;
+        //  this.refs.control.checked = true;
         var checked = !this.state.checked;
-        this.setState( { checked } );
+        this.setState({checked});
 
-        this.props.onCheck( this.props.value, checked );
+        this.props.onCheck(this.props.value, checked);
     }
 }
 
 Checkbox.defaultProps = {
-    onCheck: function() {}
+    onCheck() {}
 };
 
 Checkbox.contextTypes = {

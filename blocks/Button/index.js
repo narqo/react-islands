@@ -23,7 +23,7 @@ class Button extends BemComponent {
         if (props.disabled === true) {
             this.setState({ pressed: false });
         }
-        this.setState( { checked: props.checked } );
+        this.setState({checked: props.checked});
     }
 
     render() {

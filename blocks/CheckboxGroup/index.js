@@ -4,16 +4,16 @@ import bem from 'b_';
 const b = bem.with('checkbox-group');
 
 class CheckboxGroup extends React.Component {
-    constructor( props ) {
-        super( props );
+    constructor(props) {
+        super(props);
 
         var value = [];
-        if ( this.props.value ) {
-            value = value.concat( this.props.value );
+        if (this.props.value) {
+            value = value.concat(this.props.value);
         }
-        this.state = { value };
+        this.state = {value};
 
-        this.onCheck = this.onCheck.bind( this );
+        this.onCheck = this.onCheck.bind(this);
     }
 
     render() {
@@ -23,30 +23,28 @@ class CheckboxGroup extends React.Component {
 
         var onCheck = this.onCheck;
         var value = this.state.value;
-        var children = React.Children.map( this.props.children, function( child ) {
-            var checked = value.indexOf( child.props.value ) !== -1;
-            return React.cloneElement( child, { checked, onCheck } );
-        } );
+        var children = React.Children.map(this.props.children, child => {
+            var checked = value.indexOf(child.props.value) !== -1;
+            return React.cloneElement(child, {checked, onCheck});
+        });
 
         return (
-            <span className={ className }>
-                { children }
+            <span className={className}>
+                {children}
             </span>
         );
     }
 
-    onCheck( value, checked ) {
-        if ( checked && this.state.value.indexOf( value ) === -1 ) {
-            var checked = this.state.value.concat( value );
-            this.setState( { value: checked } );
-            this.props.onChange( checked );
+    onCheck(value, checked) {
+        if (checked && this.state.value.indexOf(value) === -1) {
+            checked = this.state.value.concat(value);
+            this.setState({value: checked});
+            this.props.onChange(checked);
 
-        } else if ( !checked ) {
-            var checked = this.state.value.filter( function( item ) {
-                return item !== value;
-            } );
-            this.setState( { value: checked } );
-            this.props.onChange( checked );
+        } else if (!checked) {
+            checked = this.state.value.filter(item => (item !== value));
+            this.setState({value: checked});
+            this.props.onChange(checked);
         }
     }
 
@@ -62,7 +60,7 @@ class CheckboxGroup extends React.Component {
 }
 
 CheckboxGroup.defaultProps = {
-    onChange: function() {}
+    onChange() {}
 };
 
 CheckboxGroup.propTypes = {

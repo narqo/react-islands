@@ -1,18 +1,18 @@
 import React from 'react';
 import bem from 'b_';
-import BemComponent, { BemControl } from '../BemComponent';
+import BemComponent from '../BemComponent';
 
 const b = bem.with('radio-group');
 
 class RadioGroup extends BemComponent {
-    constructor( props ) {
-        super( props );
+    constructor(props) {
+        super(props);
 
-        Object.assign( this.state, {
+        Object.assign(this.state, {
             value: this.props.value
-        } );
+        });
 
-        this.onCheck = this.onCheck.bind( this );
+        this.onCheck = this.onCheck.bind(this);
     }
 
     render() {
@@ -24,24 +24,22 @@ class RadioGroup extends BemComponent {
 
         var onCheck = this.onCheck;
         var value = this.state.value;
-        var children = React.Children.map( this.props.children, function( child ) {
-            return React.cloneElement( child, {
-                checked: child.props.value === value,
-                onCheck: onCheck
-            } );
-        } );
+        var children = React.Children.map(this.props.children, child => {
+            var checked = child.props.value === value;
+            return React.cloneElement(child, { checked, onCheck });
+        });
 
         return (
-            <span className={ className }>
-                { children }
+            <span className={className}>
+                {children}
             </span>
         );
     }
 
-    onCheck( value ) {
-        if ( value !== this.state.value ) {
-            this.setState( { value } );
-            this.props.onChange( value );
+    onCheck(value) {
+        if (value !== this.state.value) {
+            this.setState({value});
+            this.props.onChange(value);
         }
     }
 
@@ -57,7 +55,7 @@ class RadioGroup extends BemComponent {
 }
 
 RadioGroup.defaultProps = {
-    onChange: function() {}
+    onChange() {}
 };
 
 RadioGroup.propTypes = {
