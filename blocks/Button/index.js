@@ -1,13 +1,10 @@
 import React from 'react';
-import bem from 'b_';
-import BemComponent, { BemControl } from '../BemComponent';
-
-const b = bem.with('button');
+import Control from '../Control';
 
 const KEY_SPACE = ' ';
 const KEY_ENTER = 'Enter';
 
-class Button extends BemComponent {
+class Button extends Control {
     constructor(props) {
         super(props);
         Object.assign(this.state, {
@@ -15,6 +12,11 @@ class Button extends BemComponent {
             pressed: false
         });
         this.isPointerPressInProgress = false;
+
+        this.onMouseUp = this.onMouseUp.bind(this);
+        this.onMouseDown = this.onMouseDown.bind(this);
+        this.onKeyUp = this.onKeyUp.bind(this);
+        this.onKeyDown = this.onKeyUp.bind(this);
     }
 
     /** @override */
@@ -27,34 +29,58 @@ class Button extends BemComponent {
     }
 
     render() {
-        const { disabled, hovered, pressed, focused, checked } = this.state;
-        const { theme, size, view, name } = this.props;
-
-        const className = b({
-            theme,
-            size,
-            view,
-            disabled,
-            checked,
-            hovered,
-            pressed,
-            focused,
-        });
-
-        const listerners = {
-            onMouseDown: e => this.onMouseDown(e),
-            onMouseUp: e => this.onMouseUp(e),
-            onKeyDown: e => this.onKeyDown(e),
-            onKeyUp: e => this.onKeyUp(e),
-        };
-
         return (
-            <BemControl>
-                <button className={className} name={name} disabled={disabled} {...listerners}>
-                    <span className={b('text')}>{this.props.children}</span>
-                </button>
-            </BemControl>
+            <button {...this.getProps()} name={this.props.name} disabled={this.props.disabled}>
+                <span className="button__text">{this.props.children}</span>
+            </button>
         );
+    }
+
+    getProps() {
+        return Object.assign(
+            super.getProps(),
+            {
+                onMouseDown: this.onMouseDown,
+                onMouseUp: this.onMouseUp,
+                onKeyUp: this.onKeyUp,
+                onKeyDown: this.onKeyDown
+            }
+        );
+    }
+
+    className() {
+        var className = 'button';
+
+        if (this.props.theme) {
+            className += ' button_theme_' + this.props.theme;
+        }
+        if (this.props.size) {
+            className += ' button_size_' + this.props.size;
+        }
+        if (this.props.view) {
+            className += ' button_view_' + this.props.view;
+        }
+        if (this.props.disabled) {
+            className += ' button_disabled';
+        }
+        if (this.state.hovered) {
+            className += ' button_hovered';
+        }
+        if (this.state.pressed) {
+            className += ' button_pressed';
+        }
+        if (this.state.focused) {
+            className += ' button_focused';
+        }
+        if (this.state.checked) {
+            className += ' button_checked';
+        }
+
+        if (this.props.className) {
+            className += ' ' + this.props.className;
+        }
+
+        return className;
     }
 
     /** @override */
@@ -65,7 +91,7 @@ class Button extends BemComponent {
     }
 
     onMouseDown() {
-        if (!this.state.disabled) {
+        if (!this.props.disabled) {
             this.isPointerPressInProgress = true;
             this.setState({ pressed: true });
         }
@@ -96,7 +122,7 @@ class Button extends BemComponent {
     }
 
     onKeyDown(e) {
-        if (this.state.disabled || !this.state.focused) {
+        if (this.props.disabled || !this.state.focused) {
             return;
         }
         if (e.key === KEY_SPACE || e.key === KEY_ENTER) {

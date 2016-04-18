@@ -1,13 +1,13 @@
 import React from 'react';
 import { render } from 'react-dom';
-import Button from '../blocks/Button';
-import Link from '../blocks/Link';
-import Popup from '../blocks/Popup';
-import TextInput from '../blocks/TextInput';
+// import Button from '../blocks/Button';
+// import Link from '../blocks/Link';
+// import Popup from '../blocks/Popup';
+// import TextInput from '../blocks/TextInput';
 import Radio from '../blocks/Radio';
 import RadioGroup from '../blocks/RadioGroup';
-import Checkbox from '../blocks/Checkbox';
-import CheckboxGroup from '../blocks/CheckboxGroup';
+// import Checkbox from '../blocks/Checkbox';
+// import CheckboxGroup from '../blocks/CheckboxGroup';
 
 class RadioGroupExample extends React.Component {
     constructor( props ) {
@@ -41,6 +41,7 @@ class RadioGroupExample extends React.Component {
 
 }
 
+/*
 class CheckboxGroupExample extends React.Component {
     constructor( props ) {
         super( props );
@@ -72,6 +73,7 @@ class CheckboxGroupExample extends React.Component {
     }
 
 }
+*/
 
 class Example extends React.Component {
     constructor(...args) {
@@ -107,16 +109,19 @@ class Example extends React.Component {
     render() {
         return (
             <div className="example">
+                {/*
                 {this.renderButton()}
                 {this.renderLink()}
                 {this.renderTextInput()}
                 {this.renderPopup()}
-                {this.renderRadioGroup()}
                 {this.renderCheckboxGroup()}
+                */}
+                {this.renderRadioGroup()}
             </div>
         );
     }
 
+    /*
     renderButton() {
         return (
             <div className="example">
@@ -169,6 +174,7 @@ class Example extends React.Component {
             </div>
         )
     }
+    */
 
     renderRadioGroup() {
         return (
@@ -183,6 +189,7 @@ class Example extends React.Component {
         );
     }
 
+    /*
     renderCheckboxGroup() {
         return (
             <div>
@@ -195,6 +202,7 @@ class Example extends React.Component {
             </div>
         );
     }
+    */
 }
 
 render(React.createElement(Example), document.getElementById('root'));
