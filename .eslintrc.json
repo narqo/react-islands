@@ -63,7 +63,6 @@
       "error",
       "last"
     ],
-    "complexity": "warn",
     "computed-property-spacing": [
       "error",
       "never"

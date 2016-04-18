@@ -5,11 +5,17 @@ class RadioGroup extends Component {
     constructor(props) {
         super(props);
 
-        Object.assign(this.state, {
-            value: this.props.value
-        });
+        this._propsToState(props);
 
         this.onCheck = this.onCheck.bind(this);
+    }
+
+    _propsToState(props) {
+        this.state.value = props.value;
+    }
+
+    componentWillReceiveProps(props) {
+        this._propsToState(props);
     }
 
     render() {

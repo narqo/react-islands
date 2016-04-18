@@ -14,9 +14,7 @@ class Control extends Component {
     }
 
     _propsToState(props) {
-        Object.assign(this.state, {
-            focused: !props.disabled && props.focused
-        });
+        this.state.focused = !props.disabled && props.focused;
     }
 
     componentWillReceiveProps(props) {

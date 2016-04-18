@@ -6,19 +6,19 @@ class Radio extends Control {
     constructor(props) {
         super(props);
 
-        Object.assign(this.state, {
-            checked: props.checked
-        });
+        this._propsToState(props);
 
         this.onClick = this.onClick.bind(this);
+    }
+
+    _propsToState(props) {
+        this.state.checked = props.checked;
     }
 
     componentWillReceiveProps(props) {
         super.componentWillReceiveProps(props);
 
-        Object.assign(this.state, {
-            checked: props.checked
-        });
+        this._propsToState(props);
     }
 
     render() {

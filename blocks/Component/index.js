@@ -18,6 +18,9 @@ class Component extends React.Component {
         }
     }
 
+    componentWillReceiveProps() {
+        //  Do nothing.
+    }
 }
 
 export default Component;
