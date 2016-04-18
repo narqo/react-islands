@@ -4,6 +4,74 @@ import Button from '../blocks/Button';
 import Link from '../blocks/Link';
 import Popup from '../blocks/Popup';
 import TextInput from '../blocks/TextInput';
+import Radio from '../blocks/Radio';
+import RadioGroup from '../blocks/RadioGroup';
+import Checkbox from '../blocks/Checkbox';
+import CheckboxGroup from '../blocks/CheckboxGroup';
+
+class RadioGroupExample extends React.Component {
+    constructor( props ) {
+        super( props );
+
+        this.state = {
+            value: '30'
+        };
+
+        this.onChange = this.onChange.bind( this );
+    }
+
+    render() {
+        return (
+            <div>
+                <RadioGroup name="phones" value={ this.state.value } theme="islands" size="l" type="button" onChange={ this.onChange }>
+                    <Radio value="10">10</Radio>
+                    <Radio value="20" disabled>20</Radio>
+                    <Radio value="30">30</Radio>
+                    <Radio value="40">40</Radio>
+                    <Radio value="50">50</Radio>
+                </RadioGroup>
+                <div>Вы выбрали: <b>{ this.state.value }</b></div>
+            </div>
+        );
+    }
+
+    onChange( value ) {
+        this.setState( { value } );
+    }
+
+}
+
+class CheckboxGroupExample extends React.Component {
+    constructor( props ) {
+        super( props );
+
+        this.state = {
+            value: [ '30', '40' ]
+        };
+
+        this.onChange = this.onChange.bind( this );
+    }
+
+    render() {
+        return (
+            <div>
+                <CheckboxGroup name="phones" value={ this.state.value } theme="islands" size="l" type="button" onChange={ this.onChange }>
+                    <Checkbox value="10">10</Checkbox>
+                    <Checkbox value="20" disabled>20</Checkbox>
+                    <Checkbox value="30">30</Checkbox>
+                    <Checkbox value="40">40</Checkbox>
+                    <Checkbox value="50">50</Checkbox>
+                </CheckboxGroup>
+                <div>Вы выбрали: <b>{ this.state.value.join( ', ' ) }</b></div>
+            </div>
+        );
+    }
+
+    onChange( value ) {
+        this.setState( { value } );
+    }
+
+}
 
 class Example extends React.Component {
     constructor(...args) {
@@ -38,19 +106,21 @@ class Example extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className="example">
                 {this.renderButton()}
                 {this.renderLink()}
                 {this.renderTextInput()}
                 {this.renderPopup()}
+                {this.renderRadioGroup()}
+                {this.renderCheckboxGroup()}
             </div>
         );
     }
 
     renderButton() {
         return (
-            <div>
-                <Button name="btn1" theme="islands" size="s">Click me!</Button>
+            <div className="example">
+                <Button name="btn1" theme="islands" size="s" onClick={this.handleClick}>Click me!</Button>
                 <span>&nbsp;</span>
                 <Button name="btn2-disabled" theme="islands" size="s" disabled={true} onClick={this.handleClick}>Try click me!</Button>
             </div>
@@ -59,7 +129,7 @@ class Example extends React.Component {
 
     renderLink() {
         return (
-            <div>
+            <div className="example">
                 <p>Link: <Link theme="islands" size="s" url="#/https://yandex.ru">Yandex</Link></p>
                 <p>Pseudo link: <Link theme="islands" size="s" onClick={this.handleClick}>Yandex</Link></p>
             </div>
@@ -68,7 +138,7 @@ class Example extends React.Component {
 
     renderTextInput() {
         return (
-            <p>
+            <p className="example">
                 <TextInput theme="islands" size="s" value="islands" placeholder="Fill me!" hasClear={true}/>
             </p>
         );
@@ -76,7 +146,7 @@ class Example extends React.Component {
 
     renderPopup() {
         return (
-            <div>
+            <div className="example">
                 <div>
                     <Button theme="islands" size="s" onClick={() => this.handlePopup1AnchorClick()}>Toggle popup 1</Button>
                     <Popup theme="islands" id="p1" visible={this.state.popup1Visible}>
@@ -98,6 +168,32 @@ class Example extends React.Component {
                 </div>
             </div>
         )
+    }
+
+    renderRadioGroup() {
+        return (
+            <div>
+                <div className="example">
+                    <RadioGroupExample/>
+                </div>
+                <div className="example">
+                    <Radio theme="islands" type="button" size="l" name="foo" value="70">70</Radio>
+                </div>
+            </div>
+        );
+    }
+
+    renderCheckboxGroup() {
+        return (
+            <div>
+                <div className="example">
+                    <CheckboxGroupExample/>
+                </div>
+                <div className="example">
+                    <Checkbox theme="islands" type="button" size="l" name="foo" value="70">70</Checkbox>
+                </div>
+            </div>
+        );
     }
 }
 
