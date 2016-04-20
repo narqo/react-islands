@@ -9,6 +9,7 @@ class Radio extends Control {
         this._propsToState(props);
 
         this.onClick = this.onClick.bind(this);
+        this.onChange = this.onChange.bind(this);
     }
 
     _propsToState(props) {
@@ -28,14 +29,31 @@ class Radio extends Control {
         var size = this.props.size || this.context.size;
         var type = this.props.type || this.context.type;
 
-        return (
-            <label {...this.getProps()}>
-                <Button theme={theme} size={size} type={type} checked={this.state.checked} disabled={this.props.disabled} onClick={this.onClick}>
-                    {this.props.children}
-                </Button>
-                <input ref="control" className="radio__control" type="radio" autoComplete="off" name={name} value={this.props.value} disabled={this.props.disabled}/>
-            </label>
-        );
+        return (type === 'button') ?
+            (
+                <label {...this.getProps()}>
+                    <Button theme={theme} size={size} type={type} checked={this.state.checked} disabled={this.props.disabled} onClick={this.onClick}>
+                        {this.props.children}
+                    </Button>
+                    <input ref="control" className="radio__control" type="radio" autoComplete="off" name={name}
+                        value={this.props.value}
+                        disabled={this.props.disabled}
+                    />
+                </label>
+            ) : (
+                <label {...this.getProps()}>
+                    <span className="radio__box">
+                        <input ref="control" className="radio__control" type="radio" autoComplete="off" name={name}
+                            value={this.props.value}
+                            disabled={this.props.disabled}
+                            onChange={this.onChange}
+                        />
+                    </span>
+                    <span className="radio__text" role="presentation">
+                        {this.props.children}
+                    </span>
+                </label>
+            );
     }
 
     className() {
@@ -83,6 +101,16 @@ class Radio extends Control {
 
             this.setState({checked: true});
 
+            this.props.onCheck(this.props.value);
+        }
+    }
+
+    onChange(e) {
+        var checked = e.target.checked;
+
+        this.setState({checked});
+
+        if (checked) {
             this.props.onCheck(this.props.value);
         }
     }

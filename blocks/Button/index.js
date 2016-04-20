@@ -16,7 +16,7 @@ class Button extends Control {
         this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onKeyUp = this.onKeyUp.bind(this);
-        this.onKeyDown = this.onKeyUp.bind(this);
+        this.onKeyDown = this.onKeyDown.bind(this);
     }
 
     /** @override */
