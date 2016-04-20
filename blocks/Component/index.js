@@ -18,9 +18,14 @@ class Component extends React.Component {
         }
     }
 
-    componentWillReceiveProps() {
+    _propsToState(props) {
         //  Do nothing.
     }
+
+    componentWillReceiveProps(props) {
+        this._propsToState(props);
+    }
+
 }
 
 export default Component;

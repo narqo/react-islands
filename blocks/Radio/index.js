@@ -75,22 +75,23 @@ class Radio extends Control {
     }
 
     onClick(e) {
-        if (this.props.onClick) {
-            //  FIXME: Может передавать туда name, value?
-            this.props.onClick(e);
-        }
+        //  FIXME: Может передавать туда name, value?
+        this.props.onClick(e);
 
         if (!this.state.checked) {
             this.refs.control.checked = true;
 
             this.setState({checked: true});
 
-            if (this.props.onCheck) {
-                this.props.onCheck(this.props.value);
-            }
+            this.props.onCheck(this.props.value);
         }
     }
 }
+
+Radio.defaultProps = {
+    onClick() {},
+    onCheck() {}
+};
 
 Radio.contextTypes = {
     theme: React.PropTypes.string,
@@ -103,5 +104,5 @@ Radio.contextTypes = {
     onCheck: React.PropTypes.func
 };
 
-module.exports = Radio;
+export default Radio;
 

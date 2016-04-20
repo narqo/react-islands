@@ -30,7 +30,7 @@ class Button extends Control {
 
     render() {
         return (
-            <button {...this.getProps()} name={this.props.name} disabled={this.props.disabled}>
+            <button ref="control" {...this.getProps()} name={this.props.name} disabled={this.props.disabled}>
                 <span className="button__text">{this.props.children}</span>
             </button>
         );
@@ -69,7 +69,9 @@ class Button extends Control {
         if (this.state.pressed) {
             className += ' button_pressed';
         }
-        if (this.state.focused) {
+        if (this.state.focused === 'hard') {
+            className += ' button_focused button_focused-hard';
+        } else if (this.state.focused) {
             className += ' button_focused';
         }
         if (this.state.checked) {
@@ -90,14 +92,18 @@ class Button extends Control {
         this.setState({ pressed: false });
     }
 
-    onMouseDown() {
+    onMouseDown(e) {
+        super.onMouseDown(e);
+
         if (!this.props.disabled) {
             this.isPointerPressInProgress = true;
             this.setState({ pressed: true });
         }
     }
 
-    onMouseUp() {
+    onMouseUp(e) {
+        super.onMouseUp(e);
+
         this.onPointerRelease();
         if (this.state.pressed) {
             this.setState({ pressed: false });

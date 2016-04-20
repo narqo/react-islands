@@ -6,8 +6,8 @@ import { render } from 'react-dom';
 // import TextInput from '../blocks/TextInput';
 import Radio from '../blocks/Radio';
 import RadioGroup from '../blocks/RadioGroup';
-// import Checkbox from '../blocks/Checkbox';
-// import CheckboxGroup from '../blocks/CheckboxGroup';
+import Checkbox from '../blocks/Checkbox';
+import CheckboxGroup from '../blocks/CheckboxGroup';
 
 class RadioGroupExample extends React.Component {
     constructor( props ) {
@@ -26,7 +26,7 @@ class RadioGroupExample extends React.Component {
                 <RadioGroup name="phones" value={ this.state.value } theme="islands" size="l" type="button" onChange={ this.onChange }>
                     <Radio value="10">10</Radio>
                     <Radio value="20" disabled>20</Radio>
-                    <Radio value="30">30</Radio>
+                    <Radio value="30" onClick={ (e) => console.log('CLICK') }>30</Radio>
                     <Radio value="40">40</Radio>
                     <Radio value="50">50</Radio>
                 </RadioGroup>
@@ -41,7 +41,6 @@ class RadioGroupExample extends React.Component {
 
 }
 
-/*
 class CheckboxGroupExample extends React.Component {
     constructor( props ) {
         super( props );
@@ -56,10 +55,10 @@ class CheckboxGroupExample extends React.Component {
     render() {
         return (
             <div>
-                <CheckboxGroup name="phones" value={ this.state.value } theme="islands" size="l" type="button" onChange={ this.onChange }>
+                <CheckboxGroup name="phones" value={ this.state.value } theme="islands" type="line" size="l" onChange={ this.onChange }>
                     <Checkbox value="10">10</Checkbox>
                     <Checkbox value="20" disabled>20</Checkbox>
-                    <Checkbox value="30">30</Checkbox>
+                    <Checkbox value="30" focused>30</Checkbox>
                     <Checkbox value="40">40</Checkbox>
                     <Checkbox value="50">50</Checkbox>
                 </CheckboxGroup>
@@ -73,7 +72,6 @@ class CheckboxGroupExample extends React.Component {
     }
 
 }
-*/
 
 class Example extends React.Component {
     constructor(...args) {
@@ -114,9 +112,9 @@ class Example extends React.Component {
                 {this.renderLink()}
                 {this.renderTextInput()}
                 {this.renderPopup()}
-                {this.renderCheckboxGroup()}
-                */}
                 {this.renderRadioGroup()}
+                */}
+                {this.renderCheckboxGroup()}
             </div>
         );
     }
@@ -189,20 +187,20 @@ class Example extends React.Component {
         );
     }
 
-    /*
     renderCheckboxGroup() {
         return (
             <div>
                 <div className="example">
                     <CheckboxGroupExample/>
                 </div>
+                {/*
                 <div className="example">
                     <Checkbox theme="islands" type="button" size="l" name="foo" value="70">70</Checkbox>
                 </div>
+                */}
             </div>
         );
     }
-    */
 }
 
 render(React.createElement(Example), document.getElementById('root'));

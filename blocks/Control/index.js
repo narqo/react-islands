@@ -5,27 +5,21 @@ class Control extends Component {
     constructor(props) {
         super(props);
 
-        this._propsToState(props);
+        //  Прокидываем focused из props в state только в начале.
+        //  А в componentWillReceiveProps это уже не нужно.
+        this.state.focused = !props.disabled && props.focused;
 
+        this.onMouseDown = this.onMouseDown.bind(this);
+        this.onMouseUp = this.onMouseUp.bind(this);
         this.onFocus = this.onFocus.bind(this);
         this.onBlur = this.onBlur.bind(this);
         this.onMouseEnter = this.onMouseEnter.bind(this);
         this.onMouseLeave = this.onMouseLeave.bind(this);
     }
 
-    _propsToState(props) {
-        this.state.focused = !props.disabled && props.focused;
-    }
-
-    componentWillReceiveProps(props) {
-        this._propsToState(props);
-    }
-
-    componentDidUpdate(prevProps) {
-        if (this.props.focused && !prevProps.focused) {
-            //  FIXME: Тут нужно кому-то другому делать focus().
-            //  Скажем, this.refs.control.focus().
-            this.getNode.focus();
+    componentDidMount() {
+        if (this.state.focused && this.refs.control) {
+            this.refs.control.focus();
         }
     }
 
@@ -33,6 +27,8 @@ class Control extends Component {
         return Object.assign(
             super.getProps(),
             {
+                onMouseDown: this.onMouseDown,
+                onMouseUp: this.onMouseUp,
                 onFocus: this.onFocus,
                 onBlur: this.onBlur,
                 onMouseEnter: this.onMouseEnter,
@@ -41,10 +37,41 @@ class Control extends Component {
         );
     }
 
+    onMouseDown() {
+        this._mousePressed = true;
+    }
+
+    onMouseUp() {
+        this._mousePressed = false;
+    }
+
     onFocus() {
+        if (!this.props.disabled) {
+            var focused;
+            if (this.props.focused) {
+                focused = true;
+
+            } else {
+                focused = (this._mousePressed) ? true : 'hard';
+            }
+            this.setState({ focused });
+
+            //  FIXME: А нужно ли это? Кажется да, а то в чекбоксе есть button и label,
+            //  они оба подписаны на focus. И в итоге последним отработает label,
+            //  что вроде неправильно.
+            //  e.stopPropagation();
+            //  e.preventDefault();
+        }
     }
 
     onBlur() {
+        this._focusedByMouse = false;
+        if (!this.props.disabled) {
+            this.setState({ focused: false });
+
+            //  e.stopPropagation();
+            //  e.preventDefault();
+        }
     }
 
     onMouseEnter() {
