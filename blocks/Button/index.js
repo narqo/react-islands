@@ -1,31 +1,7 @@
 import React from 'react';
-import Control from '../Control';
+import Pressable from '../Pressable';
 
-const KEY_SPACE = ' ';
-const KEY_ENTER = 'Enter';
-
-class Button extends Control {
-    constructor(props) {
-        super(props);
-
-        this.state.pressed = false;
-
-        this.isPointerPressInProgress = false;
-
-        this.onMouseUp = this.onMouseUp.bind(this);
-        this.onMouseDown = this.onMouseDown.bind(this);
-        this.onKeyUp = this.onKeyUp.bind(this);
-        this.onKeyDown = this.onKeyDown.bind(this);
-    }
-
-    /** @override */
-    componentWillReceiveProps(props) {
-        super.componentWillReceiveProps(props);
-
-        if (props.disabled === true) {
-            this.setState({ pressed: false });
-        }
-    }
+class Button extends Pressable {
 
     render() {
         if (this.props.type === 'link') {
@@ -42,18 +18,6 @@ class Button extends Control {
                 </button>
             );
         }
-    }
-
-    getProps() {
-        return Object.assign(
-            super.getProps(),
-            {
-                onMouseDown: this.onMouseDown,
-                onMouseUp: this.onMouseUp,
-                onKeyUp: this.onKeyUp,
-                onKeyDown: this.onKeyDown
-            }
-        );
     }
 
     className() {
@@ -96,69 +60,14 @@ class Button extends Control {
         return className;
     }
 
-    /** @override */
-    onMouseLeave() {
-        this.onPointerRelease();
-        super.onMouseLeave();
-        this.setState({ pressed: false });
-    }
-
-    onMouseDown(e) {
-        super.onMouseDown(e);
-
-        if (!this.props.disabled) {
-            this.isPointerPressInProgress = true;
-            this.setState({ pressed: true });
-        }
-    }
-
-    onMouseUp(e) {
-        super.onMouseUp(e);
-
-        this.onPointerRelease();
-        if (this.state.pressed) {
-            this.setState({ pressed: false });
-            this.onClick();
-        }
-    }
-
-    onPointerRelease() {
-        this.isPointerPressInProgress = false;
-    }
-
+    /*
     onClick() {
         //  FIXME: Нужно ли при нажатии на кнопку с type="link" переходить по ссылке?
 
         this.props.onClick();
     }
+    */
 
-    /** @override */
-    onFocus() {
-        if (this.isPointerPressInProgress) {
-            return;
-        }
-        super.onFocus();
-    }
-
-    onKeyDown(e) {
-        if (this.props.disabled || !this.state.focused) {
-            return;
-        }
-        if (e.key === KEY_SPACE || e.key === KEY_ENTER) {
-            this.setState({ pressed: true });
-        }
-    }
-
-    onKeyUp() {
-        if (this.state.pressed && this.state.focused) {
-            this.setState({ pressed: false });
-            this.onClick();
-        }
-    }
 }
-
-Button.defaultProps = {
-    onClick() {},
-};
 
 export default Button;
