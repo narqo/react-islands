@@ -1,75 +1,83 @@
 import React from 'react';
-import bem from 'b_';
-import BemComponent, { BemControl } from '../BemComponent';
-import Clear from './Clear';
+import Control from '../Control';
 
-const b = bem.with('input');
-
-class TextInput extends BemComponent {
+class TextInput extends Control {
     constructor(props) {
         super(props);
-        Object.assign(this.state, {
-            value: props.value,
-        });
+
+        this.state.value = props.value;
+
+        this.onClearClick = this.onClearClick.bind(this);
+        this.onInputChange = this.onInputChange.bind(this);
     }
 
     render() {
-        const { disabled, focused, hovered } = this.state;
-        const { theme, size, hasClear } = this.props;
+        var type = this.props.type || 'text';
 
-        const className = b({
-            'has-clear': hasClear,
-            theme,
-            size,
-            hovered,
-            disabled,
-            focused,
-        });
+        var hasClear;
+        if (this.props.hasClear && this.state.value) {
+            hasClear = (
+                <i className="input__clear input__clear_visible" onClick={this.onClearClick}/>
+            );
+        }
 
         return (
-            <span className={className}>
-                <span className={b('box')}>
-                    {this.renderControl()}
-                    {hasClear && this.renderClear()}
+            <span {...this.getProps()}>
+                <span className="input__box">
+                    <input ref="control" className="input__control" type={type} placeholder={this.props.placeholder} value={this.state.value}
+                        onChange={this.onInputChange}
+                    />
+                    {hasClear}
                 </span>
             </span>
         );
     }
 
-    renderControl() {
-        const { type = 'text', placeholder} = this.props;
-        const { value } = this.state;
-        return (
-            <BemControl>
-                <input
-                    className={b('control')}
-                    onChange={e => this.onInputChange(e)}
-                    {...{ type, value, placeholder }} />
-            </BemControl>
-        );
-    }
+    className() {
+        var className = 'input';
 
-    renderClear() {
-        return <Clear visible={!!this.state.value} onClick={() => this.onClearClick()}/>;
+        if (this.props.theme) {
+            className += ' input_theme_' + this.props.theme;
+        }
+        if (this.props.size) {
+            className += ' input_size_' + this.props.size;
+        }
+        if (this.props.disabled) {
+            className += ' input_disabled';
+        }
+        if (this.state.hovered) {
+            className += ' input_hovered';
+        }
+        if (this.state.focused) {
+            className += ' input_focused';
+        }
+        if (this.props.hasClear) {
+            className += ' input_has-clear';
+        }
+
+        if (this.props.className) {
+            className += ' ' + this.props.className;
+        }
+
+        return className;
     }
 
     onInputChange(e) {
         this.setState({ value: e.target.value });
-        this.onChange();
+        this.props.onChange();
     }
 
     onClearClick() {
         this.setState({ value: '', focused: true });
-        this.onChange({ source: 'clear' });
+        //  FIXME: А неплохо бы на focused тут реагировать, а не явно ставить фокус?
+        this.refs.control.focus();
+        this.props.onChange({ source: 'clear' });
     }
 
-    onChange(data) {
-        this.props.onChange.call(this, data);
-    }
 }
 
 TextInput.defaultProps = {
-    onChange() {},
+    onChange() {}
 };
 
 export default TextInput;
