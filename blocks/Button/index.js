@@ -7,10 +7,9 @@ const KEY_ENTER = 'Enter';
 class Button extends Control {
     constructor(props) {
         super(props);
-        Object.assign(this.state, {
-            checked: props.checked,
-            pressed: false
-        });
+
+        this.state.pressed = false;
+
         this.isPointerPressInProgress = false;
 
         this.onMouseUp = this.onMouseUp.bind(this);
@@ -22,18 +21,27 @@ class Button extends Control {
     /** @override */
     componentWillReceiveProps(props) {
         super.componentWillReceiveProps(props);
+
         if (props.disabled === true) {
             this.setState({ pressed: false });
         }
-        this.setState({checked: props.checked});
     }
 
     render() {
-        return (
-            <button ref="control" {...this.getProps()} name={this.props.name} disabled={this.props.disabled}>
-                <span className="button__text">{this.props.children}</span>
-            </button>
-        );
+        if (this.props.type === 'link') {
+            return (
+                <a {...this.getProps()} role="link" href={this.props.url}>
+                    <span className="button__text">{this.props.children}</span>
+                </a>
+            );
+
+        } else {
+            return (
+                <button ref="control" {...this.getProps()} name={this.props.name} disabled={this.props.disabled}>
+                    <span className="button__text">{this.props.children}</span>
+                </button>
+            );
+        }
     }
 
     getProps() {
@@ -57,6 +65,9 @@ class Button extends Control {
         if (this.props.size) {
             className += ' button_size_' + this.props.size;
         }
+        if (this.props.type) {
+            className += ' button_type_' + this.props.type;
+        }
         if (this.props.view) {
             className += ' button_view_' + this.props.view;
         }
@@ -74,7 +85,7 @@ class Button extends Control {
         } else if (this.state.focused) {
             className += ' button_focused';
         }
-        if (this.state.checked) {
+        if (this.props.checked) {
             className += ' button_checked';
         }
 
@@ -86,9 +97,9 @@ class Button extends Control {
     }
 
     /** @override */
-    onControlMouseLeave() {
+    onMouseLeave() {
         this.onPointerRelease();
-        super.onControlMouseLeave();
+        super.onMouseLeave();
         this.setState({ pressed: false });
     }
 
@@ -116,15 +127,17 @@ class Button extends Control {
     }
 
     onClick() {
+        //  FIXME: Нужно ли при нажатии на кнопку с type="link" переходить по ссылке?
+
         this.props.onClick();
     }
 
     /** @override */
-    onControlFocus() {
+    onFocus() {
         if (this.isPointerPressInProgress) {
             return;
         }
-        super.onControlFocus();
+        super.onFocus();
     }
 
     onKeyDown(e) {
