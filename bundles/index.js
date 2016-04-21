@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import Button from '../blocks/Button';
 import Link from '../blocks/Link';
-//  import Popup from '../blocks/Popup';
+import Popup from '../blocks/Popup';
 import TextInput from '../blocks/TextInput';
 import Radio from '../blocks/Radio';
 import RadioGroup from '../blocks/RadioGroup';
@@ -110,9 +110,7 @@ class Example extends React.Component {
                 {this.renderButton()}
                 {this.renderLink()}
                 {this.renderTextInput()}
-                {/*
                 {this.renderPopup()}
-                */}
                 {this.renderRadioGroup()}
                 {this.renderCheckboxGroup()}
             </div>
@@ -148,7 +146,6 @@ class Example extends React.Component {
         );
     }
 
-    /*
     renderPopup() {
         return (
             <div className="example">
@@ -174,7 +171,6 @@ class Example extends React.Component {
             </div>
         )
     }
-    */
 
     renderRadioGroup() {
         return (
