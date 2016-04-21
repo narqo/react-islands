@@ -1,9 +1,9 @@
 import React from 'react';
 import { render } from 'react-dom';
-// import Button from '../blocks/Button';
-// import Link from '../blocks/Link';
-// import Popup from '../blocks/Popup';
-// import TextInput from '../blocks/TextInput';
+import Button from '../blocks/Button';
+import Link from '../blocks/Link';
+//  import Popup from '../blocks/Popup';
+import TextInput from '../blocks/TextInput';
 import Radio from '../blocks/Radio';
 import RadioGroup from '../blocks/RadioGroup';
 import Checkbox from '../blocks/Checkbox';
@@ -55,7 +55,7 @@ class CheckboxGroupExample extends React.Component {
     render() {
         return (
             <div>
-                <CheckboxGroup name="phones" value={ this.state.value } theme="islands" type="line" size="l" onChange={ this.onChange }>
+                <CheckboxGroup name="phones" value={ this.state.value } theme="islands" type="button" size="l" onChange={ this.onChange }>
                     <Checkbox value="10">10</Checkbox>
                     <Checkbox value="20" disabled>20</Checkbox>
                     <Checkbox value="30" focused>30</Checkbox>
@@ -107,25 +107,26 @@ class Example extends React.Component {
     render() {
         return (
             <div className="example">
-                {/*
                 {this.renderButton()}
                 {this.renderLink()}
                 {this.renderTextInput()}
+                {/*
                 {this.renderPopup()}
-                {this.renderRadioGroup()}
                 */}
+                {this.renderRadioGroup()}
                 {this.renderCheckboxGroup()}
             </div>
         );
     }
 
-    /*
     renderButton() {
         return (
             <div className="example">
                 <Button name="btn1" theme="islands" size="s" onClick={this.handleClick}>Click me!</Button>
                 <span>&nbsp;</span>
                 <Button name="btn2-disabled" theme="islands" size="s" disabled={true} onClick={this.handleClick}>Try click me!</Button>
+                <span>&nbsp;</span>
+                <Button theme="islands" size="s" type="link" url="#/https://yandex.ru">Yandex</Button>
             </div>
         );
     }
@@ -142,11 +143,12 @@ class Example extends React.Component {
     renderTextInput() {
         return (
             <p className="example">
-                <TextInput theme="islands" size="s" value="islands" placeholder="Fill me!" hasClear={true}/>
+                <TextInput theme="islands" size="s" value="islands" placeholder="Fill me!" hasClear/>
             </p>
         );
     }
 
+    /*
     renderPopup() {
         return (
             <div className="example">
@@ -193,11 +195,9 @@ class Example extends React.Component {
                 <div className="example">
                     <CheckboxGroupExample/>
                 </div>
-                {/*
                 <div className="example">
                     <Checkbox theme="islands" type="button" size="l" name="foo" value="70">70</Checkbox>
                 </div>
-                */}
             </div>
         );
     }
