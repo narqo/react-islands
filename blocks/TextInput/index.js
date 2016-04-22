@@ -15,9 +15,14 @@ class TextInput extends Control {
         var type = this.props.type || 'text';
 
         var hasClear;
-        if (this.props.hasClear && this.state.value) {
+        if (this.props.hasClear) {
+            var hasClearClassName = 'input__clear';
+            if (this.state.value) {
+                hasClearClassName += ' input__clear_visible';
+            }
+
             hasClear = (
-                <i className="input__clear input__clear_visible" onClick={this.onClearClick}/>
+                <i className={hasClearClassName} onClick={this.onClearClick}/>
             );
         }
 
