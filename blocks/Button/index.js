@@ -4,15 +4,15 @@ import Control from '../Control';
 import pressable from '../pressable';
 
 class Button extends Control {
-
     render() {
         if (this.props.type === 'link') {
+            const url = this.props.disabled ? null : this.props.url;
+
             return (
-                <a className={this.className()} {...this.getControlHandlers()} role="link" href={this.props.url}>
+                <a className={this.className()} {...this.getControlHandlers()} ref="control" role="link" href={url}>
                     <span className="button__text">{this.props.children}</span>
                 </a>
             );
-
         } else {
             return (
                 <button className={this.className()} {...this.getControlHandlers()} ref="control" name={this.props.name} disabled={this.props.disabled}>
