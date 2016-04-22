@@ -27,9 +27,11 @@ class TextInput extends Control {
         }
 
         return (
-            <span className={this.className()} {...this.getControlHandlers()}>
+            <span className={this.className()}>
                 <span className="input__box">
-                    <input ref="control" className="input__control" type={type} placeholder={this.props.placeholder} value={this.state.value}
+                    <input {...this.getControlHandlers()} ref="control" className="input__control" type={type}
+                        placeholder={this.props.placeholder}
+                        value={this.state.value}
                         onChange={this.onInputChange}
                     />
                     {hasClear}
