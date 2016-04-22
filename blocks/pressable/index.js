@@ -28,16 +28,15 @@ const pressable = Class => class extends Class {
     }
 
     getProps() {
-        return Object.assign(
-            super.getProps(),
-            {
-                onClick: this.onClick,
-                onMouseDown: this.onMouseDown,
-                onMouseUp: this.onMouseUp,
-                onKeyUp: this.onKeyUp,
-                onKeyDown: this.onKeyDown
-            }
-        );
+        return {
+            ...super.getProps(),
+
+            onClick: this.onClick,
+            onMouseDown: this.onMouseDown,
+            onMouseUp: this.onMouseUp,
+            onKeyUp: this.onKeyUp,
+            onKeyDown: this.onKeyDown
+        };
     }
 
     onMouseLeave() {
