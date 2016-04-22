@@ -1,7 +1,9 @@
 import React from 'react';
-import Pressable from '../Pressable';
 
-class Link extends Pressable {
+import Control from '../Control';
+import pressable from '../pressable';
+
+class Link extends Control {
 
     render() {
         if (this.props.url) {
@@ -47,4 +49,4 @@ class Link extends Pressable {
 
 }
 
-export default Link;
+export default pressable(Link);

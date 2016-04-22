@@ -1,13 +1,14 @@
-import Control from '../Control';
-
 const KEY_SPACE = ' ';
 const KEY_ENTER = 'Enter';
 
-class Pressable extends Control {
-    constructor(props) {
-        super(props);
+const pressable = Class => class extends Class {
+    constructor(...args) {
+        super(...args);
 
-        this.state.pressed = false;
+        this.state = {
+            ...this.state,
+            pressed: false
+        };
 
         this._isPointerPressInProgress = false;
 
@@ -60,7 +61,7 @@ class Pressable extends Control {
         if (this.state.disabled) {
             e.preventDefault();
 
-        } else {
+        } else if (this.props.onClick) {
             this.props.onClick();
         }
     }
@@ -101,8 +102,4 @@ class Pressable extends Control {
     }
 }
 
-Pressable.defaultProps = {
-    onClick() {}
-};
-
-export default Pressable;
+export default pressable;

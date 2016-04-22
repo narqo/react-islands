@@ -1,7 +1,9 @@
 import React from 'react';
-import Pressable from '../Pressable';
 
-class Button extends Pressable {
+import Control from '../Control';
+import pressable from '../pressable';
+
+class Button extends Control {
 
     render() {
         if (this.props.type === 'link') {
@@ -70,4 +72,4 @@ class Button extends Pressable {
 
 }
 
-export default Button;
+export default pressable(Button);
