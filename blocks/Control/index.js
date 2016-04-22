@@ -28,11 +28,11 @@ class Control extends React.Component {
         }
     }
 
-    componentWillUpdate(nextProps) {
+    componentWillUpdate(nextProps, nextState) {
         // TODO(narqo@): sync DOM focus and `focused` on props reconciliation
-        // if (this.state.focused && nextProps.focused !== this.state.focused) {
-        //     this.refs.control.focus();
-        // }
+        if (nextState.focused && this.refs.control) {
+            this.refs.control.focus();
+        }
     }
 
     getControlHandlers() {
