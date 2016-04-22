@@ -73,6 +73,42 @@ class CheckboxGroupExample extends React.Component {
 
 }
 
+class TextInputExample extends React.Component {
+    constructor(...args) {
+        super(...args);
+
+        this.state = {
+            value: 'islands'
+        };
+
+        this.onInputChange = this.onInputChange.bind(this);
+    }
+
+    onInputChange(value) {
+        console.log('textinput changed!');
+        this.setState({ value });
+    }
+
+    render() {
+        return (
+            <div>
+                <p>
+                    <TextInput theme="islands" size="s" value={this.state.value} placeholder="Fill me!" hasClear onChange={this.onInputChange}/>
+                </p>
+                <p>
+                    <TextInput theme="islands" size="s" value={this.state.value.toUpperCase()} hasClear/>
+                </p>
+                <p>
+                    <TextInput theme="islands" size="s" value={this.state.value} disabled placeholder="Fill me!" hasClear/>
+                </p>
+                <p>
+                    <TextInput theme="islands" size="s" type="password" placeholder="Fill me!"/>
+                </p>
+            </div>
+        )
+    }
+}
+
 class Example extends React.Component {
     constructor(...args) {
         super(...args);
@@ -142,9 +178,9 @@ class Example extends React.Component {
 
     renderTextInput() {
         return (
-            <p className="example">
-                <TextInput theme="islands" size="s" value="islands" placeholder="Fill me!" hasClear/>
-            </p>
+            <div className="example">
+                <TextInputExample />
+            </div>
         );
     }
 
