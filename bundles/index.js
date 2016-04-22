@@ -122,9 +122,11 @@ class Example extends React.Component {
             <div className="example">
                 <Button name="btn1" theme="islands" size="s" onClick={this.handleClick}>Click me!</Button>
                 <span>&nbsp;</span>
-                <Button name="btn2-disabled" theme="islands" size="s" disabled={true} onClick={this.handleClick}>Try click me!</Button>
+                <Button name="btn2-disabled" theme="islands" size="s" disabled onClick={this.handleClick}>Try click me!</Button>
                 <span>&nbsp;</span>
-                <Button theme="islands" size="s" type="link" url="#/https://yandex.ru">Yandex</Button>
+                <Button theme="islands" size="s" type="link" url="#/https://yandex.ru" onClick={this.handleClick}>Yandex</Button>
+                <span>&nbsp;</span>
+                <Button theme="islands" size="s" type="link" url="#/https://yandex.ru" disabled  onClick={this.handleClick}>Yandex</Button>
             </div>
         );
     }
