@@ -1,63 +1,123 @@
 import React from 'react';
-import bem from 'b_';
-import BemComponent, { BemControl } from '../BemComponent';
+import Control from '../Control';
 import Button from '../Button';
 
-const b = bem.with('radio');
-
-class Radio extends BemComponent {
+class Radio extends Control {
     constructor(props) {
         super(props);
 
-        Object.assign(this.state, {
+        this.state = {
+            ...this.state,
             checked: props.checked
-        });
+        };
 
         this.onClick = this.onClick.bind(this);
+        this.onChange = this.onChange.bind(this);
     }
 
     componentWillReceiveProps(props) {
-        super.componentWillReceiveProps(props);
-
-        Object.assign(this.state, {
+        this.setState({
+            ...this.state,
             checked: props.checked
         });
     }
 
     render() {
+        //  FIXME: А как бы сделать так, чтобы это сделать один раз, положить куда-нибудь и везде брать оттуда?
         var name = this.props.name || this.context.name;
-        var value = this.props.value;
-
         var theme = this.props.theme || this.context.theme;
         var size = this.props.size || this.context.size;
         var type = this.props.type || this.context.type;
-        var checked = this.state.checked;
-        var disabled = this.props.disabled;
-        var hovered = this.state.hovered;
 
-        var className = b({ theme, size, type, checked, disabled, hovered });
-
-        return (
-            <BemControl>
-                <label className={className}>
-                    <Button theme={theme} size={size} type={type} checked={checked} disabled={disabled} onClick={this.onClick}>
+        return (type === 'button') ?
+            (
+                <label className={this.className()} {...this.getControlHandlers()}>
+                    <Button theme={theme} size={size} type={type} checked={this.state.checked} disabled={this.props.disabled} onClick={this.onClick}>
                         {this.props.children}
                     </Button>
-                    <input ref="control" className={b('control')} type="radio" autoComplete="off" name={name} value={value} disabled={disabled}/>
+                    <input ref="control" className="radio__control" type="radio" autoComplete="off" name={name}
+                        value={this.props.value}
+                        disabled={this.props.disabled}
+                    />
                 </label>
-            </BemControl>
-        );
+            ) : (
+                <label className={this.className()} {...this.getControlHandlers()}>
+                    <span className="radio__box">
+                        <input ref="control" className="radio__control" type="radio" autoComplete="off" name={name}
+                            value={this.props.value}
+                            disabled={this.props.disabled}
+                            onChange={this.onChange}
+                        />
+                    </span>
+                    <span className="radio__text" role="presentation">
+                        {this.props.children}
+                    </span>
+                </label>
+            );
     }
 
-    onClick() {
-        //  this.refs.control.checked = true;
-        this.setState({checked: true});
+    className() {
+        var theme = this.props.theme || this.context.theme;
+        var size = this.props.size || this.context.size;
+        var type = this.props.type || this.context.type;
 
-        this.props.onCheck(this.props.value);
+        var className = 'radio';
+
+        if (theme) {
+            className += ' radio_theme_' + theme;
+        }
+        if (size) {
+            className += ' radio_size_' + size;
+        }
+        if (type) {
+            className += ' radio_type_' + type;
+        }
+        if (this.props.disabled) {
+            className += ' radio_disabled';
+        }
+        if (this.state.hovered) {
+            className += ' radio_hovered';
+        }
+        if (this.state.focused) {
+            className += ' radio_focused';
+        }
+        if (this.state.checked) {
+            className += ' radio_checked';
+        }
+
+        if (this.props.className) {
+            className += ' ' + this.props.className;
+        }
+
+        return className;
+    }
+
+    onClick(e) {
+        //  FIXME: Может передавать туда name, value?
+        this.props.onClick(e);
+
+        if (!this.state.checked) {
+            this.refs.control.checked = true;
+
+            this.setState({checked: true});
+
+            this.props.onCheck(this.props.value);
+        }
+    }
+
+    onChange(e) {
+        var checked = e.target.checked;
+
+        this.setState({checked});
+
+        if (checked) {
+            this.props.onCheck(this.props.value);
+        }
     }
 }
 
 Radio.defaultProps = {
+    onClick() {},
     onCheck() {}
 };
 
@@ -66,8 +126,11 @@ Radio.contextTypes = {
     size: React.PropTypes.string,
     type: React.PropTypes.string,
     name: React.PropTypes.string,
-    value: React.PropTypes.any
+    value: React.PropTypes.any,
+    disabled: React.PropTypes.bool,
+    onClick: React.PropTypes.func,
+    onCheck: React.PropTypes.func
 };
 
-module.exports = Radio;
+export default Radio;
 

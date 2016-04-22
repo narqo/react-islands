@@ -26,7 +26,7 @@ class RadioGroupExample extends React.Component {
                 <RadioGroup name="phones" value={ this.state.value } theme="islands" size="l" type="button" onChange={ this.onChange }>
                     <Radio value="10">10</Radio>
                     <Radio value="20" disabled>20</Radio>
-                    <Radio value="30">30</Radio>
+                    <Radio value="30" onClick={ (e) => console.log('CLICK') }>30</Radio>
                     <Radio value="40">40</Radio>
                     <Radio value="50">50</Radio>
                 </RadioGroup>
@@ -55,10 +55,10 @@ class CheckboxGroupExample extends React.Component {
     render() {
         return (
             <div>
-                <CheckboxGroup name="phones" value={ this.state.value } theme="islands" size="l" type="button" onChange={ this.onChange }>
+                <CheckboxGroup name="phones" value={ this.state.value } theme="islands" type="button" size="l" onChange={ this.onChange }>
                     <Checkbox value="10">10</Checkbox>
                     <Checkbox value="20" disabled>20</Checkbox>
-                    <Checkbox value="30">30</Checkbox>
+                    <Checkbox value="30" focused>30</Checkbox>
                     <Checkbox value="40">40</Checkbox>
                     <Checkbox value="50">50</Checkbox>
                 </CheckboxGroup>
@@ -123,6 +123,8 @@ class Example extends React.Component {
                 <Button name="btn1" theme="islands" size="s" onClick={this.handleClick}>Click me!</Button>
                 <span>&nbsp;</span>
                 <Button name="btn2-disabled" theme="islands" size="s" disabled={true} onClick={this.handleClick}>Try click me!</Button>
+                <span>&nbsp;</span>
+                <Button theme="islands" size="s" type="link" url="#/https://yandex.ru">Yandex</Button>
             </div>
         );
     }
@@ -139,7 +141,7 @@ class Example extends React.Component {
     renderTextInput() {
         return (
             <p className="example">
-                <TextInput theme="islands" size="s" value="islands" placeholder="Fill me!" hasClear={true}/>
+                <TextInput theme="islands" size="s" value="islands" placeholder="Fill me!" hasClear/>
             </p>
         );
     }

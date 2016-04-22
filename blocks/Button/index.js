@@ -1,119 +1,75 @@
 import React from 'react';
-import bem from 'b_';
-import BemComponent, { BemControl } from '../BemComponent';
 
-const b = bem.with('button');
+import Control from '../Control';
+import pressable from '../pressable';
 
-const KEY_SPACE = ' ';
-const KEY_ENTER = 'Enter';
-
-class Button extends BemComponent {
-    constructor(props) {
-        super(props);
-        Object.assign(this.state, {
-            checked: props.checked,
-            pressed: false
-        });
-        this.isPointerPressInProgress = false;
-    }
-
-    /** @override */
-    componentWillReceiveProps(props) {
-        super.componentWillReceiveProps(props);
-        if (props.disabled === true) {
-            this.setState({ pressed: false });
-        }
-        this.setState({checked: props.checked});
-    }
+class Button extends Control {
 
     render() {
-        const { disabled, hovered, pressed, focused, checked } = this.state;
-        const { theme, size, view, name } = this.props;
+        if (this.props.type === 'link') {
+            return (
+                <a className={this.className()} {...this.getControlHandlers()} role="link" href={this.props.url}>
+                    <span className="button__text">{this.props.children}</span>
+                </a>
+            );
 
-        const className = b({
-            theme,
-            size,
-            view,
-            disabled,
-            checked,
-            hovered,
-            pressed,
-            focused,
-        });
-
-        const listerners = {
-            onMouseDown: e => this.onMouseDown(e),
-            onMouseUp: e => this.onMouseUp(e),
-            onKeyDown: e => this.onKeyDown(e),
-            onKeyUp: e => this.onKeyUp(e),
-        };
-
-        return (
-            <BemControl>
-                <button className={className} name={name} disabled={disabled} {...listerners}>
-                    <span className={b('text')}>{this.props.children}</span>
+        } else {
+            return (
+                <button className={this.className()} {...this.getControlHandlers()} ref="control" name={this.props.name} disabled={this.props.disabled}>
+                    <span className="button__text">{this.props.children}</span>
                 </button>
-            </BemControl>
-        );
-    }
-
-    /** @override */
-    onControlMouseLeave() {
-        this.onPointerRelease();
-        super.onControlMouseLeave();
-        this.setState({ pressed: false });
-    }
-
-    onMouseDown() {
-        if (!this.state.disabled) {
-            this.isPointerPressInProgress = true;
-            this.setState({ pressed: true });
+            );
         }
     }
 
-    onMouseUp() {
-        this.onPointerRelease();
+    className() {
+        var className = 'button';
+
+        if (this.props.theme) {
+            className += ' button_theme_' + this.props.theme;
+        }
+        if (this.props.size) {
+            className += ' button_size_' + this.props.size;
+        }
+        if (this.props.type) {
+            className += ' button_type_' + this.props.type;
+        }
+        if (this.props.view) {
+            className += ' button_view_' + this.props.view;
+        }
+        if (this.props.disabled) {
+            className += ' button_disabled';
+        }
+        if (this.state.hovered) {
+            className += ' button_hovered';
+        }
         if (this.state.pressed) {
-            this.setState({ pressed: false });
-            this.onClick();
+            className += ' button_pressed';
         }
+        if (this.state.focused === 'hard') {
+            className += ' button_focused button_focused-hard';
+        } else if (this.state.focused) {
+            className += ' button_focused';
+        }
+        if (this.props.checked) {
+            className += ' button_checked';
+        }
+
+        if (this.props.className) {
+            className += ' ' + this.props.className;
+        }
+
+        return className;
     }
 
-    onPointerRelease() {
-        this.isPointerPressInProgress = false;
-    }
-
+    /*
     onClick() {
+        //  FIXME: Нужно ли при нажатии на кнопку с type="link" переходить по ссылке?
+
         this.props.onClick();
     }
+    */
 
-    /** @override */
-    onControlFocus() {
-        if (this.isPointerPressInProgress) {
-            return;
-        }
-        super.onControlFocus();
-    }
-
-    onKeyDown(e) {
-        if (this.state.disabled || !this.state.focused) {
-            return;
-        }
-        if (e.key === KEY_SPACE || e.key === KEY_ENTER) {
-            this.setState({ pressed: true });
-        }
-    }
-
-    onKeyUp() {
-        if (this.state.pressed && this.state.focused) {
-            this.setState({ pressed: false });
-            this.onClick();
-        }
-    }
 }
 
-Button.defaultProps = {
-    onClick() {},
-};
-
-export default Button;
+export default pressable(Button);

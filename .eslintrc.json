@@ -63,7 +63,6 @@
       "error",
       "last"
     ],
-    "complexity": "warn",
     "computed-property-spacing": [
       "error",
       "never"
@@ -80,8 +79,7 @@
       }
     ],
     "eol-last": "error",
-    "eqeqeq": "error",
-    "func-names": "error",
+    "eqeqeq": ["error", "allow-null"],
     "func-style": [
       "error",
       "declaration"
@@ -131,7 +129,6 @@
     "no-duplicate-imports": "error",
     "no-else-return": "off",
     "no-empty-function": "off",
-    "no-eq-null": "error",
     "no-eval": "error",
     "no-extend-native": "error",
     "no-extra-bind": "error",
@@ -154,7 +151,6 @@
     "no-multi-str": "error",
     "no-multiple-empty-lines": "error",
     "no-native-reassign": "error",
-    "no-negated-condition": "error",
     "no-nested-ternary": "error",
     "no-new": "error",
     "no-new-func": "error",
@@ -185,7 +181,6 @@
     "no-trailing-spaces": "error",
     "no-undef-init": "error",
     "no-undefined": "off",
-    "no-underscore-dangle": "error",
     "no-unmodified-loop-condition": "error",
     "no-unneeded-ternary": "error",
     "no-unused-expressions": "error",
@@ -268,7 +263,6 @@
     "strict": "error",
     "template-curly-spacing": "error",
     "valid-jsdoc": "error",
-    "vars-on-top": "error",
     "wrap-iife": "error",
     "wrap-regex": "error",
     "yield-star-spacing": "error",

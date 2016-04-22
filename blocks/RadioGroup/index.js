@@ -1,27 +1,24 @@
 import React from 'react';
-import bem from 'b_';
-import BemComponent from '../BemComponent';
 
-const b = bem.with('radio-group');
-
-class RadioGroup extends BemComponent {
+class RadioGroup extends React.Component {
     constructor(props) {
         super(props);
 
-        Object.assign(this.state, {
-            value: this.props.value
-        });
+        this.state = {
+            value: props.value
+        };
 
         this.onCheck = this.onCheck.bind(this);
     }
 
+    componentWillReceiveProps(props) {
+        this.setState({
+            ...this.state,
+            value: props.value
+        });
+    }
+
     render() {
-        var theme = this.props.theme;
-        var size = this.props.size;
-        var type = this.props.type;
-
-        var className = b({ theme, size, type }) + ' control-group';
-
         var onCheck = this.onCheck;
         var value = this.state.value;
         var children = React.Children.map(this.props.children, child => {
@@ -30,10 +27,26 @@ class RadioGroup extends BemComponent {
         });
 
         return (
-            <span className={className}>
+            <span className={this.className()}>
                 {children}
             </span>
         );
+    }
+
+    className() {
+        var className = 'radio-group control-group';
+
+        if (this.props.theme) {
+            className += ' radio-group_theme_' + this.props.theme;
+        }
+        if (this.props.size) {
+            className += ' radio-group_size_' + this.props.size;
+        }
+        if (this.props.type) {
+            className += ' radio-group_type_' + this.props.type;
+        }
+
+        return className;
     }
 
     onCheck(value) {
