@@ -26,18 +26,15 @@ class Control extends Component {
         }
     }
 
-    getProps() {
-        return Object.assign(
-            super.getProps(),
-            {
-                onMouseDown: this.onMouseDown,
-                onMouseUp: this.onMouseUp,
-                onFocus: this.onFocus,
-                onBlur: this.onBlur,
-                onMouseEnter: this.onMouseEnter,
-                onMouseLeave: this.onMouseLeave
-            }
-        );
+    getControlHandlers() {
+        return {
+            onMouseDown: this.onMouseDown,
+            onMouseUp: this.onMouseUp,
+            onFocus: this.onFocus,
+            onBlur: this.onBlur,
+            onMouseEnter: this.onMouseEnter,
+            onMouseLeave: this.onMouseLeave
+        };
     }
 
     onMouseDown() {

@@ -31,7 +31,7 @@ class Radio extends Control {
 
         return (type === 'button') ?
             (
-                <label {...this.getProps()}>
+                <label className={this.className()} {...this.getControlHandlers()}>
                     <Button theme={theme} size={size} type={type} checked={this.state.checked} disabled={this.props.disabled} onClick={this.onClick}>
                         {this.props.children}
                     </Button>
@@ -41,7 +41,7 @@ class Radio extends Control {
                     />
                 </label>
             ) : (
-                <label {...this.getProps()}>
+                <label className={this.className()} {...this.getControlHandlers()}>
                     <span className="radio__box">
                         <input ref="control" className="radio__control" type="radio" autoComplete="off" name={name}
                             value={this.props.value}

@@ -29,7 +29,7 @@ class RadioGroup extends Component {
         });
 
         return (
-            <span {...this.getProps()}>
+            <span className={this.className()}>
                 {children}
             </span>
         );

@@ -34,7 +34,7 @@ class Checkbox extends Control {
             //  (а не просто value/checked). Иначе замучает warning'ами.
             //  Или же нужен фейковый onChange.
             (
-                <label {...this.getProps()}>
+                <label className={this.className()} {...this.getControlHandlers()}>
                     <Button refs="button" theme={theme} size={size} type={type}
                         checked={this.state.checked}
                         disabled={this.props.disabled}
@@ -50,7 +50,7 @@ class Checkbox extends Control {
                     />
                 </label>
             ) : (
-                <label {...this.getProps()}>
+                <label className={this.className()} {...this.getControlHandlers()}>
                     <span className="checkbox__box">
                         <input ref="control" className="checkbox__control" type="checkbox" autoComplete="off" name={name}
                             value={this.props.value}

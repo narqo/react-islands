@@ -11,12 +11,6 @@ class Component extends React.Component {
     getNode() {
         return ReactDOM.findDOMNode(this);
     }
-
-    getProps() {
-        return {
-            className: this.className()
-        }
-    }
 }
 
 export default Component;

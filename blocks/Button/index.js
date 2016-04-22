@@ -8,14 +8,14 @@ class Button extends Control {
     render() {
         if (this.props.type === 'link') {
             return (
-                <a {...this.getProps()} role="link" href={this.props.url}>
+                <a className={this.className()} {...this.getControlHandlers()} role="link" href={this.props.url}>
                     <span className="button__text">{this.props.children}</span>
                 </a>
             );
 
         } else {
             return (
-                <button ref="control" {...this.getProps()} name={this.props.name} disabled={this.props.disabled}>
+                <button className={this.className()} {...this.getControlHandlers()} ref="control" name={this.props.name} disabled={this.props.disabled}>
                     <span className="button__text">{this.props.children}</span>
                 </button>
             );

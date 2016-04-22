@@ -8,7 +8,7 @@ class Link extends Control {
     render() {
         if (this.props.url) {
             return (
-                <a {...this.getProps()} href={this.props.url} target={this.props.target} title={this.props.title}>
+                <a className={this.className()} {...this.getControlHandlers()} href={this.props.url} target={this.props.target} title={this.props.title}>
                     {this.props.children}
                 </a>
             );
@@ -17,7 +17,7 @@ class Link extends Control {
             const tabIndex = this.props.disabled ? -1 : 0;
 
             return (
-                <span {...this.getProps()} tabIndex={tabIndex} title={this.props.title}>
+                <span className={this.className()} {...this.getControlHandlers()} tabIndex={tabIndex} title={this.props.title}>
                     {this.props.children}
                 </span>
             );

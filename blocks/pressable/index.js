@@ -29,9 +29,9 @@ const pressable = Class => class extends Class {
         }
     }
 
-    getProps() {
+    getControlHandlers() {
         return {
-            ...super.getProps(),
+            ...super.getControlHandlers(),
 
             onClick: this.onClick,
             onMouseDown: this.onMouseDown,
