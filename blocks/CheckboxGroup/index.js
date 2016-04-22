@@ -6,19 +6,22 @@ class CheckboxGroup extends Component {
     constructor(props) {
         super(props);
 
-        this._propsToState(props);
+        this.state = this._propsToState(props);
 
         this.onCheck = this.onCheck.bind(this);
     }
 
     _propsToState(props) {
-        super._propsToState(props);
+        var value = (props.value != null) ? [].concat(props.value) : [];
 
-        var value = [];
-        if (props.value != null) {
-            value = value.concat(props.value);
-        }
-        this.state = { value };
+        return {
+            ...this.state,
+            value
+        };
+    }
+
+    componentWillReceiveProps(props) {
+        this.setState(this._propsToState(props));
     }
 
     render() {

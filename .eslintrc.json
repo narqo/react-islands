@@ -79,7 +79,7 @@
       }
     ],
     "eol-last": "error",
-    "eqeqeq": "error",
+    "eqeqeq": ["error", "allow-null"],
     "func-style": [
       "error",
       "declaration"
@@ -129,7 +129,6 @@
     "no-duplicate-imports": "error",
     "no-else-return": "off",
     "no-empty-function": "off",
-    "no-eq-null": "error",
     "no-eval": "error",
     "no-extend-native": "error",
     "no-extra-bind": "error",
@@ -152,7 +151,6 @@
     "no-multi-str": "error",
     "no-multiple-empty-lines": "error",
     "no-native-reassign": "error",
-    "no-negated-condition": "error",
     "no-nested-ternary": "error",
     "no-new": "error",
     "no-new-func": "error",

@@ -20,7 +20,9 @@ const pressable = Class => class extends Class {
     }
 
     componentWillReceiveProps(props) {
-        super.componentWillReceiveProps(props);
+        if (super.componentWillReceiveProps) {
+            super.componentWillReceiveProps(props);
+        }
 
         if (props.disabled === true) {
             this.setState({ pressed: false });

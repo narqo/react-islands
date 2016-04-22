@@ -7,16 +7,20 @@ class Checkbox extends Control {
     constructor(props) {
         super(props);
 
-        this._propsToState(props);
+        this.state = {
+            ...this.state,
+            checked: props.checked
+        };
 
         this.onClick = this.onClick.bind(this);
         this.onChange = this.onChange.bind(this);
     }
 
-    _propsToState(props) {
-        super._propsToState(props);
-
-        this.state.checked = props.checked;
+    componentWillReceiveProps(props) {
+        this.setState({
+            ...this.state,
+            checked: props.checked
+        });
     }
 
     render() {

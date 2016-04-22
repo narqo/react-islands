@@ -17,15 +17,6 @@ class Component extends React.Component {
             className: this.className()
         }
     }
-
-    _propsToState(props) {
-        //  Do nothing.
-    }
-
-    componentWillReceiveProps(props) {
-        this._propsToState(props);
-    }
-
 }
 
 export default Component;

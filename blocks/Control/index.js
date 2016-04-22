@@ -7,7 +7,10 @@ class Control extends Component {
 
         //  Прокидываем focused из props в state только в начале.
         //  А в componentWillReceiveProps это уже не нужно.
-        this.state.focused = !props.disabled && props.focused;
+        this.state = {
+            ...this.state,
+            focused: !props.disabled && props.focused
+        };
 
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
