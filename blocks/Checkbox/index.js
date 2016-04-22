@@ -30,6 +30,9 @@ class Checkbox extends Control {
         var type = this.props.type || this.context.type;
 
         return (type === 'button') ?
+            //  В первом input'е нужно одновременно defaultValue и defaultChecked
+            //  (а не просто value/checked). Иначе замучает warning'ами.
+            //  Или же нужен фейковый onChange.
             (
                 <label {...this.getProps()}>
                     <Button refs="button" theme={theme} size={size} type={type}
@@ -41,7 +44,8 @@ class Checkbox extends Control {
                         {this.props.children}
                     </Button>
                     <input ref="control" className="checkbox__control" type="checkbox" autoComplete="off" name={name}
-                        value={this.props.value}
+                        defaultValue={this.props.value}
+                        defaultChecked={this.state.checked}
                         disabled={this.props.disabled}
                     />
                 </label>
