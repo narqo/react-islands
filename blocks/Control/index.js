@@ -1,6 +1,6 @@
-import Component from '../Component';
+import React from 'react';
 
-class Control extends Component {
+class Control extends React.Component {
 
     constructor(props) {
         super(props);
@@ -8,7 +8,6 @@ class Control extends Component {
         //  Прокидываем focused из props в state только в начале.
         //  А в componentWillReceiveProps это уже не нужно.
         this.state = {
-            ...this.state,
             focused: !props.disabled && props.focused
         };
 

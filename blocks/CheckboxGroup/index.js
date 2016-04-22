@@ -1,27 +1,22 @@
 import React from 'react';
 
-import Component from '../Component';
-
-class CheckboxGroup extends Component {
+class CheckboxGroup extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = this._propsToState(props);
+        var value = (props.value != null) ? [].concat(props.value) : [];
+        this.state = { value };
 
         this.onCheck = this.onCheck.bind(this);
     }
 
-    _propsToState(props) {
+    componentWillReceiveProps(props) {
         var value = (props.value != null) ? [].concat(props.value) : [];
 
-        return {
+        this.setState({
             ...this.state,
             value
-        };
-    }
-
-    componentWillReceiveProps(props) {
-        this.setState(this._propsToState(props));
+        });
     }
 
     render() {

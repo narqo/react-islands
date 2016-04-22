@@ -1,12 +1,10 @@
 import React from 'react';
-import Component from '../Component';
 
-class RadioGroup extends Component {
+class RadioGroup extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            ...this.state,
             value: props.value
         };
 
