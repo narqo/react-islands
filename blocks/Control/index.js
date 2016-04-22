@@ -1,12 +1,9 @@
 import React from 'react';
 
 class Control extends React.Component {
-
     constructor(props) {
         super(props);
 
-        //  Прокидываем focused из props в state только в начале.
-        //  А в componentWillReceiveProps это уже не нужно.
         this.state = {
             focused: !props.disabled && props.focused
         };
@@ -25,6 +22,19 @@ class Control extends React.Component {
         }
     }
 
+    componentWillReceiveProps({ disabled }) {
+        if (disabled === true) {
+            this.setState({ focused: false });
+        }
+    }
+
+    componentWillUpdate(nextProps) {
+        // TODO(narqo@): sync DOM focus and `focused` on props reconciliation
+        // if (this.state.focused && nextProps.focused !== this.state.focused) {
+        //     this.refs.control.focus();
+        // }
+    }
+
     getControlHandlers() {
         return {
             onMouseDown: this.onMouseDown,
@@ -34,6 +44,16 @@ class Control extends React.Component {
             onMouseEnter: this.onMouseEnter,
             onMouseLeave: this.onMouseLeave
         };
+    }
+
+    onMouseEnter() {
+        if (!this.props.disabled) {
+            this.setState({ hovered: true });
+        }
+    }
+
+    onMouseLeave() {
+        this.setState({ hovered: false });
     }
 
     onMouseDown() {
@@ -46,10 +66,9 @@ class Control extends React.Component {
 
     onFocus() {
         if (!this.props.disabled) {
-            var focused;
+            let focused;
             if (this.props.focused) {
                 focused = true;
-
             } else {
                 focused = (this._mousePressed) ? true : 'hard';
             }
@@ -64,26 +83,8 @@ class Control extends React.Component {
     }
 
     onBlur() {
-        this._focusedByMouse = false;
-        if (!this.props.disabled) {
-            this.setState({ focused: false });
-
-            //  e.stopPropagation();
-            //  e.preventDefault();
-        }
+        this.setState({ focused: false });
     }
-
-    onMouseEnter() {
-        if (!this.props.disabled) {
-            this.setState({ hovered: true });
-        }
-    }
-
-    onMouseLeave() {
-        this.setState({ hovered: false });
-    }
-
 }
 
 export default Control;
-

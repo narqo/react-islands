@@ -10,8 +10,6 @@ const pressable = Class => class extends Class {
             pressed: false
         };
 
-        this._isPointerPressInProgress = false;
-
         this.onClick = this.onClick.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
@@ -32,8 +30,6 @@ const pressable = Class => class extends Class {
     getControlHandlers() {
         return {
             ...super.getControlHandlers(),
-
-            onClick: this.onClick,
             onMouseDown: this.onMouseDown,
             onMouseUp: this.onMouseUp,
             onKeyUp: this.onKeyUp,
@@ -42,7 +38,6 @@ const pressable = Class => class extends Class {
     }
 
     onMouseLeave() {
-        this._isPointerPressInProgress = false;
         super.onMouseLeave();
         this.setState({ pressed: false });
     }
@@ -51,35 +46,27 @@ const pressable = Class => class extends Class {
         super.onMouseDown(e);
 
         if (!this.props.disabled) {
-            this._isPointerPressInProgress = true;
             this.setState({ pressed: true });
-        }
-    }
-
-    onClick(e) {
-        this._isPointerPressInProgress = false;
-
-        if (this.state.disabled) {
-            e.preventDefault();
-
-        } else if (this.props.onClick) {
-            this.props.onClick();
         }
     }
 
     onMouseUp(e) {
         super.onMouseUp(e);
 
-        this._isPointerPressInProgress = false;
         if (this.state.pressed) {
             this.setState({ pressed: false });
+            this.onClick();
+        }
+    }
 
-            //  this.onClick();
+    onClick() {
+        if (typeof this.props.onClick === 'function') {
+            this.props.onClick();
         }
     }
 
     onFocus() {
-        if (!this._isPointerPressInProgress) {
+        if (!this.state.pressed) {
             super.onFocus();
         }
     }
@@ -88,7 +75,6 @@ const pressable = Class => class extends Class {
         if (this.props.disabled || !this.state.focused) {
             return;
         }
-
         if (e.key === KEY_SPACE || e.key === KEY_ENTER) {
             this.setState({ pressed: true });
         }
@@ -97,7 +83,6 @@ const pressable = Class => class extends Class {
     onKeyUp() {
         if (this.state.pressed && this.state.focused) {
             this.setState({ pressed: false });
-
             this.onClick();
         }
     }
