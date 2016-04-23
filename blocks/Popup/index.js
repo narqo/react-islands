@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import Portal from './Portal';
-import Layer from './Layer';
+import Overlay from '../Overlay';
 
 const VIEWPORT_ACCURACY_FACTOR = 0.99;
 const DEFAULT_DIRECTIONS = [
@@ -12,11 +11,10 @@ const DEFAULT_DIRECTIONS = [
 ];
 
 class Popup extends Component {
-    constructor(props, context) {
-        super(props, context);
+    constructor(props) {
+        super(props);
 
         this.state = {
-            visible: props.visible,
             direction: props.direction,
             left: undefined,
             top: undefined,
@@ -25,19 +23,9 @@ class Popup extends Component {
 
         this.domNode = null;
         this.shouldRenderToOverlay = false;
-        this.isClickOutsidePrevented = null;
-        this.preventClickOutside = this.preventClickOutside.bind(this);
-        this.isPopupVisible = this.isPopupVisible.bind(this);
-        this.onPopupClick = this.onPopupClick.bind(this);
-        this.onDocumentClick = this.onDocumentClick.bind(this);
         this.onLayerOrderChange = this.onLayerOrderChange.bind(this);
-    }
-
-    getChildContext() {
-        return {
-            preventParentPopupClickOutside: this.preventClickOutside,
-            isParentPopupVisible: this.isPopupVisible,
-        };
+        this.onLayerVisibleChange = this.onLayerVisibleChange.bind(this);
+        this.onLayerClickOutside = this.onLayerClickOutside.bind(this);
     }
 
     componentDidMount() {
@@ -45,59 +33,37 @@ class Popup extends Component {
     }
 
     componentWillUnmount() {
-        this.popupWillBecomeHidden();
         this.domNode = null;
     }
 
     componentWillReceiveProps({ visible }) {
         if (visible !== this.props.visible) {
             this.setState({ visible });
-            this.handleParentPopupHide();
         }
     }
 
     componentWillUpdate(nextProps, { visible }) {
-        if (this.state.visible !== visible) {
-            // NOTE(narqo@): do this only when visible is going to be changed
-            if (visible) {
-                this.popupWillBecomeVisible();
-            } else {
-                this.popupWillBecomeHidden();
-            }
-        }
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        if (prevState.visible !== this.state.visible) {
-            this.props.onVisible(this.state.visible);
-
-            if (this.state.visible) {
-                // TODO(@narqo): don't call DOMNode measurements in case nothing has changed
-                const { direction, left, top } = this.calcBestDrawingParams();
-                this.setState({ direction, left, top });
-            }
+        if (!this.shouldRenderToOverlay && visible) {
+            this.shouldRenderToOverlay = true;
         }
     }
 
     render() {
-        const { visible } = this.state;
-
         if (this.shouldRenderToOverlay) {
-            const { left, top, zIndex } = this.state;
-            const popupAttrs = {
-                style: { left, top, zIndex }
+            const style = { 
+                left: this.state.left, 
+                top: this.state.top, 
+                zIndex: this.state.zIndex,
             };
 
-            if (visible) {
-                popupAttrs.onClick = this.onPopupClick;
-            }
-
             return (
-                <Portal>
-                    <Layer visible={visible} onOrderChange={this.onLayerOrderChange}>
-                        <div className={this.className()} {...popupAttrs}>{this.props.children}</div>
-                    </Layer>
-                </Portal>
+                <Overlay visible={this.state.visible}
+                    onVisibleChange={this.onLayerVisibleChange}
+                    onClickOutside={this.onLayerClickOutside}
+                    onOrderChange={this.onLayerOrderChange}
+                >
+                    <div className={this.className()} style={style}>{this.props.children}</div>
+                </Overlay>
             );
         } else {
             return (
@@ -133,62 +99,26 @@ class Popup extends Component {
         return className;
     }
 
-    handleParentPopupHide() {
-        const { isParentPopupVisible } = this.context;
-        if (typeof isParentPopupVisible === 'function' && isParentPopupVisible() === false) {
-            this.setState({ visible: false });
-        }
-    }
-
-    handleClickOutside() {
-        this.props.onClickOutside();
-    }
-
-    onLayerOrderChange(zIndex) {
-        this.setState({ zIndex });
-    }
-
-    onPopupClick() {
-        this.preventClickOutside();
-        if (typeof this.context.preventParentPopupClickOutside === 'function') {
-            this.context.preventParentPopupClickOutside();
-        }
-    }
-
-    onDocumentClick(e) {
+    onLayerClickOutside(e) {
         const target = this.getTarget();
         if (target instanceof Element && target.contains(e.target)) {
             return;
         }
-        if (this.isClickOutsidePrevented) {
-            this.isClickOutsidePrevented = null;
-        } else {
-            this.handleClickOutside();
+        this.props.onClickOutside();
+    }
+
+    onLayerVisibleChange(visible) {
+        if (visible) {
+            // TODO(@narqo): don't call DOMNode measurements in case nothing has changed
+            const { direction, left, top } = this.calcBestDrawingParams();
+            this.setState({ direction, left, top });
         }
+        this.setState({ visible });
+        this.props.onVisible(visible);
     }
 
-    popupWillBecomeVisible() {
-        if (!this.shouldRenderToOverlay) {
-            this.shouldRenderToOverlay = true;
-        }
-        // NOTE(narqo@): we have to use `nextTick` or nested popup will be closed immediately after being opened
-        process.nextTick(() => {
-            if (this.domNode && this.state.visible) {
-                document.addEventListener('click', this.onDocumentClick);
-            }
-        });
-    }
-
-    popupWillBecomeHidden() {
-        document.removeEventListener('click', this.onDocumentClick);
-    }
-
-    preventClickOutside() {
-        this.isClickOutsidePrevented = true;
-    }
-
-    isPopupVisible() {
-        return this.state.visible;
+    onLayerOrderChange(zIndex) {
+        this.setState({ zIndex });
     }
 
     calcBestDrawingParams() {
@@ -346,18 +276,12 @@ function checkSecondaryDirection(direction, secondaryDirection) {
 }
 
 Popup.defaultProps = {
-    visible: false,
     directions: DEFAULT_DIRECTIONS,
     mainOffset: 0,
     secondaryOffset: 0,
     viewportOffset: 0,
     onClickOutside() {},
     onVisible() {},
-};
-
-Popup.childContextTypes = Popup.contextTypes = {
-    isParentPopupVisible: React.PropTypes.func,
-    preventParentPopupClickOutside: React.PropTypes.func,
 };
 
 export default Popup;

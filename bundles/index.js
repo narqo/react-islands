@@ -270,6 +270,7 @@ class PopupExample extends React.Component {
                     onClickOutside={() => this.handlePopup2ClickOutside()}
                 >
                     <Link theme="islands" size="s" onClick={() => this.handlePopup3AnchorClick()}>Toggle popup 3</Link>
+                    <p>Blah-blah-blah</p>
                     <Popup
                         theme="islands"
                         target={() => ({ left: 150, top: 550 })}
@@ -278,6 +279,7 @@ class PopupExample extends React.Component {
                         onClickOutside={() => this.handlePopup3ClickOutside()}
                     >
                         <Link size="s">Yandex</Link>
+                        <p>Blah-blah-blah</p>
                     </Popup>
                 </Popup>
             </div>
