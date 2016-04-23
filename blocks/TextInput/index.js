@@ -5,31 +5,42 @@ class TextInput extends Control {
     constructor(props) {
         super(props);
 
-        this.state.value = props.value;
+        this.state = {
+            ...this.state,
+            value: props.value
+        };
 
         this.onClearClick = this.onClearClick.bind(this);
         this.onInputChange = this.onInputChange.bind(this);
     }
 
-    render() {
-        var type = this.props.type || 'text';
+    /** @override */
+    componentWillReceiveProps(nextProps) {
+        super.componentWillReceiveProps(nextProps);
+        if (nextProps.value !== this.props.value) {
+            this.setState({ value: nextProps.value });
+        }
+    }
 
+    render() {
         var hasClear;
         if (this.props.hasClear) {
-            var hasClearClassName = 'input__clear';
+            let clearClassName = 'input__clear';
             if (this.state.value) {
-                hasClearClassName += ' input__clear_visible';
+                clearClassName += ' input__clear_visible';
             }
 
             hasClear = (
-                <i className={hasClearClassName} onClick={this.onClearClick}/>
+                <i className={clearClassName} onClick={this.onClearClick}/>
             );
         }
 
         return (
             <span className={this.className()}>
                 <span className="input__box">
-                    <input {...this.getControlHandlers()} ref="control" className="input__control" type={type}
+                    <input {...this.getControlHandlers()} ref="control" className="input__control"
+                        type={this.props.type}
+                        disabled={this.props.disabled}
                         placeholder={this.props.placeholder}
                         value={this.state.value}
                         onChange={this.onInputChange}
@@ -70,20 +81,21 @@ class TextInput extends Control {
     }
 
     onInputChange(e) {
-        this.setState({ value: e.target.value });
-        this.props.onChange();
+        const { value } = e.target;
+        this.setState({ value });
+        this.props.onChange(value);
     }
 
     onClearClick() {
-        this.setState({ value: '', focused: true });
-        //  FIXME: А неплохо бы на focused тут реагировать, а не явно ставить фокус?
-        this.refs.control.focus();
-        this.props.onChange({ source: 'clear' });
+        const newValue = '';
+        this.setState({ value: newValue, focused: true });
+        this.props.onChange(newValue, { source: 'clear' });
     }
-
 }
 
 TextInput.defaultProps = {
+    value: '',
+    type: 'text',
     onChange() {}
 };
 

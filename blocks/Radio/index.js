@@ -11,42 +11,57 @@ class Radio extends Control {
             checked: props.checked
         };
 
-        this.onClick = this.onClick.bind(this);
-        this.onChange = this.onChange.bind(this);
+        this.onButtonClick = this.onButtonClick.bind(this);
+        this.onControlChange = this.onControlChange.bind(this);
     }
 
-    componentWillReceiveProps(props) {
-        this.setState({
-            ...this.state,
-            checked: props.checked
-        });
+    /** @override */
+    componentWillReceiveProps(nextProps) {
+        super.componentWillReceiveProps(nextProps);
+
+        // NOTE(narqo@): `setState({ checked })` must be called only if new `checked` value was passed
+        // or `Checkbox` will stay in the `checked` state regardless the DOM events.
+        if (this.props.checked !== nextProps.checked) {
+            this.setState({
+                ...this.state,
+                checked: nextProps.checked
+            });
+        }
     }
 
     render() {
-        //  FIXME: А как бы сделать так, чтобы это сделать один раз, положить куда-нибудь и везде брать оттуда?
-        var name = this.props.name || this.context.name;
-        var theme = this.props.theme || this.context.theme;
-        var size = this.props.size || this.context.size;
-        var type = this.props.type || this.context.type;
+        const { name, theme, size, type, disabled, value } = this.props;
+        const { checked, focused } = this.state;
 
-        return (type === 'button') ?
-            (
+        if (type === 'button') {
+            return (
                 <label className={this.className()} {...this.getControlHandlers()}>
-                    <Button theme={theme} size={size} type={type} checked={this.state.checked} disabled={this.props.disabled} onClick={this.onClick}>
+                    <Button theme={theme} size={size} type={type}
+                        disabled={disabled}
+                        checked={checked}
+                        focused={focused}
+                        onClick={this.onButtonClick}
+                    >
                         {this.props.children}
                     </Button>
-                    <input ref="control" className="radio__control" type="radio" autoComplete="off" name={name}
-                        value={this.props.value}
-                        disabled={this.props.disabled}
+                    <input ref="control" className="radio__control" type="radio" autoComplete="off"
+                        name={name}
+                        disabled={disabled}
+                        defaultValue={value}
+                        defaultChecked={checked}
                     />
                 </label>
-            ) : (
+            )
+        } else {
+            return (
                 <label className={this.className()} {...this.getControlHandlers()}>
                     <span className="radio__box">
-                        <input ref="control" className="radio__control" type="radio" autoComplete="off" name={name}
-                            value={this.props.value}
-                            disabled={this.props.disabled}
-                            onChange={this.onChange}
+                        <input ref="control" className="radio__control" type="radio" autoComplete="off"
+                            name={name}
+                            disabled={disabled}
+                            value={value}
+                            checked={checked}
+                            onChange={this.onControlChange}
                         />
                     </span>
                     <span className="radio__text" role="presentation">
@@ -54,23 +69,20 @@ class Radio extends Control {
                     </span>
                 </label>
             );
+        }
     }
 
     className() {
-        var theme = this.props.theme || this.context.theme;
-        var size = this.props.size || this.context.size;
-        var type = this.props.type || this.context.type;
-
         var className = 'radio';
 
-        if (theme) {
-            className += ' radio_theme_' + theme;
+        if (this.props.theme) {
+            className += ' radio_theme_' + this.props.theme;
         }
-        if (size) {
-            className += ' radio_size_' + size;
+        if (this.props.size) {
+            className += ' radio_size_' + this.props.size;
         }
-        if (type) {
-            className += ' radio_type_' + type;
+        if (this.props.type) {
+            className += ' radio_type_' + this.props.type;
         }
         if (this.props.disabled) {
             className += ' radio_disabled';
@@ -92,26 +104,24 @@ class Radio extends Control {
         return className;
     }
 
-    onClick(e) {
+    onButtonClick(e) {
         //  FIXME: Может передавать туда name, value?
-        this.props.onClick(e);
+        this.props.onClick();
 
         if (!this.state.checked) {
+            // FIXME(narqo@): `this.refs.control.checked = checked`
             this.refs.control.checked = true;
+            this.setState({ checked: true });
 
-            this.setState({checked: true});
-
-            this.props.onCheck(this.props.value);
+            this.props.onCheck(true, this.props.value);
         }
     }
 
-    onChange(e) {
-        var checked = e.target.checked;
-
-        this.setState({checked});
-
+    onControlChange(e) {
+        const { checked } = e.target;
+        this.setState({ checked });
         if (checked) {
-            this.props.onCheck(this.props.value);
+            this.props.onCheck(checked, this.props.value);
         }
     }
 }
@@ -119,17 +129,6 @@ class Radio extends Control {
 Radio.defaultProps = {
     onClick() {},
     onCheck() {}
-};
-
-Radio.contextTypes = {
-    theme: React.PropTypes.string,
-    size: React.PropTypes.string,
-    type: React.PropTypes.string,
-    name: React.PropTypes.string,
-    value: React.PropTypes.any,
-    disabled: React.PropTypes.bool,
-    onClick: React.PropTypes.func,
-    onCheck: React.PropTypes.func
 };
 
 export default Radio;

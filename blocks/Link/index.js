@@ -4,20 +4,22 @@ import Control from '../Control';
 import pressable from '../pressable';
 
 class Link extends Control {
-
     render() {
+        const { disabled, title } = this.props;
+
         if (this.props.url) {
+            const url = disabled ? null : this.props.url;
+
             return (
-                <a className={this.className()} {...this.getControlHandlers()} href={this.props.url} target={this.props.target} title={this.props.title}>
+                <a className={this.className()} {...this.getControlHandlers()} href={url} target={this.props.target} title={title}>
                     {this.props.children}
                 </a>
             );
-
         } else {
-            const tabIndex = this.props.disabled ? -1 : 0;
+            const tabIndex = disabled ? -1 : 0;
 
             return (
-                <span className={this.className()} {...this.getControlHandlers()} tabIndex={tabIndex} title={this.props.title}>
+                <span className={this.className()} {...this.getControlHandlers()} tabIndex={tabIndex} title={title}>
                     {this.props.children}
                 </span>
             );

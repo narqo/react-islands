@@ -1,7 +1,7 @@
 const KEY_SPACE = ' ';
 const KEY_ENTER = 'Enter';
 
-const pressable = Class => class extends Class {
+const pressable = BaseComponent => class extends BaseComponent {
     constructor(...args) {
         super(...args);
 
@@ -10,20 +10,17 @@ const pressable = Class => class extends Class {
             pressed: false
         };
 
-        this._isPointerPressInProgress = false;
-
-        this.onClick = this.onClick.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onKeyUp = this.onKeyUp.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
     }
 
+    /** @override */
     componentWillReceiveProps(props) {
         if (super.componentWillReceiveProps) {
             super.componentWillReceiveProps(props);
         }
-
         if (props.disabled === true) {
             this.setState({ pressed: false });
         }
@@ -32,8 +29,6 @@ const pressable = Class => class extends Class {
     getControlHandlers() {
         return {
             ...super.getControlHandlers(),
-
-            onClick: this.onClick,
             onMouseDown: this.onMouseDown,
             onMouseUp: this.onMouseUp,
             onKeyUp: this.onKeyUp,
@@ -41,66 +36,59 @@ const pressable = Class => class extends Class {
         };
     }
 
-    onMouseLeave() {
-        this._isPointerPressInProgress = false;
-        super.onMouseLeave();
-        this.setState({ pressed: false });
-    }
-
-    onMouseDown(e) {
-        super.onMouseDown(e);
-
-        if (!this.props.disabled) {
-            this._isPointerPressInProgress = true;
-            this.setState({ pressed: true });
-        }
-    }
-
-    onClick(e) {
-        this._isPointerPressInProgress = false;
-
-        if (this.state.disabled) {
-            e.preventDefault();
-
-        } else if (this.props.onClick) {
+    handleClick() {
+        if (typeof this.props.onClick === 'function') {
             this.props.onClick();
         }
     }
 
-    onMouseUp(e) {
-        super.onMouseUp(e);
+    /** @override */
+    onMouseLeave() {
+        super.onMouseLeave();
+        this.setState({ pressed: false });
+    }
 
-        this._isPointerPressInProgress = false;
-        if (this.state.pressed) {
-            this.setState({ pressed: false });
-
-            //  this.onClick();
+    /** @override */
+    onMouseDown(e) {
+        super.onMouseDown(e);
+        if (!this.props.disabled) {
+            this.setState({ pressed: true });
         }
     }
 
+    /** @override */
+    onMouseUp(e) {
+        super.onMouseUp(e);
+        if (this.state.pressed) {
+            this.setState({ pressed: false });
+            this.handleClick();
+        }
+    }
+
+    /** @override */
     onFocus() {
-        if (!this._isPointerPressInProgress) {
+        if (!this.state.pressed) {
             super.onFocus();
         }
     }
 
+    /** @override */
     onKeyDown(e) {
         if (this.props.disabled || !this.state.focused) {
             return;
         }
-
         if (e.key === KEY_SPACE || e.key === KEY_ENTER) {
             this.setState({ pressed: true });
         }
     }
 
+    /** @override */
     onKeyUp() {
         if (this.state.pressed && this.state.focused) {
             this.setState({ pressed: false });
-
-            this.onClick();
+            this.handleClick();
         }
     }
-}
+};
 
 export default pressable;
