@@ -8,7 +8,7 @@ class RadioGroup extends React.Component {
             value: props.value
         };
 
-        this.onCheck = this.onCheck.bind(this);
+        this.onRadioCheck = this.onRadioCheck.bind(this);
     }
 
     componentWillReceiveProps(props) {
@@ -19,11 +19,23 @@ class RadioGroup extends React.Component {
     }
 
     render() {
-        var onCheck = this.onCheck;
-        var value = this.state.value;
-        var children = React.Children.map(this.props.children, child => {
-            var checked = child.props.value === value;
-            return React.cloneElement(child, { checked, onCheck });
+        const onRadioCheck = this.onRadioCheck;
+        const { value } = this.state;
+        const { theme, size, type, name, disabled } = this.props;
+        
+        const children = React.Children.map(this.props.children, child => {
+            const checked = child.props.value === value;
+            return React.cloneElement(child, { 
+                theme,
+                size,
+                type,
+                name,
+                value,
+                disabled,
+                ...child.props,
+                checked,
+                onCheck: onRadioCheck 
+            });
         });
 
         return (
@@ -49,21 +61,11 @@ class RadioGroup extends React.Component {
         return className;
     }
 
-    onCheck(value) {
-        if (value !== this.state.value) {
-            this.setState({value});
-            this.props.onChange(value);
+    onRadioCheck(checked, newValue) {
+        if (newValue !== this.state.value) {
+            this.setState({ value: newValue });
+            this.props.onChange(newValue);
         }
-    }
-
-    getChildContext() {
-        return {
-            theme: this.props.theme,
-            size: this.props.size,
-            type: this.props.type,
-            name: this.props.name,
-            value: this.state.value
-        };
     }
 }
 
@@ -78,14 +80,6 @@ RadioGroup.propTypes = {
     name: React.PropTypes.string,
     value: React.PropTypes.any,
     onChange: React.PropTypes.func
-};
-
-RadioGroup.childContextTypes = {
-    theme: React.PropTypes.string,
-    size: React.PropTypes.string,
-    type: React.PropTypes.string,
-    name: React.PropTypes.string,
-    value: React.PropTypes.any
 };
 
 module.exports = RadioGroup;
