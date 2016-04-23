@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import Overlay from './overlay';
-import Layer from './layer';
+import Portal from './Portal';
+import Layer from './Layer';
 
 const VIEWPORT_ACCURACY_FACTOR = 0.99;
 const DEFAULT_DIRECTIONS = [
@@ -93,11 +93,11 @@ class Popup extends Component {
             }
 
             return (
-                <Overlay>
+                <Portal>
                     <Layer visible={visible} onOrderChange={this.onLayerOrderChange}>
                         <div className={this.className()} {...popupAttrs}>{this.props.children}</div>
                     </Layer>
-                </Overlay>
+                </Portal>
             );
         } else {
             return (
