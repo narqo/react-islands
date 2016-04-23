@@ -12,75 +12,72 @@ class Checkbox extends Control {
             checked: props.checked
         };
 
-        this.onClick = this.onClick.bind(this);
-        this.onChange = this.onChange.bind(this);
+        this.onButtonClick = this.onButtonClick.bind(this);
+        this.onControlChange = this.onControlChange.bind(this);
     }
 
     componentWillReceiveProps(props) {
-        this.setState({
-            ...this.state,
-            checked: props.checked
-        });
+        super.componentWillReceiveProps(props);
+        if (this.props.checked !== props.checked) {
+            this.setState({
+                ...this.state,
+                checked: props.checked
+            });
+        }
     }
 
     render() {
-        var name = this.props.name || this.context.name;
-        var theme = this.props.theme || this.context.theme;
-        var size = this.props.size || this.context.size;
-        var type = this.props.type || this.context.type;
+        const { name, theme, size, type, disabled, value } = this.props;
+        const { checked, focused } = this.state;
 
-        return (type === 'button') ?
+        if (type === 'button') {
             //  В первом input'е нужно одновременно defaultValue и defaultChecked
             //  (а не просто value/checked). Иначе замучает warning'ами.
             //  Или же нужен фейковый onChange.
-            (
+            return (
                 <label className={this.className()} {...this.getControlHandlers()}>
-                    <Button refs="button" theme={theme} size={size} type={type}
-                        checked={this.state.checked}
-                        disabled={this.props.disabled}
-                        focused={this.state.focused}
-                        onClick={this.onClick}
-                    >
+                    <Button theme={theme} size={size} type={type} disabled={disabled} checked={checked} focused={focused} onClick={this.onButtonClick}>
                         {this.props.children}
                     </Button>
-                    <input ref="control" className="checkbox__control" type="checkbox" autoComplete="off" name={name}
-                        defaultValue={this.props.value}
-                        defaultChecked={this.state.checked}
-                        disabled={this.props.disabled}
+                    <input ref="control" className="checkbox__control" type="checkbox" autoComplete="off"
+                        name={name}
+                        disabled={disabled}
+                        defaultValue={value}
+                        defaultChecked={checked}
                     />
                 </label>
-            ) : (
+            )
+        } else {
+            return (
                 <label className={this.className()} {...this.getControlHandlers()}>
                     <span className="checkbox__box">
-                        <input ref="control" className="checkbox__control" type="checkbox" autoComplete="off" name={name}
-                            value={this.props.value}
-                            disabled={this.props.disabled}
-                            checked={this.state.checked}
-                            onChange={this.onChange}
+                        <input ref="control" className="checkbox__control" type="checkbox" autoComplete="off"
+                            name={name}
+                            value={value}
+                            disabled={disabled}
+                            checked={checked}
+                            onChange={this.onControlChange}
                         />
                     </span>
                     <span className="checkbox__text" role="presentation">
                         {this.props.children}
                     </span>
                 </label>
-            );
+            )
+        }
     }
 
     className() {
-        var theme = this.props.theme || this.context.theme;
-        var size = this.props.size || this.context.size;
-        var type = this.props.type || this.context.type;
-
         var className = 'checkbox';
 
-        if (theme) {
-            className += ' checkbox_theme_' + theme;
+        if (this.props.theme) {
+            className += ' checkbox_theme_' + this.props.theme;
         }
-        if (size) {
-            className += ' checkbox_size_' + size;
+        if (this.props.size) {
+            className += ' checkbox_size_' + this.props.size;
         }
-        if (type) {
-            className += ' checkbox_type_' + type;
+        if (this.props.type) {
+            className += ' checkbox_type_' + this.props.type;
         }
         if (this.props.disabled) {
             className += ' checkbox_disabled';
@@ -102,22 +99,24 @@ class Checkbox extends Control {
         return className;
     }
 
-    onClick(e) {
+    onButtonClick(e) {
         this.props.onClick(e);
 
-        var checked = !this.state.checked;
+        const checked = !this.state.checked;
 
+        // FIXME(narqo@): `this.refs.control.checked = checked`
         this.refs.control.checked = checked;
         this.setState({ checked });
 
-        this.props.onCheck(this.props.value, checked);
+        this.props.onCheck(checked, this.props.value);
     }
 
-    onChange(e) {
-        var checked = e.target.checked;
+    onControlChange(e) {
+        const checked = e.target.checked;
+
         this.setState({ checked });
 
-        this.props.onCheck(this.props.value, checked);
+        this.props.onCheck(checked, this.props.value);
     }
 }
 
@@ -126,16 +125,4 @@ Checkbox.defaultProps = {
     onCheck() {}
 };
 
-Checkbox.contextTypes = {
-    theme: React.PropTypes.string,
-    size: React.PropTypes.string,
-    type: React.PropTypes.string,
-    name: React.PropTypes.string,
-    value: React.PropTypes.any,
-    disabled: React.PropTypes.bool,
-    onClick: React.PropTypes.func,
-    onCheck: React.PropTypes.func
-};
-
 export default Checkbox;
-

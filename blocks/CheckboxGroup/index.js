@@ -4,27 +4,34 @@ class CheckboxGroup extends React.Component {
     constructor(props) {
         super(props);
 
-        var value = (props.value != null) ? [].concat(props.value) : [];
+        const value = props.value != null ? [...props.value] : [];
         this.state = { value };
 
-        this.onCheck = this.onCheck.bind(this);
+        this.onChildCheck = this.onChildCheck.bind(this);
     }
 
-    componentWillReceiveProps(props) {
-        var value = (props.value != null) ? [].concat(props.value) : [];
-
-        this.setState({
-            ...this.state,
-            value
-        });
+    componentWillReceiveProps({ value }) {
+        this.setState({ value: value != null ? [...value] : [] });
     }
 
     render() {
-        var onCheck = this.onCheck;
-        var value = this.state.value;
-        var children = React.Children.map(this.props.children, child => {
-            var checked = value.indexOf(child.props.value) !== -1;
-            return React.cloneElement(child, { checked, onCheck });
+        const onChildCheck = this.onChildCheck;
+        const { value } = this.state;
+        const { theme, size, type, name, disabled } = this.props;
+
+        const children = React.Children.map(this.props.children, child => {
+            const checked = value.indexOf(child.props.value) !== -1;
+            return React.cloneElement(child, {
+                theme,
+                size,
+                type,
+                name,
+                value,
+                disabled,
+                ...child.props,
+                checked,
+                onCheck: onChildCheck
+            });
         });
 
         return (
@@ -54,27 +61,17 @@ class CheckboxGroup extends React.Component {
         return className;
     }
 
-    onCheck(value, checked) {
+    onChildCheck(checked, value) {
+        let newValue;
         if (checked && this.state.value.indexOf(value) === -1) {
-            checked = this.state.value.concat(value);
-            this.setState({ value: checked });
-            this.props.onChange(checked);
-
+            newValue = this.state.value.concat(value);
+            this.setState({ value: newValue });
+            this.props.onChange(newValue);
         } else if (!checked) {
-            checked = this.state.value.filter(item => (item !== value));
-            this.setState({ value: checked });
-            this.props.onChange(checked);
+            newValue = this.state.value.filter(item => (item !== value));
+            this.setState({ value: newValue });
+            this.props.onChange(newValue);
         }
-    }
-
-    getChildContext() {
-        return {
-            theme: this.props.theme,
-            size: this.props.size,
-            type: this.props.type,
-            name: this.props.name,
-            value: this.state.value
-        };
     }
 }
 
@@ -91,13 +88,4 @@ CheckboxGroup.propTypes = {
     onChange: React.PropTypes.func
 };
 
-CheckboxGroup.childContextTypes = {
-    theme: React.PropTypes.string,
-    size: React.PropTypes.string,
-    type: React.PropTypes.string,
-    name: React.PropTypes.string,
-    value: React.PropTypes.any
-};
-
 export default CheckboxGroup;
-
