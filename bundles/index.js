@@ -26,6 +26,8 @@ class ButtonExample extends React.Component {
                 <Button theme="islands" size="s" type="link" url="#/https://yandex.ru" onClick={this.onButtonClick}>Yandex</Button>
                 <span>&nbsp;</span>
                 <Button theme="islands" size="s" type="link" url="#/https://yandex.ru" disabled onClick={this.onButtonClick}>Yandex</Button>
+                <span>&nbsp;</span>
+                <Button theme="islands" size="s" view="action">Do it!</Button>
             </div>
         );
     }
