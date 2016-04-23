@@ -15,6 +15,7 @@ class Radio extends Control {
         this.onControlChange = this.onControlChange.bind(this);
     }
 
+    /** @override */
     componentWillReceiveProps(nextProps) {
         super.componentWillReceiveProps(nextProps);
 
@@ -52,19 +53,22 @@ class Radio extends Control {
                 </label>
             )
         } else {
-            <label className={this.className()} {...this.getControlHandlers()}>
-                <span className="radio__box">
-                    <input ref="control" className="radio__control" type="radio" autoComplete="off"
-                        name={name}
-                        disabled={disabled}
-                        value={value}
-                        onChange={this.onControlChange}
-                    />
-                </span>
-                <span className="radio__text" role="presentation">
-                    {this.props.children}
-                </span>
-            </label>
+            return (
+                <label className={this.className()} {...this.getControlHandlers()}>
+                    <span className="radio__box">
+                        <input ref="control" className="radio__control" type="radio" autoComplete="off"
+                            name={name}
+                            disabled={disabled}
+                            value={value}
+                            checked={checked}
+                            onChange={this.onControlChange}
+                        />
+                    </span>
+                    <span className="radio__text" role="presentation">
+                        {this.props.children}
+                    </span>
+                </label>
+            );
         }
     }
 
@@ -114,10 +118,10 @@ class Radio extends Control {
     }
 
     onControlChange(e) {
-        const checked = e.target.checked;
+        const { checked } = e.target;
         this.setState({ checked });
         if (checked) {
-            this.props.onCheck(this.props.value);
+            this.props.onCheck(checked, this.props.value);
         }
     }
 }
