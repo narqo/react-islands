@@ -14,6 +14,7 @@ class TextInput extends Control {
         this.onInputChange = this.onInputChange.bind(this);
     }
 
+    /** @override */
     componentWillReceiveProps(nextProps) {
         super.componentWillReceiveProps(nextProps);
         if (nextProps.value !== this.props.value) {
@@ -86,8 +87,9 @@ class TextInput extends Control {
     }
 
     onClearClick() {
-        this.setState({ value: '', focused: true });
-        this.props.onChange('', { source: 'clear' });
+        const newValue = '';
+        this.setState({ value: newValue, focused: true });
+        this.props.onChange(newValue, { source: 'clear' });
     }
 }
 

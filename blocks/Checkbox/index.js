@@ -16,6 +16,7 @@ class Checkbox extends Control {
         this.onControlChange = this.onControlChange.bind(this);
     }
 
+    /** @override */
     componentWillReceiveProps(nextProps) {
         super.componentWillReceiveProps(nextProps);
 
