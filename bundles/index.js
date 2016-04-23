@@ -42,35 +42,43 @@ class RadioGroupExample extends React.Component {
 }
 
 class CheckboxGroupExample extends React.Component {
-    constructor( props ) {
-        super( props );
+    constructor(props) {
+        super(props);
 
         this.state = {
-            value: [ '30', '40' ]
+            value: ['30', '40']
         };
 
-        this.onChange = this.onChange.bind( this );
+        this.onChange = this.onChange.bind(this);
+        this.onCheckboxCheck = this.onCheckboxCheck.bind(this);
     }
 
     render() {
         return (
             <div>
-                <CheckboxGroup name="phones" value={ this.state.value } theme="islands" type="button" size="l" onChange={ this.onChange }>
+                <CheckboxGroup name="phones" value={this.state.value} theme="islands" type="button" size="l" onChange={this.onChange}>
                     <Checkbox value="10">10</Checkbox>
                     <Checkbox value="20" disabled>20</Checkbox>
                     <Checkbox value="30" focused>30</Checkbox>
                     <Checkbox value="40">40</Checkbox>
                     <Checkbox value="50">50</Checkbox>
                 </CheckboxGroup>
-                <div>Вы выбрали: <b>{ this.state.value.join( ', ' ) }</b></div>
+                <div>Вы выбрали: <b>{this.state.value.join(', ')}</b></div>
+                <p>
+                    <Checkbox theme="islands" type="button" size="l" name="foo" value="40" onCheck={this.onCheckboxCheck}>Forty</Checkbox>
+                </p>
             </div>
         );
     }
 
-    onChange( value ) {
-        this.setState( { value } );
+    onChange(value) {
+        this.setState({ value });
     }
 
+    onCheckboxCheck(checked, value) {
+        console.log(`checked: ${checked}`);
+        this.setState({ value: [value] });
+    }
 }
 
 class TextInputExample extends React.Component {
@@ -225,13 +233,8 @@ class Example extends React.Component {
 
     renderCheckboxGroup() {
         return (
-            <div>
-                <div className="example">
-                    <CheckboxGroupExample/>
-                </div>
-                <div className="example">
-                    <Checkbox theme="islands" type="button" size="l" name="foo" value="70">70</Checkbox>
-                </div>
+            <div className="example">
+                <CheckboxGroupExample/>
             </div>
         );
     }
