@@ -16,12 +16,15 @@ class Checkbox extends Control {
         this.onControlChange = this.onControlChange.bind(this);
     }
 
-    componentWillReceiveProps(props) {
-        super.componentWillReceiveProps(props);
-        if (this.props.checked !== props.checked) {
+    componentWillReceiveProps(nextProps) {
+        super.componentWillReceiveProps(nextProps);
+
+        // NOTE(narqo@): `setState({ checked })` must be called only if new `checked` value was passed
+        // or `Checkbox` will stay in the `checked` state regardless the DOM events.
+        if (this.props.checked !== nextProps.checked) {
             this.setState({
                 ...this.state,
-                checked: props.checked
+                checked: nextProps.checked
             });
         }
     }
@@ -36,7 +39,12 @@ class Checkbox extends Control {
             //  Или же нужен фейковый onChange.
             return (
                 <label className={this.className()} {...this.getControlHandlers()}>
-                    <Button theme={theme} size={size} type={type} disabled={disabled} checked={checked} focused={focused} onClick={this.onButtonClick}>
+                    <Button theme={theme} size={size} type={type}
+                        disabled={disabled}
+                        checked={checked}
+                        focused={focused}
+                        onClick={this.onButtonClick}
+                    >
                         {this.props.children}
                     </Button>
                     <input ref="control" className="checkbox__control" type="checkbox" autoComplete="off"
@@ -100,7 +108,7 @@ class Checkbox extends Control {
     }
 
     onButtonClick(e) {
-        this.props.onClick(e);
+        this.props.onClick();
 
         const checked = !this.state.checked;
 
@@ -113,9 +121,7 @@ class Checkbox extends Control {
 
     onControlChange(e) {
         const checked = e.target.checked;
-
         this.setState({ checked });
-
         this.props.onCheck(checked, this.props.value);
     }
 }
