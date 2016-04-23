@@ -30,7 +30,7 @@ class Overlay extends React.Component {
     componentWillMount() {
         if (this.state.visible) {
             this.layerWillBecomeVisible();
-            this.handleVisibleChange(this.state.visible);
+            this.dispatchVisibleChange(this.state.visible);
         }
     }
 
@@ -55,7 +55,7 @@ class Overlay extends React.Component {
     componentDidUpdate(prevProps, { visible }) {
         if (this.state.visible !== visible) {
             // this must be handled after DOM changes, e.g. calc new dimensions
-            this.handleVisibleChange(this.state.visible);
+            this.dispatchVisibleChange(this.state.visible);
         }
     }
 
@@ -93,11 +93,11 @@ class Overlay extends React.Component {
         return this.state.visible;
     }
 
-    handleVisibleChange(visible) {
+    dispatchVisibleChange(visible) {
         this.props.onVisibleChange(visible);
     }
 
-    handleClickOutside(e) {
+    dispatchClickOutside(e) {
         this.props.onClickOutside(e);
     }
 
@@ -112,7 +112,7 @@ class Overlay extends React.Component {
         }
     }
 
-    onLayerClick() {
+    onLayerClick(e) {
         if (this.state.visible) {
             this.preventClickOutside();
 
@@ -121,13 +121,14 @@ class Overlay extends React.Component {
                 preventParentLayerClickOutside();
             }
         }
+        this.props.onClick(e);
     }
 
     onDocumentClick(e) {
         if (this.isClickOutsidePrevented) {
             this.isClickOutsidePrevented = null;
         } else {
-            this.handleClickOutside(e);
+            this.dispatchClickOutside(e);
         }
     }
 
@@ -161,6 +162,7 @@ Overlay.childContextTypes = Overlay.contextTypes = {
 Overlay.defaultProps = {
     visible: false,
     zIndexGroupLevel: 0,
+    onClick() {},
     onClickOutside() {},
     onOrderChange() {},
     onVisibleChange() {},

@@ -3,6 +3,7 @@ import { render, findDOMNode } from 'react-dom';
 import Button from '../blocks/Button';
 import Link from '../blocks/Link';
 import Popup from '../blocks/Popup';
+import Modal from '../blocks/Modal';
 import TextInput from '../blocks/TextInput';
 import Radio from '../blocks/Radio';
 import RadioGroup from '../blocks/RadioGroup';
@@ -206,6 +207,7 @@ class PopupExample extends React.Component {
             popup1Visible: false,
             popup2Visible: false,
             popup3Visible: false,
+            modal1Visible: false,
         };
     }
 
@@ -245,6 +247,18 @@ class PopupExample extends React.Component {
         this.setState({ popup3Visible: val });
     }
 
+    handleModal1AnchorClick() {
+        this.setState({ modal1Visible: true });
+    }
+
+    handleModal1ClickOutside() {
+        this.setState({ modal1Visible: false });
+    }
+
+    handleModal1VisibilityChange(val) {
+        this.setState({ modal1Visible: val });
+    }
+
     render() {
         return (
             <div style={{paddingBottom: '10px'}}>
@@ -282,6 +296,16 @@ class PopupExample extends React.Component {
                         <p>Blah-blah-blah</p>
                     </Popup>
                 </Popup>
+                <span>&nbsp;</span>
+                <Button ref="modal1Anchor" theme="islands" size="s" onClick={() => this.handleModal1AnchorClick()}>Open modal</Button>
+                <Modal
+                    theme="islands"
+                    visible={this.state.modal1Visible}
+                    onVisible={v => this.handleModal1VisibilityChange(v)}
+                    onClickOutside={() => this.handleModal1ClickOutside()}
+                >
+                    <p>Because we can!</p>
+                </Modal>
             </div>
         );
     }
