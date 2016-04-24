@@ -50,9 +50,9 @@ class Popup extends Component {
 
     render() {
         if (this.shouldRenderToOverlay) {
-            const style = { 
-                left: this.state.left, 
-                top: this.state.top, 
+            const style = {
+                left: this.state.left,
+                top: this.state.top,
                 zIndex: this.state.zIndex,
             };
 

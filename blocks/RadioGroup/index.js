@@ -22,10 +22,10 @@ class RadioGroup extends React.Component {
         const onRadioCheck = this.onRadioCheck;
         const { value } = this.state;
         const { theme, size, type, name, disabled } = this.props;
-        
+
         const children = React.Children.map(this.props.children, child => {
             const checked = child.props.value === value;
-            return React.cloneElement(child, { 
+            return React.cloneElement(child, {
                 theme,
                 size,
                 type,
@@ -34,7 +34,7 @@ class RadioGroup extends React.Component {
                 disabled,
                 ...child.props,
                 checked,
-                onCheck: onRadioCheck 
+                onCheck: onRadioCheck,
             });
         });
 
@@ -83,4 +83,3 @@ RadioGroup.propTypes = {
 };
 
 module.exports = RadioGroup;
-

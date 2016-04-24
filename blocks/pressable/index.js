@@ -36,7 +36,7 @@ const pressable = BaseComponent => class extends BaseComponent {
         };
     }
 
-    handleClick() {
+    dispatchClick() {
         if (typeof this.props.onClick === 'function') {
             this.props.onClick();
         }
@@ -61,7 +61,7 @@ const pressable = BaseComponent => class extends BaseComponent {
         super.onMouseUp(e);
         if (this.state.pressed) {
             this.setState({ pressed: false });
-            this.handleClick();
+            this.dispatchClick();
         }
     }
 
@@ -86,7 +86,7 @@ const pressable = BaseComponent => class extends BaseComponent {
     onKeyUp() {
         if (this.state.pressed && this.state.focused) {
             this.setState({ pressed: false });
-            this.handleClick();
+            this.dispatchClick();
         }
     }
 };
