@@ -104,7 +104,7 @@ class Radio extends Control {
         return className;
     }
 
-    onButtonClick(e) {
+    onButtonClick() {
         //  FIXME: Может передавать туда name, value?
         this.props.onClick();
 
@@ -132,4 +132,3 @@ Radio.defaultProps = {
 };
 
 export default Radio;
-

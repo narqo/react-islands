@@ -108,7 +108,7 @@ class Checkbox extends Control {
         return className;
     }
 
-    onButtonClick(e) {
+    onButtonClick() {
         this.props.onClick();
 
         const checked = !this.state.checked;

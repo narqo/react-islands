@@ -63,9 +63,8 @@ class Button extends Control {
     }
 
     /*
-    handleClick() {
+    dispatchClick() {
         //  FIXME: Нужно ли при нажатии на кнопку с type="link" переходить по ссылке?
-
         this.props.onClick();
     }
     */

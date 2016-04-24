@@ -61,7 +61,7 @@ class Overlay extends React.Component {
 
     componentWillUnmount() {
         // FIXME(narqo@): ugly hack to reset `state.visible` on unmounting
-        this.state.visible = false;
+        this.state.visible = false; // eslint-disable-line react/no-direct-mutation-state
         this.layerWillBecomeHidden();
     }
 
