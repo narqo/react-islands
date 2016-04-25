@@ -3,4 +3,3 @@ build
 node_modules
 *.swp
 blocks/**/examples.html
-!blocks/examples.html
