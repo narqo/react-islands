@@ -51,15 +51,7 @@ gulp.task('examples', () => {
 gulp.task('watch', () => {
     gulp.watch(
         [
-            'blocks/**/index.js',
-            'blocks/index.js'
-        ],
-        ['library']
-    );
-
-    gulp.watch(
-        [
-            'blocks/**/examples.js'
+            'blocks/**/*.js'
         ],
         ['examples']
     );
