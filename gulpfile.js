@@ -51,7 +51,8 @@ gulp.task('examples', () => {
 gulp.task('watch', () => {
     gulp.watch(
         [
-            'blocks/**/*.js'
+            'blocks/**/*.js',
+            'src/examples.html'
         ],
         ['examples']
     );
