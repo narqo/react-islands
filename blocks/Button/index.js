@@ -71,4 +71,4 @@ class Button extends Control {
 
 }
 
-export default pressable(Button);
+module.exports = pressable(Button);
