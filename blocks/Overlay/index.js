@@ -8,10 +8,6 @@ class Overlay extends React.Component {
     constructor(props, context) {
         super(props, context);
 
-        this.state = {
-            visible: props.visible,
-        };
-
         this.zIndex = null;
         this.isClickOutsidePrevented = null;
         this.isVisible = this.isVisible.bind(this);
@@ -28,22 +24,16 @@ class Overlay extends React.Component {
     }
 
     componentWillMount() {
-        if (this.state.visible) {
+        if (this.props.visible) {
             this.layerWillBecomeVisible();
-            this.dispatchVisibleChange(this.state.visible);
+            this.dispatchVisibleChange(this.props.visible);
         }
     }
 
-    componentWillReceiveProps({ visible }) {
-        if (this.props.visible !== visible) {
-            this.setState({ visible });
-        }
+    componentWillUpdate({ visible }) {
         this.handleParentLayerHide();
-    }
-
-    componentWillUpdate(nextProps, { visible }) {
         // NOTE(narqo@): do this only when visible is going to be changed
-        if (this.state.visible !== visible) {
+        if (this.props.visible !== visible) {
             if (visible) {
                 this.layerWillBecomeVisible();
             } else {
@@ -52,16 +42,7 @@ class Overlay extends React.Component {
         }
     }
 
-    componentDidUpdate(prevProps, { visible }) {
-        if (this.state.visible !== visible) {
-            // this must be handled after DOM changes, e.g. calc new dimensions
-            this.dispatchVisibleChange(this.state.visible);
-        }
-    }
-
     componentWillUnmount() {
-        // FIXME(narqo@): ugly hack to reset `state.visible` on unmounting
-        this.state.visible = false; // eslint-disable-line react/no-direct-mutation-state
         this.layerWillBecomeHidden();
     }
 
@@ -69,7 +50,8 @@ class Overlay extends React.Component {
         this.captureZIndex();
         // NOTE(narqo@): we have to use `nextTick` or nested layer will be closed immediately after being opened
         process.nextTick(() => {
-            if (this.state.visible) {
+            if (this.props.visible) {
+                // FIXME(narqo@): `document.addEventListener(click)` doesn't work on iOS
                 document.addEventListener('click', this.onDocumentClick);
             }
         });
@@ -90,7 +72,7 @@ class Overlay extends React.Component {
     }
 
     isVisible() {
-        return this.state.visible;
+        return this.props.visible;
     }
 
     dispatchVisibleChange(visible) {
@@ -107,13 +89,13 @@ class Overlay extends React.Component {
 
     handleParentLayerHide() {
         const { isParentLayerVisible } = this.context;
-        if (typeof isParentLayerVisible === 'function' && isParentLayerVisible() === false) {
-            this.setState({ visible: false });
+        if (this.props.visible && typeof isParentLayerVisible === 'function' && isParentLayerVisible() === false) {
+            this.dispatchVisibleChange(false);
         }
     }
 
     onLayerClick(e) {
-        if (this.state.visible) {
+        if (this.props.visible) {
             this.preventClickOutside();
 
             const { preventParentLayerClickOutside } = this.context;

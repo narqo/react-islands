@@ -268,7 +268,7 @@ class PopupExample extends React.Component {
                     id="p1"
                     target={() => findDOMNode(this.refs.popup1Anchor)}
                     visible={this.state.popup1Visible}
-                    onVisible={v => this.handlePopup1VisibilityChange(v)}
+                    onVisibleChange={v => this.handlePopup1VisibilityChange(v)}
                     onClickOutside={() => this.handlePopup1ClickOutside()}
                 >
                     <Link theme="islands" size="s">Yandex</Link>
@@ -280,7 +280,7 @@ class PopupExample extends React.Component {
                     directions={['right-top', 'bottom-left']}
                     target={() => findDOMNode(this.refs.popup2Anchor)}
                     visible={this.state.popup2Visible}
-                    onVisible={v => this.handlePopup2VisibilityChange(v)}
+                    onVisibleChange={v => this.handlePopup2VisibilityChange(v)}
                     onClickOutside={() => this.handlePopup2ClickOutside()}
                 >
                     <Link theme="islands" size="s" onClick={() => this.handlePopup3AnchorClick()}>Toggle popup 3</Link>
@@ -289,7 +289,7 @@ class PopupExample extends React.Component {
                         theme="islands"
                         target={() => ({ left: 150, top: 550 })}
                         visible={this.state.popup3Visible}
-                        onVisible={v => this.handlePopup3VisibilityChange(v)}
+                        onVisibleChange={v => this.handlePopup3VisibilityChange(v)}
                         onClickOutside={() => this.handlePopup3ClickOutside()}
                     >
                         <Link size="s">Yandex</Link>
