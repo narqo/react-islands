@@ -4,6 +4,7 @@ const gulp = require('gulp');
 const browserify = require('browserify');
 const source = require('vinyl-source-stream');
 const rename = require('gulp-rename');
+const connect = require('gulp-connect');
 
 const vendor = [
     'react',
@@ -14,7 +15,15 @@ const blocks = [
     'Button'
 ];
 
-gulp.task('default', ['vendor', 'examples', 'watch']);
+gulp.task('default', ['connect', 'vendor', 'examples', 'watch']);
+
+gulp.task('connect', () => {
+    connect.server({
+        root: 'build',
+        port: 3000,
+        //  livereload: true
+    });
+});
 
 gulp.task('vendor', () => {
     browserify({
@@ -45,7 +54,12 @@ gulp.task('examples', () => {
             .src('src/examples.html')
             .pipe(rename('index.html'))
             .pipe(gulp.dest(`build/${name}`));
+
     });
+
+    //  FIXME: Как-то очень медленно работает livereload.
+    //  gulp.src('./**/*.html')
+    //      .pipe(connect.reload());
 });
 
 gulp.task('watch', () => {
