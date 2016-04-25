@@ -36,13 +36,7 @@ class Popup extends Component {
         this.domNode = null;
     }
 
-    componentWillReceiveProps({ visible }) {
-        if (visible !== this.props.visible) {
-            this.setState({ visible });
-        }
-    }
-
-    componentWillUpdate(nextProps, { visible }) {
+    componentWillUpdate({ visible }) {
         if (!this.shouldRenderToOverlay && visible) {
             this.shouldRenderToOverlay = true;
         }
@@ -57,7 +51,7 @@ class Popup extends Component {
             };
 
             return (
-                <Overlay visible={this.state.visible}
+                <Overlay visible={this.props.visible}
                     onVisibleChange={this.onLayerVisibleChange}
                     onClickOutside={this.onLayerClickOutside}
                     onOrderChange={this.onLayerOrderChange}
@@ -84,7 +78,7 @@ class Popup extends Component {
         if (this.state.direction) {
             className += ' popup_direction_' + this.state.direction;
         }
-        if (this.state.visible) {
+        if (this.props.visible) {
             className += ' popup_visible';
         }
         if (this.shouldRenderToOverlay) {
@@ -113,8 +107,7 @@ class Popup extends Component {
             const { direction, left, top } = this.calcBestDrawingParams();
             this.setState({ direction, left, top });
         }
-        this.setState({ visible });
-        this.props.onVisible(visible);
+        this.props.onVisibleChange(visible);
     }
 
     onLayerOrderChange(zIndex) {
@@ -277,11 +270,12 @@ function checkSecondaryDirection(direction, secondaryDirection) {
 
 Popup.defaultProps = {
     directions: DEFAULT_DIRECTIONS,
+    visible: false,
     mainOffset: 0,
     secondaryOffset: 0,
     viewportOffset: 0,
     onClickOutside() {},
-    onVisible() {},
+    onVisibleChange() {},
 };
 
 export default Popup;
