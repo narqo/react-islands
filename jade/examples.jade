@@ -17,8 +17,9 @@ html(lang="en")
     body
         h2 #{ name }
         div(id="root")
-        script(src="../vendor.js")
-        script(src="./index.js")
+        script(src="/node_modules/react/dist/react.js")
+        script(src="/node_modules/react-dom/dist/react-dom.js")
+        script(src="index.js")
 
         div.back
             a.link(href="..") Back

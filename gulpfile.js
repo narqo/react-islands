@@ -6,11 +6,13 @@ const source = require('vinyl-source-stream');
 const rename = require('gulp-rename');
 const connect = require('gulp-connect');
 const jade = require('gulp-jade');
-
-const vendor = [
-    'react',
-    'react-dom'
-];
+//  Заменяем require('react') на React, а require('react-dom') на ReactDOM.
+//  Что позволяет не собирать отдельно vendor.js, а просто подключать готовые сборки React'а.
+const globalShim = require('browserify-global-shim')
+    .configure({
+        'react': 'React',
+        'react-dom': 'ReactDOM'
+    });
 
 const blocks = [
     'Button',
@@ -18,24 +20,14 @@ const blocks = [
     'CheckboxGroup'
 ];
 
-gulp.task('default', ['connect', 'vendor', 'examples', 'watch']);
+gulp.task('default', ['connect', 'examples', 'watch']);
 
 gulp.task('connect', () => {
     connect.server({
-        root: 'build',
+        root: '.',
         port: 3000,
         //  livereload: true
     });
-});
-
-gulp.task('vendor', () => {
-    browserify({
-        require: vendor,
-        debug: true
-    })
-        .bundle()
-        .pipe(source('vendor.js'))
-        .pipe(gulp.dest('build'));
 });
 
 gulp.task('examples', () => {
@@ -45,10 +37,9 @@ gulp.task('examples', () => {
             debug: true
         });
 
-        vendor.forEach(id => bundle.external(id));
-
         bundle
             .transform('babelify')
+            .transform(globalShim)
             .bundle()
             .pipe(source('index.js'))
             .pipe(gulp.dest(`build/${name}`));
