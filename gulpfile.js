@@ -35,6 +35,7 @@ gulp.task('examples', () => {
     blocks.forEach(name => {
         const bundle = browserify({
             entries: `blocks/${name}/examples.js`,
+            standalone: 'Example',
             debug: true
         });
 

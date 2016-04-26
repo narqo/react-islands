@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 import App from '../App';
 import TextInput from './index.js';
@@ -46,4 +45,4 @@ class Example extends React.Component {
     }
 }
 
-ReactDOM.render(React.createElement(Example), document.getElementById('root'));
+export default Example;

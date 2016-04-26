@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 import App from '../App';
 import Button from './index.js';
@@ -59,4 +58,4 @@ class Example extends React.Component {
     }
 }
 
-ReactDOM.render(React.createElement(Example), document.getElementById('root'));
+export default Example;

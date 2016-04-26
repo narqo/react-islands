@@ -20,6 +20,8 @@ html(lang="en")
         script(src="/node_modules/react/dist/react.js")
         script(src="/node_modules/react-dom/dist/react-dom.js")
         script(src="index.js")
+        script.
+            ReactDOM.render(React.createElement(Example.default), document.getElementById('root'));
 
         div.back
             a.link(href="..") Back
