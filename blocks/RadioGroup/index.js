@@ -12,10 +12,15 @@ class RadioGroup extends React.Component {
     }
 
     componentWillReceiveProps(props) {
-        this.setState({
-            ...this.state,
-            value: props.value
-        });
+        //  FIXME: А нужно ли вообще перевыставлять value в стейт?
+        //  Ведь то, что в RadioGroup задается — это начальное значение,
+        //  дальше оно меняется в собственном стейте.
+        if (props.value != null) {
+            this.setState({
+                ...this.state,
+                value: props.value
+            });
+        }
     }
 
     render() {
@@ -64,7 +69,7 @@ class RadioGroup extends React.Component {
     onRadioCheck(checked, newValue) {
         if (newValue !== this.state.value) {
             this.setState({ value: newValue });
-            this.props.onChange(newValue);
+            this.props.onChange(newValue, this.props.name);
         }
     }
 }
