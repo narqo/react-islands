@@ -114,7 +114,7 @@ class Radio extends Control {
             this.refs.control.checked = true;
             this.setState({ checked: true });
 
-            this.props.onCheck(true, this.props.value);
+            this.props.onCheck(true, this.props);
         }
     }
 
@@ -122,7 +122,7 @@ class Radio extends Control {
         const { checked } = e.target;
         this.setState({ checked });
         if (checked) {
-            this.props.onCheck(checked, this.props.value);
+            this.props.onCheck(checked, this.props);
         }
     }
 }

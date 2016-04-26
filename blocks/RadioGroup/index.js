@@ -67,10 +67,11 @@ class RadioGroup extends React.Component {
         return className;
     }
 
-    onRadioCheck(checked, newValue) {
-        if (newValue !== this.state.value) {
-            this.setState({ value: newValue });
-            this.props.onChange(newValue, this.props.name);
+    onRadioCheck(checked, radioProps) {
+        const value = radioProps.value;
+        if (value !== this.state.value) {
+            this.setState({ value });
+            this.props.onChange(value, this.props);
         }
     }
 }

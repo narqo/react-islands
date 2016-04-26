@@ -93,9 +93,9 @@ class Example extends React.Component {
         );
     }
 
-    onChange(value, name) {
+    onChange(value, groupProps) {
         this.setState({
-            [name]: value
+            [groupProps.name]: value
         });
     }
 

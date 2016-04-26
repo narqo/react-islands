@@ -17,7 +17,8 @@ const globalShim = require('browserify-global-shim')
 const blocks = [
     'Button',
     'RadioGroup',
-    'CheckboxGroup'
+    'CheckboxGroup',
+    'TextInput'
 ];
 
 gulp.task('default', ['connect', 'examples', 'watch']);

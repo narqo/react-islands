@@ -38,7 +38,7 @@ const pressable = BaseComponent => class extends BaseComponent {
 
     dispatchClick() {
         if (typeof this.props.onClick === 'function') {
-            this.props.onClick();
+            this.props.onClick(this.props);
         }
     }
 

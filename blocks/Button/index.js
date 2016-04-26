@@ -72,6 +72,10 @@ class Button extends Control {
 
 }
 
+Button.propTypes = {
+    size: React.PropTypes.oneOf(['s', 'm', 'l', 'xl'])
+};
+
 Button.contextTypes = {
     theme: React.PropTypes.string
 };

@@ -84,13 +84,13 @@ class TextInput extends Control {
     onInputChange(e) {
         const { value } = e.target;
         this.setState({ value });
-        this.props.onChange(value);
+        this.props.onChange(value, this.props);
     }
 
     onClearClick() {
         const newValue = '';
         this.setState({ value: newValue, focused: true });
-        this.props.onChange(newValue, { source: 'clear' });
+        this.props.onChange(newValue, this.props, { source: 'clear' });
     }
 }
 
