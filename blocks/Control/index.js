@@ -28,9 +28,9 @@ class Control extends React.Component {
         }
     }
 
-    componentWillUpdate(nextProps, nextState) {
+    componentWillUpdate(nextProps, { focused }) {
         // TODO(narqo@): sync DOM focus and `focused` on props reconciliation
-        if (nextState.focused && this.refs.control) {
+        if (focused && this.refs.control) {
             this.refs.control.focus();
         }
     }
@@ -67,10 +67,11 @@ class Control extends React.Component {
     onFocus() {
         if (!this.props.disabled) {
             let focused;
-            if (this.props.focused) {
-                focused = true;
+            // if focus wasn't set by mouse set focused state to "hard"
+            if (this.props.focused || !this._mousePressed) {
+                focused = 'hard';
             } else {
-                focused = (this._mousePressed) ? true : 'hard';
+                focused = true;
             }
             this.setState({ focused });
 
