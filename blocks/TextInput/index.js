@@ -54,8 +54,9 @@ class TextInput extends Control {
     className() {
         var className = 'input';
 
-        if (this.props.theme) {
-            className += ' input_theme_' + this.props.theme;
+        const theme = this.props.theme || this.context.theme;
+        if (theme) {
+            className += ' input_theme_' + theme;
         }
         if (this.props.size) {
             className += ' input_size_' + this.props.size;
@@ -97,6 +98,10 @@ TextInput.defaultProps = {
     value: '',
     type: 'text',
     onChange() {}
+};
+
+TextInput.contextTypes = {
+    theme: React.PropTypes.string
 };
 
 export default TextInput;

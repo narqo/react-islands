@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import App from '../App';
 import Button from './index.js';
 
 class Example extends React.Component {
@@ -16,36 +17,38 @@ class Example extends React.Component {
 
     render() {
         return (
-            <div className="examples">
+            <App theme="islands">
+                <div className="examples">
 
-                <div className="example">
-                    <Button theme="islands" size="s">Small</Button>
-                    <Button theme="islands" size="m">Medium</Button>
-                    <Button theme="islands" size="l">Large</Button>
-                    <Button theme="islands" size="xl">Extra Large</Button>
+                    <div className="example">
+                        <Button size="s">Small</Button>
+                        <Button size="m">Medium</Button>
+                        <Button size="l">Large</Button>
+                        <Button size="xl">Extra Large</Button>
+                    </div>
+
+                    <div className="example">
+                        <Button size="l" view="plain">Plain</Button>
+                        <Button size="l" view="action">Action</Button>
+                        <Button size="l" view="pseudo">Pseudo</Button>
+                    </div>
+
+                    <div className="example">
+                        <Button size="l" disabled>Disabled</Button>
+                        <Button size="l" focused>Focused</Button>
+                    </div>
+
+                    <div className="example">
+                        <Button size="l" type="link" url="https://yandex.ru">Link</Button>
+                    </div>
+
+                    <div className="example">
+                        <Button size="l" onClick={this.onClick}>Click me!</Button>
+                        <span> {this.state.clicks} clicks</span>
+                    </div>
+
                 </div>
-
-                <div className="example">
-                    <Button theme="islands" size="l" view="plain">Plain</Button>
-                    <Button theme="islands" size="l" view="action">Action</Button>
-                    <Button theme="islands" size="l" view="pseudo">Pseudo</Button>
-                </div>
-
-                <div className="example">
-                    <Button theme="islands" size="l" disabled>Disabled</Button>
-                    <Button theme="islands" size="l" focused>Focused</Button>
-                </div>
-
-                <div className="example">
-                    <Button theme="islands" size="l" type="link" url="https://yandex.ru">Link</Button>
-                </div>
-
-                <div className="example">
-                    <Button theme="islands" size="l" onClick={this.onClick}>Click me!</Button>
-                    <span> {this.state.clicks} clicks</span>
-                </div>
-
-            </div>
+            </App>
         );
     }
 

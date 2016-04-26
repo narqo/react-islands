@@ -53,8 +53,9 @@ class RadioGroup extends React.Component {
     className() {
         var className = 'radio-group control-group';
 
-        if (this.props.theme) {
-            className += ' radio-group_theme_' + this.props.theme;
+        const theme = this.props.theme || this.context.theme;
+        if (theme) {
+            className += ' radio-group_theme_' + theme;
         }
         if (this.props.size) {
             className += ' radio-group_size_' + this.props.size;
@@ -85,6 +86,10 @@ RadioGroup.propTypes = {
     name: React.PropTypes.string,
     value: React.PropTypes.any,
     onChange: React.PropTypes.func
+};
+
+RadioGroup.contextTypes = {
+    theme: React.PropTypes.string
 };
 
 module.exports = RadioGroup;

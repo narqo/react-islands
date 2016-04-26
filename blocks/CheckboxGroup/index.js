@@ -46,8 +46,9 @@ class CheckboxGroup extends React.Component {
     className() {
         var className = 'checkbox-group control-group';
 
-        if (this.props.theme) {
-            className += ' checkbox-group_theme_' + this.props.theme;
+        const theme = this.props.theme || this.context.theme;
+        if (theme) {
+            className += ' checkbox-group_theme_' + theme;
         }
         if (this.props.size) {
             className += ' checkbox-group_size_' + this.props.size;
@@ -79,6 +80,10 @@ class CheckboxGroup extends React.Component {
         }
     }
 }
+
+CheckboxGroup.contextTypes = {
+    theme: React.PropTypes.string
+};
 
 CheckboxGroup.defaultProps = {
     onChange() {}

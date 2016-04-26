@@ -25,8 +25,9 @@ class Button extends Control {
     className() {
         var className = 'button';
 
-        if (this.props.theme) {
-            className += ' button_theme_' + this.props.theme;
+        const theme = this.props.theme || this.context.theme;
+        if (theme) {
+            className += ' button_theme_' + theme;
         }
         if (this.props.size) {
             className += ' button_size_' + this.props.size;
@@ -70,5 +71,9 @@ class Button extends Control {
     */
 
 }
+
+Button.contextTypes = {
+    theme: React.PropTypes.string
+};
 
 export default pressable(Button);

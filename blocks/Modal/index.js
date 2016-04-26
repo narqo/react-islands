@@ -52,8 +52,9 @@ class Modal extends React.Component {
     className() {
         var className = 'popup modal';
 
-        if (this.props.theme) {
-            className += ' modal_theme_' + this.props.theme;
+        const theme = this.props.theme || this.context.theme;
+        if (theme) {
+            className += ' modal_theme_' + theme;
         }
         if (this.props.size) {
             className += ' modal_size_' + this.props.size;
@@ -90,6 +91,10 @@ class Modal extends React.Component {
 Modal.defaultProps = {
     zIndexGroupLevel: 20,
     onClickOutside() {},
+};
+
+Modal.contextTypes = {
+    theme: React.PropTypes.string
 };
 
 export default Modal;
