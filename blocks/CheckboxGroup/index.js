@@ -10,8 +10,10 @@ class CheckboxGroup extends React.Component {
         this.onChildCheck = this.onChildCheck.bind(this);
     }
 
-    componentWillReceiveProps({ value }) {
-        this.setState({ value: value != null ? [...value] : [] });
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.value !== this.props.value) {
+            this.setState({ value: nextProps.value != null ? [...nextProps.value] : []});
+        }
     }
 
     render() {
@@ -64,13 +66,16 @@ class CheckboxGroup extends React.Component {
     onChildCheck(checked, value) {
         let newValue;
         if (checked && this.state.value.indexOf(value) === -1) {
+            //  FIXME: Не нужно ли тут возвращать массив в том же порядке,
+            //  как эти значение в RadioGroup расположены?
+            //
             newValue = this.state.value.concat(value);
             this.setState({ value: newValue });
-            this.props.onChange(newValue);
+            this.props.onChange(newValue, this.props.name);
         } else if (!checked) {
             newValue = this.state.value.filter(item => (item !== value));
             this.setState({ value: newValue });
-            this.props.onChange(newValue);
+            this.props.onChange(newValue, this.props.name);
         }
     }
 }
