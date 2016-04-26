@@ -13,7 +13,8 @@ const vendor = [
 
 const blocks = [
     'Button',
-    'RadioGroup'
+    'RadioGroup',
+    'CheckboxGroup'
 ];
 
 gulp.task('default', ['connect', 'vendor', 'examples', 'watch']);
