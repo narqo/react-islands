@@ -16,6 +16,7 @@ const globalShim = require('browserify-global-shim')
 
 const blocks = [
     'Button',
+    'Link',
     'RadioGroup',
     'CheckboxGroup',
     'TextInput'
