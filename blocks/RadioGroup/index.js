@@ -15,7 +15,7 @@ class RadioGroup extends React.Component {
         //  FIXME: А нужно ли вообще перевыставлять value в стейт?
         //  Ведь то, что в RadioGroup задается — это начальное значение,
         //  дальше оно меняется в собственном стейте.
-        if (props.value != null) {
+        if (props.value !== this.props.value) {
             this.setState({
                 ...this.state,
                 value: props.value

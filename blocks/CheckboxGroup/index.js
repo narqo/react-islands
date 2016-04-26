@@ -10,9 +10,9 @@ class CheckboxGroup extends React.Component {
         this.onChildCheck = this.onChildCheck.bind(this);
     }
 
-    componentWillReceiveProps({ value }) {
-        if (value != null) {
-            this.setState({ value: [...value] });
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.value !== this.props.value) {
+            this.setState({ value: nextProps.value != null ? [...nextProps.value] : []});
         }
     }
 
