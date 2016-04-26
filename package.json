@@ -4,9 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "NODE_ENV=production webpack --progress",
     "lint": "eslint blocks",
-    "start": "webpack-dev-server --hot --inline --progress --colors --port 3000",
+    "start": "gulp",
     "test": "npm run lint"
   },
   "author": "Vladimir Varankin <nek.narqo@gmail.com> (http://github.com/narqo)",

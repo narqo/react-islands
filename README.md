@@ -11,7 +11,7 @@
 › npm start
 ~~~
 
-Open `http://localhost:3000/index.html`.
+Open `http://localhost:3000/build/`.
 
 ## License
 
