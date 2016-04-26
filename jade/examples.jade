@@ -1,0 +1,25 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="utf-8")
+        title #{ name } — Test react-islands
+        link(rel="stylesheet" href="https://yastatic.net/bem-components/2.4.0/desktop/bem-components.css")
+        style.
+            body {
+                padding-left: 20px;
+            }
+            .example {
+                padding-bottom: 1em;
+            }
+            .back {
+                margin-top: 2em;
+            }
+    body
+        h2 #{ name }
+        div(id="root")
+        script(src="../vendor.js")
+        script(src="./index.js")
+
+        div.back
+            a.link(href="..") Back
+

@@ -31,9 +31,9 @@
     "browserify": "^13.0.0",
     "eslint": "^2.8.0",
     "eslint-plugin-react": "^4.3.0",
-    "file-loader": "^0.8.5",
     "gulp": "^3.9.1",
     "gulp-connect": "^3.2.2",
+    "gulp-jade": "^1.1.0",
     "gulp-rename": "^1.2.2",
     "precss": "^1.4.0",
     "vinyl-source-stream": "^1.1.0"

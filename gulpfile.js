@@ -5,6 +5,7 @@ const browserify = require('browserify');
 const source = require('vinyl-source-stream');
 const rename = require('gulp-rename');
 const connect = require('gulp-connect');
+const jade = require('gulp-jade');
 
 const vendor = [
     'react',
@@ -53,11 +54,22 @@ gulp.task('examples', () => {
             .pipe(gulp.dest(`build/${name}`));
 
         gulp
-            .src('src/examples.html')
+            .src('jade/examples.jade')
+            .pipe(jade({
+                locals: { name }
+            }))
             .pipe(rename('index.html'))
             .pipe(gulp.dest(`build/${name}`));
 
     });
+
+    gulp
+        .src('jade/examples-toc.jade')
+        .pipe(jade({
+            locals: { blocks }
+        }))
+        .pipe(rename('index.html'))
+        .pipe(gulp.dest('build'));
 
     //  FIXME: Как-то очень медленно работает livereload.
     //  gulp.src('./**/*.html')
@@ -68,7 +80,7 @@ gulp.task('watch', () => {
     gulp.watch(
         [
             'blocks/**/*.js',
-            'src/examples.html'
+            'jade/*.jade'
         ],
         ['examples']
     );

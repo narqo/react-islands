@@ -1,0 +1,20 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="utf-8")
+        title Test react-islands
+        link(rel="stylesheet" href="https://yastatic.net/bem-components/2.4.0/desktop/bem-components.css")
+        style.
+            body {
+                padding-left: 20px;
+            }
+            .example {
+                padding-bottom: 1em;
+            }
+    body
+        h2 Blocks
+        div.menu.menu_theme_islands.menu_size_l
+            each block in blocks
+                div.menu-item.menu-item_theme_islands
+                    a.link(href=block) #{block}
+
