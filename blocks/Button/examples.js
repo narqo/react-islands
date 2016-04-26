@@ -1,7 +1,7 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-var Button = require('./index.js');
+import Button from './index.js';
 
 class Example extends React.Component {
     constructor(props) {
