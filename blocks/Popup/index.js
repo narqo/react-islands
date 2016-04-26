@@ -36,8 +36,8 @@ class Popup extends Component {
         this.domNode = null;
     }
 
-    componentWillUpdate({ visible }) {
-        if (!this.shouldRenderToOverlay && visible) {
+    componentWillUpdate(nextProps) {
+        if (!this.shouldRenderToOverlay && nextProps.visible) {
             this.shouldRenderToOverlay = true;
         }
     }

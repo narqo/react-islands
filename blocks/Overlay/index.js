@@ -30,11 +30,11 @@ class Overlay extends React.Component {
         }
     }
 
-    componentWillUpdate({ visible }) {
+    componentWillUpdate(nextProps) {
         this.handleParentLayerHide();
         // NOTE(narqo@): do this only when visible is going to be changed
-        if (this.props.visible !== visible) {
-            if (visible) {
+        if (this.props.visible !== nextProps.visible) {
+            if (nextProps.visible) {
                 this.layerWillBecomeVisible();
             } else {
                 this.layerWillBecomeHidden();

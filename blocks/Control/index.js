@@ -22,15 +22,15 @@ class Control extends React.Component {
         }
     }
 
-    componentWillReceiveProps({ disabled }) {
-        if (disabled === true) {
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.disabled === true) {
             this.setState({ focused: false });
         }
     }
 
-    componentWillUpdate(nextProps, { focused }) {
+    componentWillUpdate(nextProps, nextState) {
         // TODO(narqo@): sync DOM focus and `focused` on props reconciliation
-        if (focused && this.refs.control) {
+        if (nextState.focused && this.refs.control) {
             this.refs.control.focus();
         }
     }

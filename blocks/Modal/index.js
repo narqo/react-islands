@@ -12,8 +12,8 @@ class Modal extends React.Component {
         this.onLayerOrderChange = this.onLayerOrderChange.bind(this);
     }
 
-    componentWillUpdate({ visible }) {
-        if (!this.shouldRenderToOverlay && visible) {
+    componentWillUpdate(nextProps) {
+        if (!this.shouldRenderToOverlay && nextProps.visible) {
             this.shouldRenderToOverlay = true;
         }
     }
