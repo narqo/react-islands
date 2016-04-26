@@ -12,7 +12,8 @@ const vendor = [
 ];
 
 const blocks = [
-    'Button'
+    'Button',
+    'RadioGroup'
 ];
 
 gulp.task('default', ['connect', 'vendor', 'examples', 'watch']);
