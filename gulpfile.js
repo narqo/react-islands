@@ -20,7 +20,8 @@ const blocks = [
     'RadioGroup',
     'CheckboxGroup',
     'TextInput',
-    'Popup'
+    'Popup',
+    'Icon'
 ];
 
 gulp.task('default', ['connect', 'examples', 'watch']);
