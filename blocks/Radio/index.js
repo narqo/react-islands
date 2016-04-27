@@ -75,8 +75,9 @@ class Radio extends Control {
     className() {
         var className = 'radio';
 
-        if (this.props.theme) {
-            className += ' radio_theme_' + this.props.theme;
+        const theme = this.props.theme || this.context.theme;
+        if (theme) {
+            className += ' radio_theme_' + theme;
         }
         if (this.props.size) {
             className += ' radio_size_' + this.props.size;
@@ -113,7 +114,7 @@ class Radio extends Control {
             this.refs.control.checked = true;
             this.setState({ checked: true });
 
-            this.props.onCheck(true, this.props.value);
+            this.props.onCheck(true, this.props);
         }
     }
 
@@ -121,7 +122,7 @@ class Radio extends Control {
         const { checked } = e.target;
         this.setState({ checked });
         if (checked) {
-            this.props.onCheck(checked, this.props.value);
+            this.props.onCheck(checked, this.props);
         }
     }
 }
@@ -129,6 +130,10 @@ class Radio extends Control {
 Radio.defaultProps = {
     onClick() {},
     onCheck() {}
+};
+
+Radio.contextTypes = {
+    theme: React.PropTypes.string
 };
 
 export default Radio;

@@ -29,8 +29,9 @@ class Link extends Control {
     className() {
         var className = 'link link__control';
 
-        if (this.props.theme) {
-            className += ' link_theme_' + this.props.theme;
+        const theme = this.props.theme || this.context.theme;
+        if (theme) {
+            className += ' link_theme_' + theme;
         }
         if (this.props.type) {
             className += ' link_type_' + this.props.type;
@@ -50,5 +51,9 @@ class Link extends Control {
     }
 
 }
+
+Link.contextTypes = {
+    theme: React.PropTypes.string
+};
 
 export default pressable(Link);

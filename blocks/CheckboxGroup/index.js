@@ -46,8 +46,9 @@ class CheckboxGroup extends React.Component {
     className() {
         var className = 'checkbox-group control-group';
 
-        if (this.props.theme) {
-            className += ' checkbox-group_theme_' + this.props.theme;
+        const theme = this.props.theme || this.context.theme;
+        if (theme) {
+            className += ' checkbox-group_theme_' + theme;
         }
         if (this.props.size) {
             className += ' checkbox-group_size_' + this.props.size;
@@ -63,22 +64,26 @@ class CheckboxGroup extends React.Component {
         return className;
     }
 
-    onChildCheck(checked, value) {
-        let newValue;
+    onChildCheck(checked, childProps) {
+        const value = childProps.value;
         if (checked && this.state.value.indexOf(value) === -1) {
             //  FIXME: Не нужно ли тут возвращать массив в том же порядке,
             //  как эти значение в RadioGroup расположены?
             //
-            newValue = this.state.value.concat(value);
+            let newValue = this.state.value.concat(value);
             this.setState({ value: newValue });
-            this.props.onChange(newValue, this.props.name);
+            this.props.onChange(newValue, this.props);
         } else if (!checked) {
-            newValue = this.state.value.filter(item => (item !== value));
+            let newValue = this.state.value.filter(item => (item !== value));
             this.setState({ value: newValue });
-            this.props.onChange(newValue, this.props.name);
+            this.props.onChange(newValue, this.props);
         }
     }
 }
+
+CheckboxGroup.contextTypes = {
+    theme: React.PropTypes.string
+};
 
 CheckboxGroup.defaultProps = {
     onChange() {}
@@ -86,7 +91,7 @@ CheckboxGroup.defaultProps = {
 
 CheckboxGroup.propTypes = {
     theme: React.PropTypes.string,
-    size: React.PropTypes.string,
+    size: React.PropTypes.oneOf(['m', 'l']),
     type: React.PropTypes.string,
     name: React.PropTypes.string,
     value: React.PropTypes.any,

@@ -69,8 +69,9 @@ class Popup extends Component {
     className() {
         var className = 'popup';
 
-        if (this.props.theme) {
-            className += ' popup_theme_' + this.props.theme;
+        const theme = this.props.theme || this.context.theme;
+        if (theme) {
+            className += ' popup_theme_' + theme;
         }
         if (this.props.size) {
             className += ' popup_size_' + this.props.size;
@@ -276,6 +277,10 @@ Popup.defaultProps = {
     viewportOffset: 0,
     onClickOutside() {},
     onVisibleChange() {},
+};
+
+Popup.contextTypes = {
+    theme: React.PropTypes.string
 };
 
 export default Popup;

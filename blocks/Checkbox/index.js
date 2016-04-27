@@ -79,8 +79,9 @@ class Checkbox extends Control {
     className() {
         var className = 'checkbox';
 
-        if (this.props.theme) {
-            className += ' checkbox_theme_' + this.props.theme;
+        const theme = this.props.theme || this.context.theme;
+        if (theme) {
+            className += ' checkbox_theme_' + theme;
         }
         if (this.props.size) {
             className += ' checkbox_size_' + this.props.size;
@@ -108,8 +109,8 @@ class Checkbox extends Control {
         return className;
     }
 
-    onButtonClick() {
-        this.props.onClick();
+    onButtonClick(e) {
+        this.props.onClick(e, this.props);
 
         const checked = !this.state.checked;
 
@@ -117,15 +118,19 @@ class Checkbox extends Control {
         this.refs.control.checked = checked;
         this.setState({ checked });
 
-        this.props.onCheck(checked, this.props.value);
+        this.props.onCheck(checked, this.props);
     }
 
     onControlChange(e) {
         const checked = e.target.checked;
         this.setState({ checked });
-        this.props.onCheck(checked, this.props.value);
+        this.props.onCheck(checked, this.props);
     }
 }
+
+Checkbox.contextTypes = {
+    theme: React.PropTypes.string
+};
 
 Checkbox.defaultProps = {
     onClick() {},
