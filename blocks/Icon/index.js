@@ -1,30 +1,32 @@
 import React from 'react';
 
-function Icon(props) {
-    if (props.url) {
-        return (
-            <span className={className(props)} style={{
-                backgroundImage: `url(${props.url})`
-            }}>
-            </span>
-        );
-    } else {
-        return (
-            <span className={className(props)}>
-                {props.children}
-            </span>
-        );
-    }
-}
-
-function className(props) {
-    var className = 'icon';
-
-    if (props.className) {
-        className += ' ' + props.className;
+class Icon extends React.Component {
+    render() {
+        if (this.props.url) {
+            return (
+                <span className={this.className()} style={{
+                    backgroundImage: `url(${this.props.url})`
+                }}>
+                </span>
+            );
+        } else {
+            return (
+                <span className={this.className()}>
+                    {this.props.children}
+                </span>
+            );
+        }
     }
 
-    return className;
+    className() {
+        var className = 'icon';
+
+        if (this.props.className) {
+            className += ' ' + this.props.className;
+        }
+
+        return className;
+    }
 }
 
 Icon.propTypes = {
