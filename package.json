@@ -6,6 +6,7 @@
   "scripts": {
     "lint": "eslint blocks",
     "start": "gulp",
+    "unit": "mocha --compilers js:babel-register -r jsdom-global/register blocks/**/test.js",
     "test": "npm run unit",
     "pretest": "npm run lint"
   },

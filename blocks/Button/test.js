@@ -1,6 +1,8 @@
+/* eslint-env mocha */
+
 import React from 'react';
 import { expect } from 'chai';
-import { shallow, mount, render } from 'enzyme';
+import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
 import Button from './';
@@ -54,7 +56,7 @@ describe('Button', () => {
 
         button.setProps({ disabled: false });
 
-        expect(button.prop('disabled')).not.to.be.ok;
+        expect(button.prop('disabled')).to.be.falsy;
         expect(button.hasClass('button_disabled')).to.be.false;
     });
 
@@ -118,7 +120,7 @@ describe('Button', () => {
             expect(button.hasClass('button_hovered')).to.be.true;
 
             button.simulate('mouseleave');
-            expect(button.state('hovered')).not.to.be.ok;
+            expect(button.state('hovered')).to.be.falsy;
             expect(button.hasClass('button_hovered')).to.be.false;
         });
 
@@ -126,7 +128,7 @@ describe('Button', () => {
             const button = shallow(<Button disabled>button</Button>);
 
             button.simulate('mouseenter');
-            expect(button.state('hovered')).not.to.be.ok;
+            expect(button.state('hovered')).to.be.falsy;
         });
     });
 
@@ -139,41 +141,41 @@ describe('Button', () => {
             expect(button.hasClass('button_pressed')).to.be.true;
 
             button.simulate('mouseup');
-            expect(button.state('pressed')).not.to.be.ok;
+            expect(button.state('pressed')).to.be.falsy;
             expect(button.hasClass('button_pressed')).to.be.false;
         });
 
         it('is pressed on keydown with space or enter if focused', () => {
             const button = shallow(<Button focused>button</Button>);
 
-            expect(button.state('pressed')).not.to.be.ok;
+            expect(button.state('pressed')).to.be.falsy;
 
             button.simulate('keydown', { key: 'q' });
-            expect(button.state('pressed')).not.to.be.ok;
+            expect(button.state('pressed')).to.be.falsy;
             button.simulate('keyup');
 
             button.simulate('keydown', { key: ' ' });
             expect(button.state('pressed')).to.be.true;
             button.simulate('keyup');
-            expect(button.state('pressed')).not.to.be.ok;
+            expect(button.state('pressed')).to.be.falsy;
 
             button.simulate('keydown', { key: 'Enter' });
             expect(button.state('pressed')).to.be.true;
             button.simulate('keyup');
-            expect(button.state('pressed')).not.to.be.ok;
+            expect(button.state('pressed')).to.be.falsy;
         });
 
         it('can not be pressed if disabled', () => {
             const button = shallow(<Button disabled>button</Button>);
 
             button.simulate('mousedown');
-            expect(button.state('pressed')).not.to.be.ok;
+            expect(button.state('pressed')).to.be.falsy;
 
             button.simulate('keydown', { key: ' ' });
-            expect(button.state('pressed')).not.to.be.ok;
+            expect(button.state('pressed')).to.be.falsy;
 
             button.simulate('keydown', { key: 'Enter' });
-            expect(button.state('pressed')).not.to.be.ok;
+            expect(button.state('pressed')).to.be.falsy;
         });
     });
 
@@ -219,6 +221,4 @@ describe('Button', () => {
             expect(spy.called).to.be.false;
         });
     });
-
-    const simulateClick = wrapper => wrapper.simulate('mousedown').simulate('mouseup');
 });
