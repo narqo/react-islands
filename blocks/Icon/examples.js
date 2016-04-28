@@ -49,7 +49,6 @@ class Example extends React.Component {
                     <div className="example">
                         <Icon className="social_twitter"/>
                     </div>
-
                 </div>
             </App>
         );

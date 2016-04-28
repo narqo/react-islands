@@ -5,6 +5,23 @@ import Control from '../Control';
 import pressable from '../pressable';
 
 class Button extends Control {
+    constructor(...args) {
+        super(...args);
+
+        this._wrappedChildren = null;
+    }
+
+    /** @override */
+    componentWillUpdate(nextProps, nextState) {
+        if (super.componentWillUpdate) {
+            super.componentWillUpdate(nextProps, nextState);
+        }
+
+        if (this.props.children !== nextProps.children) {
+            this._wrappedChildren = null;
+        }
+    }
+
     render() {
         if (!this._wrappedChildren) {
             this._wrappedChildren = Component.wrap(this.props.children, child => (
@@ -69,17 +86,6 @@ class Button extends Control {
 
         return className;
     }
-
-    componentWillUpdate(nextProps, nextState) {
-        if (super.componentWillUpdate) {
-            super.componentWillUpdate(nextProps, nextState);
-        }
-
-        if (this.props.children !== nextProps.children) {
-            this._wrappedChildren = null;
-        }
-    }
-
 }
 
 Button.propTypes = {
