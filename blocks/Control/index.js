@@ -17,8 +17,8 @@ class Control extends React.Component {
     }
 
     componentDidMount() {
-        if (this.state.focused && this.refs.control) {
-            this.refs.control.focus();
+        if (this.state.focused) {
+            this.handleFocused();
         }
     }
 
@@ -30,7 +30,13 @@ class Control extends React.Component {
 
     componentWillUpdate(nextProps, nextState) {
         // TODO(narqo@): sync DOM focus and `focused` on props reconciliation
-        if (nextState.focused && this.refs.control) {
+        if (nextState.focused) {
+            this.handleFocused();
+        }
+    }
+
+    handleFocused() {
+        if (this.refs.control) {
             this.refs.control.focus();
         }
     }
