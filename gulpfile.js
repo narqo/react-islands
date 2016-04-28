@@ -4,7 +4,8 @@ const gulp = require('gulp');
 const browserify = require('browserify');
 const source = require('vinyl-source-stream');
 const rename = require('gulp-rename');
-const connect = require('gulp-connect');
+const connect = require('connect');
+const serveStatic = require('serve-static');
 const jade = require('gulp-jade');
 //  Заменяем require('react') на React, а require('react-dom') на ReactDOM.
 //  Что позволяет не собирать отдельно vendor.js, а просто подключать готовые сборки React'а.
@@ -23,28 +24,33 @@ const blocks = [
     'Popup'
 ];
 
+function onError(err) {
+    console.log(err.toString());
+    this.emit('end');
+}
+
 gulp.task('default', ['connect', 'examples', 'watch']);
 
 gulp.task('connect', () => {
-    connect.server({
-        root: '.',
-        port: 3000,
-        //  livereload: true
-    });
+    var app = connect();
+    app.use(serveStatic('.', {
+        etag: false,
+        lastModified: false
+    }));
+    app.listen(3000);
 });
 
 gulp.task('examples', () => {
     blocks.forEach(name => {
-        const bundle = browserify({
+        browserify({
             entries: `blocks/${name}/examples.js`,
             standalone: 'Example',
             debug: true
-        });
-
-        bundle
+        })
             .transform('babelify')
             .transform(globalShim)
             .bundle()
+            .on('error', onError)
             .pipe(source('index.js'))
             .pipe(gulp.dest(`build/${name}`));
 
@@ -53,6 +59,7 @@ gulp.task('examples', () => {
             .pipe(jade({
                 locals: { name }
             }))
+            .on('error', onError)
             .pipe(rename('index.html'))
             .pipe(gulp.dest(`build/${name}`));
 
@@ -63,12 +70,9 @@ gulp.task('examples', () => {
         .pipe(jade({
             locals: { blocks }
         }))
+        .on('error', onError)
         .pipe(rename('index.html'))
         .pipe(gulp.dest('build'));
-
-    //  FIXME: Как-то очень медленно работает livereload.
-    //  gulp.src('./**/*.html')
-    //      .pipe(connect.reload());
 });
 
 gulp.task('watch', () => {

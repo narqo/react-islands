@@ -33,10 +33,10 @@
     "browserify-global-shim": "^1.0.3",
     "chai": "^3.5.0",
     "enzyme": "^2.2.0",
+    "connect": "^3.4.1",
     "eslint": "^2.8.0",
     "eslint-plugin-react": "^4.3.0",
     "gulp": "^3.9.1",
-    "gulp-connect": "^3.2.2",
     "gulp-jade": "^1.1.0",
     "gulp-rename": "^1.2.2",
     "jsdom": "^8.4.0",
@@ -44,6 +44,7 @@
     "mocha": "^2.4.5",
     "react-addons-test-utils": "^15.0.1",
     "sinon": "^1.17.3",
+    "serve-static": "^1.10.2",
     "vinyl-source-stream": "^1.1.0"
   }
 }
