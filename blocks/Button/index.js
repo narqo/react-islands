@@ -1,5 +1,6 @@
 import React from 'react';
 
+import Component from '../Component';
 import Control from '../Control';
 import pressable from '../pressable';
 
@@ -7,7 +8,7 @@ class Button extends Control {
     render() {
         var children = this._wrappedChildren;
         if (!children) {
-            children = this._wrappedChildren = this._wrapChildrenWith(child => (
+            children = this._wrappedChildren = Component.wrap(this.props.children, child => (
                 <span className="button__text">{child}</span>
             ));
         }
