@@ -1,6 +1,8 @@
 import React from 'react';
 
-class CheckboxGroup extends React.Component {
+import Component from '../Component';
+
+class CheckboxGroup extends Component {
     constructor(props) {
         super(props);
 

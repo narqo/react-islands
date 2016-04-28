@@ -1,22 +1,46 @@
 import React from 'react';
 
+import Component from '../Component';
 import Control from '../Control';
 import pressable from '../pressable';
 
 class Button extends Control {
+    constructor(...args) {
+        super(...args);
+
+        this._wrappedChildren = null;
+    }
+
+    /** @override */
+    componentWillUpdate(nextProps, nextState) {
+        if (super.componentWillUpdate) {
+            super.componentWillUpdate(nextProps, nextState);
+        }
+
+        if (this.props.children !== nextProps.children) {
+            this._wrappedChildren = null;
+        }
+    }
+
     render() {
+        if (!this._wrappedChildren) {
+            this._wrappedChildren = Component.wrap(this.props.children, child => (
+                <span className="button__text">{child}</span>
+            ));
+        }
+
         if (this.props.type === 'link') {
             const url = this.props.disabled ? null : this.props.url;
 
             return (
                 <a className={this.className()} {...this.getControlHandlers()} ref="control" role="link" href={url}>
-                    <span className="button__text">{this.props.children}</span>
+                    {this._wrappedChildren}
                 </a>
             );
         } else {
             return (
                 <button className={this.className()} {...this.getControlHandlers()} ref="control" name={this.props.name} disabled={this.props.disabled}>
-                    <span className="button__text">{this.props.children}</span>
+                    {this._wrappedChildren}
                 </button>
             );
         }
@@ -62,14 +86,6 @@ class Button extends Control {
 
         return className;
     }
-
-    /*
-    dispatchClick() {
-        //  FIXME: Нужно ли при нажатии на кнопку с type="link" переходить по ссылке?
-        this.props.onClick();
-    }
-    */
-
 }
 
 Button.propTypes = {

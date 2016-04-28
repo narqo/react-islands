@@ -1,9 +1,15 @@
 import React from 'react';
 
-class App extends React.Component {
+import Component from '../Component';
+
+class App extends Component {
 
     render() {
-        return this.props.children;
+        return (
+            <div>
+                {this.props.children}
+            </div>
+        );
     }
 
     getChildContext() {

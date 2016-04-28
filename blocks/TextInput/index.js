@@ -1,4 +1,5 @@
 import React from 'react';
+
 import Control from '../Control';
 
 class TextInput extends Control {

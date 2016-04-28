@@ -21,7 +21,8 @@ const blocks = [
     'RadioGroup',
     'CheckboxGroup',
     'TextInput',
-    'Popup'
+    'Popup',
+    'Icon'
 ];
 
 function onError(err) {

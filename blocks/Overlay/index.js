@@ -1,10 +1,12 @@
 import React from 'react';
+
+import Component from '../Component';
 import Portal from './Portal';
 
 const ZINDEX_FACTOR = 1000;
 const visibleLayersZIndexes = {};
 
-class Overlay extends React.Component {
+class Overlay extends Component {
     constructor(props, context) {
         super(props, context);
 

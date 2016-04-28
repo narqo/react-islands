@@ -1,6 +1,6 @@
-import React from 'react';
+import Component from '../Component';
 
-class Control extends React.Component {
+class Control extends Component {
     constructor(props) {
         super(props);
 
