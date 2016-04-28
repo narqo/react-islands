@@ -6,9 +6,8 @@ import pressable from '../pressable';
 
 class Button extends Control {
     render() {
-        var children = this._wrappedChildren;
-        if (!children) {
-            children = this._wrappedChildren = Component.wrap(this.props.children, child => (
+        if (!this._wrappedChildren) {
+            this._wrappedChildren = Component.wrap(this.props.children, child => (
                 <span className="button__text">{child}</span>
             ));
         }
@@ -18,13 +17,13 @@ class Button extends Control {
 
             return (
                 <a className={this.className()} {...this.getControlHandlers()} ref="control" role="link" href={url}>
-                    {children}
+                    {this._wrappedChildren}
                 </a>
             );
         } else {
             return (
                 <button className={this.className()} {...this.getControlHandlers()} ref="control" name={this.props.name} disabled={this.props.disabled}>
-                    {children}
+                    {this._wrappedChildren}
                 </button>
             );
         }
