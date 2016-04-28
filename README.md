@@ -8,10 +8,27 @@
 
 ~~~
 › npm install
+~~~
+
+### Examples
+
+~~~
 › npm start
 ~~~
 
 Open `http://localhost:3000/build/`.
+
+### Tests
+
+~~~
+› npm test
+~~~
+
+or
+
+~~~
+› mocha --watch --compilers js:babel-register -r jsdom-global/register blocks/**/test.js
+~~~
 
 ## License
 
