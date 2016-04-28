@@ -1,5 +1,7 @@
-import React, { Component } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
+
+import Component from '../Component';
 import Overlay from '../Overlay';
 
 const VIEWPORT_ACCURACY_FACTOR = 0.99;

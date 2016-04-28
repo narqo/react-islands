@@ -1,6 +1,8 @@
 import React from 'react';
 
-class Icon extends React.Component {
+import Component from '../Component';
+
+class Icon extends Component {
     render() {
         if (this.props.url) {
             return (

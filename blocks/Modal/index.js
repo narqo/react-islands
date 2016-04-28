@@ -1,7 +1,9 @@
 import React from 'react';
+
+import Component from '../Component';
 import Overlay from '../Overlay';
 
-class Modal extends React.Component {
+class Modal extends Component {
     constructor(props) {
         super(props);
         this.state = {

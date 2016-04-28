@@ -1,6 +1,8 @@
 import React from 'react';
 
-class RadioGroup extends React.Component {
+import Component from '../Component';
+
+class RadioGroup extends Component {
     constructor(props) {
         super(props);
 

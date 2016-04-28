@@ -5,18 +5,25 @@ import pressable from '../pressable';
 
 class Button extends Control {
     render() {
+        var children = this._wrappedChildren;
+        if (!children) {
+            children = this._wrappedChildren = this._wrapChildrenWith(child => (
+                <span className="button__text">{child}</span>
+            ));
+        }
+
         if (this.props.type === 'link') {
             const url = this.props.disabled ? null : this.props.url;
 
             return (
                 <a className={this.className()} {...this.getControlHandlers()} ref="control" role="link" href={url}>
-                    <span className="button__text">{this.props.children}</span>
+                    {children}
                 </a>
             );
         } else {
             return (
                 <button className={this.className()} {...this.getControlHandlers()} ref="control" name={this.props.name} disabled={this.props.disabled}>
-                    <span className="button__text">{this.props.children}</span>
+                    {children}
                 </button>
             );
         }
@@ -63,12 +70,15 @@ class Button extends Control {
         return className;
     }
 
-    /*
-    dispatchClick() {
-        //  FIXME: Нужно ли при нажатии на кнопку с type="link" переходить по ссылке?
-        this.props.onClick();
+    componentWillUpdate(nextProps, nextState) {
+        if (super.componentWillUpdate) {
+            super.componentWillUpdate(nextProps, nextState);
+        }
+
+        if (this.props.children !== nextProps.children) {
+            this._wrappedChildren = null;
+        }
     }
-    */
 
 }
 
