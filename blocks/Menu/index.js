@@ -69,7 +69,6 @@ class Menu extends Component {
 
         return (
             <div className={this.className()} tabIndex={tabIndex}
-                onClick={this.onClick}
                 onKeyDown={this.onKeyDown}
             >
                 {children}
