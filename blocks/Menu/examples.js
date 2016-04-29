@@ -5,6 +5,7 @@ import Menu from './index.js';
 import MenuItem from './MenuItem';
 
 class Example extends React.Component {
+
     constructor(props) {
         super(props);
 
