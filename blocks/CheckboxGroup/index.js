@@ -30,7 +30,6 @@ class CheckboxGroup extends Component {
                 size,
                 type,
                 name,
-                value,
                 disabled,
                 ...child.props,
                 checked,
