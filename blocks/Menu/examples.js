@@ -75,6 +75,13 @@ class Example extends React.Component {
                         <div>Checked: {this.state['radio-check'].join(', ')}</div>
                     </div>
 
+                    <div className="example">
+                        <h3>small menu</h3>
+                        <Menu size="l" mode="radio-check">
+                            <MenuItem value="10">10</MenuItem>
+                        </Menu>
+                    </div>
+
                 </div>
             </App>
         );

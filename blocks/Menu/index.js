@@ -18,12 +18,16 @@ class Menu extends Component {
     }
 
     _validValue(value) {
-        var newValue = (value != null) ? [...value] : [];
+        var children = React.Children.toArray(this.props.children);
+        if (!children.length) {
+            return [];
+        }
+
+        const newValue = (value != null) ? [...value] : [];
 
         if (this.props.mode === 'radio') {
             if (newValue.length === 0) {
-                //  FIXME: А если нет children'ов?
-                return [this.props.children[0].props.value];
+                return [children[0].props.value];
             }
             if (newValue.length > 1) {
                 return [newValue[0]];
@@ -77,7 +81,7 @@ class Menu extends Component {
     }
 
     className() {
-        var className = 'menu menu__control';
+        var className = 'menu';
 
         const theme = this.props.theme || this.context.theme;
         if (theme) {
@@ -122,7 +126,8 @@ class Menu extends Component {
         if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
             e.preventDefault();
 
-            const len = this.props.children.length;
+            const children = React.Children.toArray(this.props.children);
+            const len = children.length;
             if (!len) {
                 return;
             }
@@ -139,7 +144,7 @@ class Menu extends Component {
                     if (nextIndex === this.state.hoveredIndex) {
                         return;
                     }
-                } while (this.props.children[nextIndex].props.disabled);
+                } while (children[nextIndex].props.disabled);
             }
 
             this.setState({hoveredIndex: nextIndex});
@@ -159,8 +164,7 @@ class Menu extends Component {
             return;
         }
 
-        //  FIXME: А если тут один child?
-        const item = this.props.children[index];
+        const item = React.Children.toArray(this.props.children)[index];
         const itemValue = item.props.value;
         const menuValue = this.state.value;
 
