@@ -30,6 +30,16 @@ Component.wrap = function(children, wrapper) {
     return wrapped;
 };
 
+Component.textValue = function(component) {
+    let text = '';
+    React.Children.forEach(component.props.children, child => {
+        if (typeof child === 'string') {
+            text += child;
+        }
+    });
+    return text;
+};
+
 Component.isComponent = function(obj) {
     return (React.isValidElement(obj) && obj.type.prototype instanceof Component);
 };
