@@ -2,7 +2,8 @@ import React from 'react';
 
 import App from '../App';
 import Menu from './index.js';
-import MenuItem from './MenuItem';
+import Item from '../Item';
+import Group from '../Group';
 
 class Example extends React.Component {
 
@@ -31,22 +32,22 @@ class Example extends React.Component {
                     <div className="example">
                         <h3>no mode</h3>
                         <Menu size="l">
-                            <MenuItem value="10">10</MenuItem>
-                            <MenuItem value="20" disabled>20</MenuItem>
-                            <MenuItem value="30">30</MenuItem>
-                            <MenuItem value="40">40</MenuItem>
-                            <MenuItem value="50">50</MenuItem>
+                            <Item value="10">10</Item>
+                            <Item value="20" disabled>20</Item>
+                            <Item value="30">30</Item>
+                            <Item value="40">40</Item>
+                            <Item value="50">50</Item>
                         </Menu>
                     </div>
 
                     <div className="example">
                         <h3>mode="radio"</h3>
                         <Menu size="l" mode="radio" value={this.state.radio} onChange={this.onChange}>
-                            <MenuItem value="10">10</MenuItem>
-                            <MenuItem value="20" disabled>20</MenuItem>
-                            <MenuItem value="30">30</MenuItem>
-                            <MenuItem value="40">40</MenuItem>
-                            <MenuItem value="50">50</MenuItem>
+                            <Item value="10">10</Item>
+                            <Item value="20" disabled>20</Item>
+                            <Item value="30">30</Item>
+                            <Item value="40">40</Item>
+                            <Item value="50">50</Item>
                         </Menu>
                         <div>Checked: {this.state.radio.join(', ')}</div>
                     </div>
@@ -54,11 +55,11 @@ class Example extends React.Component {
                     <div className="example">
                         <h3>mode="check"</h3>
                         <Menu size="l" mode="check" value={this.state.check} onChange={this.onChange}>
-                            <MenuItem value="10">10</MenuItem>
-                            <MenuItem value="20" disabled>20</MenuItem>
-                            <MenuItem value="30">30</MenuItem>
-                            <MenuItem value="40">40</MenuItem>
-                            <MenuItem value="50">50</MenuItem>
+                            <Item value="10">10</Item>
+                            <Item value="20" disabled>20</Item>
+                            <Item value="30">30</Item>
+                            <Item value="40">40</Item>
+                            <Item value="50">50</Item>
                         </Menu>
                         <div>Checked: {this.state.check.join(', ')}</div>
                     </div>
@@ -66,11 +67,11 @@ class Example extends React.Component {
                     <div className="example">
                         <h3>mode="radio-check"</h3>
                         <Menu size="l" mode="radio-check" value={this.state['radio-check']} onChange={this.onChange}>
-                            <MenuItem value="10">10</MenuItem>
-                            <MenuItem value="20" disabled>20</MenuItem>
-                            <MenuItem value="30">30</MenuItem>
-                            <MenuItem value="40">40</MenuItem>
-                            <MenuItem value="50">50</MenuItem>
+                            <Item value="10">10</Item>
+                            <Item value="20" disabled>20</Item>
+                            <Item value="30">30</Item>
+                            <Item value="40">40</Item>
+                            <Item value="50">50</Item>
                         </Menu>
                         <div>Checked: {this.state['radio-check'].join(', ')}</div>
                     </div>
@@ -78,8 +79,26 @@ class Example extends React.Component {
                     <div className="example">
                         <h3>small menu</h3>
                         <Menu size="l" mode="radio-check">
-                            <MenuItem value="10">10</MenuItem>
+                            <Item value="10">10</Item>
                         </Menu>
+                    </div>
+
+                    <div className="example">
+                        <h3>mode="radio-check"</h3>
+                        <Menu size="l" mode="radio-check" value={this.state['radio-check']} onChange={this.onChange}>
+                            <Group>
+                                <Item value="10">10</Item>
+                                <Item value="20" disabled>20</Item>
+                                <Item value="30">30</Item>
+                            </Group>
+                            <Group>
+                                <Item value="40">40</Item>
+                                <Item value="50">50</Item>
+                            </Group>
+                            <Item value="60">60</Item>
+                            <Item value="70">70</Item>
+                        </Menu>
+                        <div>Checked: {this.state['radio-check'].join(', ')}</div>
                     </div>
 
                 </div>

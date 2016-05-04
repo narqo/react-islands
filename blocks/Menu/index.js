@@ -1,6 +1,9 @@
 import React from 'react';
 
 import Component from '../Component';
+import Item from '../Item';
+import Group from '../Group';
+import MenuItem from './MenuItem';
 
 class Menu extends Component {
     constructor(props) {
@@ -23,6 +26,20 @@ class Menu extends Component {
         this.onKeyDown = this.onKeyDown.bind(this);
         this.onItemClick = this.onItemClick.bind(this);
         this.onItemHover = this.onItemHover.bind(this);
+    }
+
+    _extractItems() {
+        let items = [];
+        React.Children.forEach(this.props.children, child => {
+            if (Component.is(child, Item)) {
+                items.push(child);
+
+            } else if (Component.is(child, Group)) {
+                //  Предполагаем, что ничего, кроме Item внутри Group уже нет.
+                items = items.concat(child.props.children);
+            }
+        });
+        return items;
     }
 
     _validValue(value) {
@@ -71,22 +88,53 @@ class Menu extends Component {
         const { theme, size, mode, disabled } = this.props;
         const { value, hoveredIndex } = this.state;
 
+        const onItemClick = this.onItemClick;
+        const onItemHover = this.onItemHover;
         const checkable = Boolean(mode);
-        const children = React.Children.map(this.props.children, (child, index) => {
-            const checked = checkable && (value.indexOf(child.props.value) !== -1);
-            const hovered = (index === hoveredIndex);
-            return React.cloneElement(child, {
-                theme,
-                size,
-                checkable,
-                checked,
-                hovered,
-                disabled: disabled || child.props.disabled,
-                index,
-                onClick: this.onItemClick,
-                onHover: this.onItemHover
-            });
+
+        let index = 0;
+        const children = React.Children.map(this.props.children, child => {
+            if (Component.is(child, Group)) {
+                return mapGroup(child);
+
+            } else if (Component.is(child, Item)) {
+                return mapItem(child);
+
+            } else {
+                //  FIXME: Или тут бросать ошибку?
+                return child;
+            }
         });
+
+        function mapItem(item) {
+            const r = React.createElement(
+                MenuItem,
+                {
+                    theme,
+                    size,
+                    checked: checkable && (value.indexOf(item.props.value) !== -1),
+                    hovered: (index === hoveredIndex),
+                    disabled: disabled || item.props.disabled,
+                    index,
+                    onClick: onItemClick,
+                    onHover: onItemHover
+                },
+                item.props.children
+            );
+            index++;
+
+            return r;
+        }
+
+        function mapGroup(group) {
+            var items = React.Children.map(group.props.children, mapItem);
+
+            return (
+                <div className="menu__group">
+                    {items}
+                </div>
+            );
+        }
 
         const tabIndex = disabled ? -1 : 0;
 
@@ -145,8 +193,8 @@ class Menu extends Component {
         if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
             e.preventDefault();
 
-            const children = React.Children.toArray(this.props.children);
-            const len = children.length;
+            const items = this._extractItems();
+            const len = items.length;
             if (!len) {
                 return;
             }
@@ -163,7 +211,7 @@ class Menu extends Component {
                     if (nextIndex === this.state.hoveredIndex) {
                         return;
                     }
-                } while (children[nextIndex].props.disabled);
+                } while (items[nextIndex].props.disabled);
             }
 
             this.setState({hoveredIndex: nextIndex});
@@ -183,7 +231,8 @@ class Menu extends Component {
             return;
         }
 
-        const item = React.Children.toArray(this.props.children)[index];
+        const items = this._extractItems();
+        const item = items[index];
         const itemValue = item.props.value;
         const menuValue = this.state.value;
 
