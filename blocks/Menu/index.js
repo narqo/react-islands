@@ -10,15 +10,6 @@ class Menu extends Component {
         super(props);
 
         const newValue = this._validValue(props.value);
-        //  Бывают ситуации, когда значение в this.props.value как-то обрабатывается
-        //  и в стейт кладется уже другое значение. Например, если в mode=radio передать
-        //  несколько значений, то мы берем только первое (как вариант, можно было бы
-        //  кидать ошибку). Поэтому сразу вверх говорим, что value уже другое.
-        if (props.value !== newValue) {
-            //  FIXME: Эта строчка приводит к warning'у.
-            //  Потому что она тригерит setState где-то выше.
-            //  this.props.onChange(newValue, this.props);
-        }
         this.state = {
             ...this.state,
             hoveredIndex: null,
@@ -28,6 +19,14 @@ class Menu extends Component {
         this.onKeyDown = this.onKeyDown.bind(this);
         this.onItemClick = this.onItemClick.bind(this);
         this.onItemHover = this.onItemHover.bind(this);
+    }
+
+    componentWillMount() {
+        //  Если мы как-то поменяли value (внутри _validValue),
+        //  то нужно сообщить про это наверх.
+        if (this.props.value !== this.state.value) {
+            this.props.onChange(this.state.value, this.props);
+        }
     }
 
     _extractItems() {
