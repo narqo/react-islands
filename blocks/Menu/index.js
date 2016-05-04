@@ -6,10 +6,18 @@ class Menu extends Component {
     constructor(props) {
         super(props);
 
+        const newValue = this._validValue(props.value);
+        //  Бывают ситуации, когда значение в this.props.value как-то обрабатывается
+        //  и в стейт кладется уже другое значение. Например, если в mode=radio передать
+        //  несколько значений, то мы берем только первое (как вариант, можно было бы
+        //  кидать ошибку). Поэтому сразу вверх говорим, что value уже другое.
+        if (props.value !== newValue) {
+            this.props.onChange(newValue, this.props);
+        }
         this.state = {
             ...this.state,
             hoveredIndex: null,
-            value: this._validValue(props.value)
+            value: newValue
         };
 
         this.onKeyDown = this.onKeyDown.bind(this);
@@ -23,7 +31,18 @@ class Menu extends Component {
             return [];
         }
 
-        const newValue = (value != null) ? [...value] : [];
+        let newValue;
+        if (value == null) {
+            newValue = [];
+
+        //  Тут вместо [...value] таки пишем явно, чтобы потом можно было понять,
+        //  что value !== newValue.
+        } else if (Array.isArray(value)) {
+            newValue = value;
+
+        } else {
+            newValue = [value];
+        }
 
         if (this.props.mode === 'radio') {
             if (newValue.length === 0) {
