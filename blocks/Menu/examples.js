@@ -86,7 +86,7 @@ class Example extends React.Component {
                     <div className="example">
                         <h3>mode="radio-check"</h3>
                         <Menu size="l" mode="radio-check" value={this.state['radio-check']} onChange={this.onChange}>
-                            <Group>
+                            <Group title="First">
                                 <Item value="10">10</Item>
                                 <Item value="20" disabled>20</Item>
                                 <Item value="30">30</Item>
@@ -95,8 +95,10 @@ class Example extends React.Component {
                                 <Item value="40">40</Item>
                                 <Item value="50">50</Item>
                             </Group>
-                            <Item value="60">60</Item>
-                            <Item value="70">70</Item>
+                            <Group title="Third">
+                                <Item value="60">60</Item>
+                                <Item value="70">70</Item>
+                            </Group>
                         </Menu>
                         <div>Checked: {this.state['radio-check'].join(', ')}</div>
                     </div>

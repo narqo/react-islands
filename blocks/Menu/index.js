@@ -118,10 +118,18 @@ class Menu extends Component {
         }
 
         function mapGroup(group) {
-            var items = React.Children.map(group.props.children, mapItem);
+            const items = React.Children.map(group.props.children, mapItem);
+
+            let title;
+            if (group.props.title) {
+                title = (
+                    <div className="menu__group-title">{group.props.title}</div>
+                );
+            }
 
             return (
                 <div className="menu__group">
+                    {title}
                     {items}
                 </div>
             );
