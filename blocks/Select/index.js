@@ -48,12 +48,19 @@ class Select extends Component {
         });
         const text = texts.join(', ') || this.props.text || '—';
 
+        const isButtonChecked = (
+            (this.props.mode === 'check' || this.props.mode === 'radio-check') &&
+            Array.isArray(this.props.value) &&
+            this.props.value.length > 0
+        );
+
         return (
             <div className={this.className()}>
                 {hiddens}
 
                 <Button ref="button" className="select__button"
                     size={this.props.size}
+                    checked={isButtonChecked}
                     onClick={this.onButtonClick}
                 >
                     {text}
@@ -86,6 +93,9 @@ class Select extends Component {
         }
         if (this.props.disabled) {
             className += ' select_disabled';
+        }
+        if (this.state.popupVisible) {
+            className += ' select_opened';
         }
 
         if (this.props.className) {
