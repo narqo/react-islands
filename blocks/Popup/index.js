@@ -17,30 +17,29 @@ class Popup extends Component {
         super(props);
 
         this.state = {
-            direction: props.direction,
+            direction: undefined,
             left: undefined,
             top: undefined,
             zIndex: 0,
         };
 
-        this.domNode = null;
         this.shouldRenderToOverlay = false;
         this.onLayerOrderChange = this.onLayerOrderChange.bind(this);
         this.onLayerVisibleChange = this.onLayerVisibleChange.bind(this);
         this.onLayerClickOutside = this.onLayerClickOutside.bind(this);
-    }
-
-    componentDidMount() {
-        this.domNode = ReactDOM.findDOMNode(this);
-    }
-
-    componentWillUnmount() {
-        this.domNode = null;
+        this.onViewportResize = this.onViewportResize.bind(this);
+        this.onViewportScroll = this.onViewportScroll.bind(this);
     }
 
     componentWillUpdate(nextProps) {
         if (!this.shouldRenderToOverlay && nextProps.visible) {
             this.shouldRenderToOverlay = true;
+        }
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.shouldRenderToOverlay && this.props.visible !== prevProps.visible) {
+            this.reposition();
         }
     }
 
@@ -53,12 +52,13 @@ class Popup extends Component {
             };
 
             return (
-                <Overlay visible={this.props.visible}
+                <Overlay
+                    visible={this.props.visible}
                     onVisibleChange={this.onLayerVisibleChange}
                     onClickOutside={this.onLayerClickOutside}
                     onOrderChange={this.onLayerOrderChange}
                 >
-                    <div className={this.className()} style={style}>{this.props.children}</div>
+                    <div ref="popup" className={this.className()} style={style}>{this.props.children}</div>
                 </Overlay>
             );
         } else {
@@ -105,10 +105,13 @@ class Popup extends Component {
     }
 
     onLayerVisibleChange(visible) {
-        if (visible) {
-            // TODO(@narqo): don't call DOMNode measurements in case nothing has changed
-            const { direction, left, top } = this.calcBestDrawingParams();
-            this.setState({ direction, left, top });
+        // NOTE(@narqo): subscribe to resize/scroll only if popup can be repositioned within `directions`
+        if (visible && this.props.directions.length > 1) {
+            window.addEventListener('resize', this.onViewportResize);
+            window.addEventListener('scroll', this.onViewportScroll);
+        } else {
+            window.removeEventListener('resize', this.onViewportResize);
+            window.removeEventListener('scroll', this.onViewportScroll);
         }
         this.props.onVisibleChange(visible);
     }
@@ -117,10 +120,42 @@ class Popup extends Component {
         this.setState({ zIndex });
     }
 
+    onViewportResize() {
+        this.reposition();
+    }
+
+    onViewportScroll() {
+        this.reposition();
+    }
+
+    reposition() {
+        if (this.props.visible) {
+            // TODO(@narqo): don't call DOMNode measurements in case nothing has changed
+            const { direction, left, top } = this.calcBestDrawingParams();
+            this.setState({ direction, left, top });
+        }
+    }
+
+    getPopup() {
+        return ReactDOM.findDOMNode(this.refs.popup);
+    }
+
+    getTarget() {
+        if (!this.props.target) {
+            return null;
+        }
+        const target = this.props.target();
+        if (target instanceof Component) {
+            return ReactDOM.findDOMNode(target);
+        } else {
+            return target || null;
+        }
+    }
+
     calcBestDrawingParams() {
+        const viewport = this.calcViewportDimensions();
         const popup = this.calcPopupDimensions();
         const target = this.calcTargetDimensions();
-        const viewport = this.calcViewportDimensions();
 
         let i = 0,
             direction,
@@ -149,26 +184,13 @@ class Popup extends Component {
         };
     }
 
-    getTarget() {
-        if (!this.props.target) {
-            return null;
-        }
-        const target = this.props.target();
-        if (target instanceof Component) {
-            return ReactDOM.findDOMNode(target);
-        } else {
-            return target || null;
-        }
-    }
-
     calcTargetDimensions() {
-        let target = this.getTarget(),
-            left, top, width, height;
+        const target = this.getTarget();
+        let left, top, width, height;
 
         if (target instanceof Element) {
             const targetRect = target.getBoundingClientRect();
-            const viewportRect = document.body.getBoundingClientRect();
-
+            const viewportRect = document.documentElement.getBoundingClientRect();
             left = targetRect.left - viewportRect.left;
             top = targetRect.top - viewportRect.top;
             width = targetRect.width;
@@ -190,16 +212,16 @@ class Popup extends Component {
     }
 
     calcViewportDimensions() {
-        const winTop = window.pageYOffset;
-        const winLeft = window.pageXOffset;
-        const winHeight = window.innerHeight;
-        const winWidth = window.innerWidth;
+        const top = window.pageYOffset;
+        const left = window.pageXOffset;
+        const height = window.innerHeight;
+        const width = window.innerWidth;
 
         return {
-            top : winTop,
-            left : winLeft,
-            bottom : winTop + winHeight,
-            right : winLeft + winWidth,
+            top,
+            left,
+            bottom: top + height,
+            right: left + width,
         };
     }
 
@@ -219,13 +241,19 @@ class Popup extends Component {
     }
 
     calcPopupDimensions() {
-        const popupWidth = this.domNode.offsetWidth;
-        const popupHeight = this.domNode.offsetHeight;
+        const popup = this.getPopup();
+        let width = 0,
+            height = 0;
+
+        if (popup) {
+            width = popup.offsetWidth;
+            height = popup.offsetHeight;
+        }
 
         return {
-            width : popupWidth,
-            height : popupHeight,
-            area : popupWidth * popupHeight
+            width,
+            height,
+            area: width * height
         };
     }
 

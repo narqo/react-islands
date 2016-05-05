@@ -28,7 +28,6 @@ class Overlay extends Component {
     componentWillMount() {
         if (this.props.visible) {
             this.layerWillBecomeVisible();
-            this.dispatchVisibleChange(this.props.visible);
         }
     }
 
@@ -50,6 +49,7 @@ class Overlay extends Component {
 
     layerWillBecomeVisible() {
         this.captureZIndex();
+        this.dispatchVisibleChange(true);
         // NOTE(narqo@): we have to use `nextTick` or nested layer will be closed immediately after being opened
         process.nextTick(() => {
             if (this.props.visible) {
@@ -62,6 +62,7 @@ class Overlay extends Component {
     layerWillBecomeHidden() {
         document.removeEventListener('click', this.onDocumentClick);
         this.releaseZIndex();
+        this.dispatchVisibleChange(false);
     }
 
     render() {
