@@ -16,9 +16,10 @@ class Example extends React.Component {
         //  Но при выводе в div это начальное значение, получается расхождение между
         //  переданным value и реальным, в стейте меню.
         this.state = {
-            'radio': ['30', '40'],
-            'check': ['30', '40'],
-            'radio-check': ['30', '40']
+            a: ['30', '40'],
+            b: ['30', '40'],
+            c: ['30', '40'],
+            d: ['30', '40']
         };
 
         this.onChange = this.onChange.bind(this);
@@ -42,38 +43,38 @@ class Example extends React.Component {
 
                     <div className="example">
                         <h3>mode="radio"</h3>
-                        <Menu size="l" mode="radio" value={this.state.radio} onChange={this.onChange}>
+                        <Menu size="l" mode="radio" name="a" value={this.state.a} onChange={this.onChange}>
                             <Item value="10">10</Item>
                             <Item value="20" disabled>20</Item>
                             <Item value="30">30</Item>
                             <Item value="40">40</Item>
                             <Item value="50">50</Item>
                         </Menu>
-                        <div>Checked: {this.state.radio.join(', ')}</div>
+                        <div>Checked: {this.state.a.join(', ')}</div>
                     </div>
 
                     <div className="example">
                         <h3>mode="check"</h3>
-                        <Menu size="l" mode="check" value={this.state.check} onChange={this.onChange}>
+                        <Menu size="l" mode="check" name="b" value={this.state.b} onChange={this.onChange}>
                             <Item value="10">10</Item>
                             <Item value="20" disabled>20</Item>
                             <Item value="30">30</Item>
                             <Item value="40">40</Item>
                             <Item value="50">50</Item>
                         </Menu>
-                        <div>Checked: {this.state.check.join(', ')}</div>
+                        <div>Checked: {this.state.b.join(', ')}</div>
                     </div>
 
                     <div className="example">
                         <h3>mode="radio-check"</h3>
-                        <Menu size="l" mode="radio-check" value={this.state['radio-check']} onChange={this.onChange}>
+                        <Menu size="l" mode="radio-check" name="c" value={this.state.c} onChange={this.onChange}>
                             <Item value="10">10</Item>
                             <Item value="20" disabled>20</Item>
                             <Item value="30">30</Item>
                             <Item value="40">40</Item>
                             <Item value="50">50</Item>
                         </Menu>
-                        <div>Checked: {this.state['radio-check'].join(', ')}</div>
+                        <div>Checked: {this.state.c.join(', ')}</div>
                     </div>
 
                     <div className="example">
@@ -85,7 +86,7 @@ class Example extends React.Component {
 
                     <div className="example">
                         <h3>mode="radio-check"</h3>
-                        <Menu size="l" mode="radio-check" value={this.state['radio-check']} onChange={this.onChange}>
+                        <Menu size="l" mode="check" name="d" value={this.state.d} onChange={this.onChange}>
                             <Group title="First">
                                 <Item value="10">10</Item>
                                 <Item value="20" disabled>20</Item>
@@ -100,7 +101,7 @@ class Example extends React.Component {
                                 <Item value="70">70</Item>
                             </Group>
                         </Menu>
-                        <div>Checked: {this.state['radio-check'].join(', ')}</div>
+                        <div>Checked: {this.state.d.join(', ')}</div>
                     </div>
 
                 </div>
@@ -110,7 +111,7 @@ class Example extends React.Component {
 
     onChange(value, menuProps) {
         this.setState({
-            [menuProps.mode]: value
+            [menuProps.name]: value
         });
     }
 }

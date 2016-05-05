@@ -44,7 +44,7 @@ class Menu extends Component {
     }
 
     _validValue(value) {
-        var children = React.Children.toArray(this.props.children);
+        var children = this._extractItems();
         if (!children.length) {
             return [];
         }
