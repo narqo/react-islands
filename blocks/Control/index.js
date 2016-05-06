@@ -25,6 +25,10 @@ class Control extends Component {
     componentWillReceiveProps(nextProps) {
         if (nextProps.disabled === true) {
             this.setState({ focused: false });
+
+        } else if (nextProps.focused !== this.state.focused) {
+            //  FIXME: Нужно ли уметь менять focused через задание props'ов?
+            this.setState({ focused: nextProps.focused });
         }
     }
 
