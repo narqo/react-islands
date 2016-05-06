@@ -6,7 +6,6 @@ import Button from '../Button';
 import Popup from '../Popup';
 import Menu from '../Menu';
 import Icon from '../Icon';
-import MenuItem from '../Menu/MenuItem';
 
 class Select extends Component {
     constructor(props) {
@@ -30,7 +29,6 @@ class Select extends Component {
     render() {
         const children = React.Children.toArray(this.props.children);
 
-        const options = children.map(child => React.createElement(MenuItem, child.props));
         const hiddens = this.props.value.map(value =>
             <input type="hidden" name={this.props.name} value={value}/>
         );
@@ -54,6 +52,8 @@ class Select extends Component {
             this.props.value.length > 0
         );
 
+        const visible = this.state.popupVisible;
+
         return (
             <div className={this.className()}>
                 {hiddens}
@@ -67,11 +67,13 @@ class Select extends Component {
                     <Icon className="select__tick"/>
                 </Button>
                 <Popup
-                    visible={this.state.popupVisible}
+                    visible={visible}
                     target={() => ReactDOM.findDOMNode(this.refs.button)}
                 >
-                    <Menu size={this.props.size} mode={this.props.mode} value={this.props.value} onChange={this.onMenuChange}>
-                        {options}
+                    <Menu size={this.props.size} mode={this.props.mode} value={this.props.value} focused={visible}
+                        onChange={this.onMenuChange}
+                    >
+                        {this.props.children}
                     </Menu>
                 </Popup>
             </div>

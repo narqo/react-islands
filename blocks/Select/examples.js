@@ -2,7 +2,8 @@ import React from 'react';
 
 import App from '../App';
 import Select from './index.js';
-import Option from './Option';
+import Group from '../Group';
+import Item from '../Item';
 
 class Example extends React.Component {
     constructor(props) {
@@ -24,13 +25,17 @@ class Example extends React.Component {
                         <p>Selected: <b>{this.state.value.join(', ')}</b></p>
 
                         <Select name="foo" value={this.state.value} text="Select days" size="l" mode="check" onChange={this.onChange}>
-                            <Option value="1" checkedText="Mon">Monday</Option>
-                            <Option value="2" checkedText="Tue">Tuesday</Option>
-                            <Option value="3" checkedText="Wed">Wednesday</Option>
-                            <Option value="4" checkedText="Thu" disabled>Thursday</Option>
-                            <Option value="5" checkedText="Fri">Friday</Option>
-                            <Option value="6" checkedText="Sat">Saturday</Option>
-                            <Option value="7" checkedText="Sun">Sunday</Option>
+                            <Group title="Weekdays">
+                                <Item value="1" checkedText="Mon">Monday</Item>
+                                <Item value="2" checkedText="Tue">Tuesday</Item>
+                                <Item value="3" checkedText="Wed">Wednesday</Item>
+                                <Item value="4" checkedText="Thu" disabled>Thursday</Item>
+                                <Item value="5" checkedText="Fri">Friday</Item>
+                            </Group>
+                            <Group title="Weekends">
+                                <Item value="6" checkedText="Sat">Saturday</Item>
+                                <Item value="7" checkedText="Sun">Sunday</Item>
+                            </Group>
                         </Select>
                     </div>
 
