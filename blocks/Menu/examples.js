@@ -33,7 +33,7 @@ class Example extends React.Component {
                     <div className="example">
                         <h3>no mode</h3>
                         <Menu size="l">
-                            <Item value="10">10</Item>
+                            <Item value="10" disabled>10</Item>
                             <Item value="20" disabled>20</Item>
                             <Item value="30">30</Item>
                             <Item value="40">40</Item>

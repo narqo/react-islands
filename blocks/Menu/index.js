@@ -16,6 +16,13 @@ class Menu extends Component {
             value: this._validValue(props.value)
         };
 
+        this._cachedItems = null;
+        this._savedIndex = null;
+
+        this.onMouseUp = this.onMouseUp.bind(this);
+        this.onMouseDown = this.onMouseDown.bind(this);
+        this.onFocus = this.onFocus.bind(this);
+        this.onBlur = this.onBlur.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
         this.onItemClick = this.onItemClick.bind(this);
         this.onItemHover = this.onItemHover.bind(this);
@@ -27,51 +34,121 @@ class Menu extends Component {
         if (this.props.value !== this.state.value) {
             this.props.onChange(this.state.value, this.props);
         }
-    }
 
-    _extractItems() {
-        let items = [];
-        React.Children.forEach(this.props.children, child => {
-            if (Component.is(child, Item)) {
-                items.push(child);
-
-            } else if (Component.is(child, Group)) {
-                //  Предполагаем, что ничего, кроме Item внутри Group уже нет.
-                items = items.concat(child.props.children);
-            }
-        });
-        return items;
-    }
-
-    _validValue(value) {
-        var children = this._extractItems();
-        if (!children.length) {
-            return [];
+        if (this.props.focused) {
+            this.onFocus();
         }
-
-        const newValue = (value != null) ? [...value] : [];
-
-        if (this.props.mode === 'radio') {
-            if (newValue.length === 0) {
-                return [children[0].props.value];
-            }
-            if (newValue.length > 1) {
-                return [newValue[0]];
-            }
-
-        } else if (this.props.mode === 'radio-check' && newValue.length > 1) {
-            return [newValue[0]];
-        }
-
-        return newValue;
     }
 
     componentWillReceiveProps(nextProps) {
+        if (nextProps.children !== this.props.children) {
+            this._cachedItems = null;
+        }
+
         if (nextProps.value !== this.props.value) {
             this.setState({
                 value: this._validValue(nextProps.value)
             });
         }
+
+        if (nextProps.focused && !this.props.focused) {
+            this.onFocus();
+
+        } else if (!nextProps.focused && this.props.focused) {
+            this.onBlur();
+        }
+    }
+
+    _getItems() {
+        let items = this._cachedItems;
+
+        if (!items) {
+            let values = [];
+            let statuses = [];
+            items = this._cachedItems = { values, statuses };
+
+            const doChild = function(child) {
+                values.push(child.props.value);
+                statuses.push(child.props.disabled);
+            };
+
+            React.Children.forEach(this.props.children, child => {
+                if (Component.is(child, Item)) {
+                    doChild(child);
+
+                } else if (Component.is(child, Group)) {
+                    //  Предполагаем, что ничего, кроме Item внутри Group уже нет.
+                    React.Children.forEach(child.props.children, doChild);
+                }
+            });
+        }
+
+        return items;
+    }
+
+    _getFirstEnabledIndex() {
+        const statuses = this._getItems().statuses;
+        for (let i = 0; i < statuses.length; i++) {
+            if (!statuses[i]) {
+                return i;
+            }
+        }
+
+        return null;
+    }
+
+    _getFirstEnabledValue() {
+        const index = this._getFirstEnabledIndex();
+
+        return (index === null) ? null : this._getItems().values[index];
+    }
+
+    _validValue(value) {
+        let newValue;
+        if (value == null) {
+            newValue = [];
+
+        } else if (Array.isArray(value)) {
+            newValue = value;
+
+        } else {
+            newValue = [value];
+        }
+
+        const values = this._getItems().values;
+        const filteredValue = newValue.filter(aValue => (values.indexOf(aValue) !== -1));
+        if (filteredValue.length !== newValue.length) {
+            newValue = filteredValue;
+        }
+
+        if (this.props.mode === 'radio') {
+            if (newValue.length === 0) {
+                const firstValue = this._getFirstEnabledValue();
+                newValue = (firstValue === null) ? [] : [firstValue];
+
+            } else if (newValue.length > 1) {
+                newValue = [newValue[0]];
+            }
+
+        } else if (this.props.mode === 'radio-check' && newValue.length > 1) {
+            newValue = [newValue[0]];
+        }
+
+        //  Раз уж начал упарываться, то остановиться уже сложно.
+        //  Теперь в newValue:
+        //
+        //    * Массив;
+        //    * В котором значения из переданного value (массива или просто значения);
+        //    * И которые при этом есть в values самого меню.
+        //    * При этом, если в value был массив, в котором были только валидные значения,
+        //      подходящие к данному mode, то вернется именно этот массив.
+        //      Что позволит сравнить исходное value с вот этим новым.
+        //
+        //  Но, увы, это сравнение все равно даст неверный результат,
+        //  если в value передать не массив или ничего не передать :(
+        //  Но так уже заморачиваться не хочется. Проще эксепшен кинуть на невалидный value.
+        //
+        return newValue;
     }
 
     render() {
@@ -137,8 +214,11 @@ class Menu extends Component {
         const tabIndex = disabled ? -1 : 0;
 
         return (
-            <div className={this.className()} tabIndex={tabIndex}
-                onKeyDown={this.onKeyDown}
+            <div ref="control" className={this.className()} tabIndex={tabIndex}
+                onMouseDown={this.onMouseDown}
+                onMouseUp={this.onMouseUp}
+                onFocus={this.onFocus}
+                onBlur={this.onBlur}
             >
                 {children}
             </div>
@@ -169,16 +249,50 @@ class Menu extends Component {
         return className;
     }
 
-    onItemHover(index, hovered) {
+    onItemHover(hovered, itemProps) {
         this.setState({
-            hoveredIndex: hovered ? index : null
+            hoveredIndex: hovered ? itemProps.index : null
         });
     }
 
     onItemClick(e, itemProps) {
+        this._savedIndex = itemProps.index;
         this.onItemCheck(itemProps.index);
 
-        this.props.onItemClick(e, itemProps);
+        this.props.onItemClick(e, itemProps, this.props);
+    }
+
+    onMouseDown() {
+        this._mousePressed = true;
+    }
+
+    onMouseUp() {
+        this._mousePressed = false;
+    }
+
+    //  TODO: Если меню в фокусе, то по ховеру тоже нужно менять _savedIndex.
+
+    onFocus() {
+        document.addEventListener('keydown', this.onKeyDown, true);
+
+        if (!this._mousePressed) {
+            let hoveredIndex = this._savedIndex;
+            if (hoveredIndex === null) {
+                hoveredIndex = this._getFirstEnabledIndex();
+            }
+            if (hoveredIndex !== this.state.hoveredIndex) {
+                this._savedIndex = hoveredIndex;
+                this.setState({ hoveredIndex });
+            }
+        }
+    }
+
+    onBlur() {
+        document.removeEventListener('keydown', this.onKeyDown, true);
+
+        this.setState({
+            hoveredIndex: null
+        });
     }
 
     onKeyDown(e) {
@@ -188,19 +302,19 @@ class Menu extends Component {
             return;
         }
 
-        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        if (e.code === 'ArrowDown' || e.code === 'ArrowUp') {
             e.preventDefault();
 
-            const items = this._extractItems();
-            const len = items.length;
+            const statuses = this._getItems().statuses;
+            const len = statuses.length;
             if (!len) {
                 return;
             }
 
-            const dir = (e.key === 'ArrowDown' ? 1 : -1);
+            const dir = (e.code === 'ArrowDown' ? 1 : -1);
             let nextIndex;
             if (this.state.hoveredIndex === null) {
-                nextIndex = 0;
+                nextIndex = this._getFirstEnabledIndex();
 
             } else {
                 nextIndex = this.state.hoveredIndex;
@@ -209,12 +323,15 @@ class Menu extends Component {
                     if (nextIndex === this.state.hoveredIndex) {
                         return;
                     }
-                } while (items[nextIndex].props.disabled);
+                } while (statuses[nextIndex]);
             }
 
-            this.setState({hoveredIndex: nextIndex});
+            if (nextIndex !== null) {
+                this._savedIndex = nextIndex;
+                this.setState({hoveredIndex: nextIndex});
+            }
 
-        } else if (e.key === ' ' || e.key === 'Enter') {
+        } else if (e.code === 'Space' || e.code === 'Enter') {
             e.preventDefault();
 
             if (this.state.hoveredIndex !== null) {
@@ -229,9 +346,8 @@ class Menu extends Component {
             return;
         }
 
-        const items = this._extractItems();
-        const item = items[index];
-        const itemValue = item.props.value;
+        const items = this._getItems();
+        const itemValue = items.values[index];
         const menuValue = this.state.value;
 
         const checked = (menuValue.indexOf(itemValue) !== -1);

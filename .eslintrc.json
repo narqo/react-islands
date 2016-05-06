@@ -79,13 +79,6 @@
     ],
     "eol-last": "error",
     "eqeqeq": ["error", "allow-null"],
-    "func-style": [
-      "error",
-      "declaration",
-      {
-        "allowArrowFunctions": true
-      }
-    ],
     "generator-star-spacing": "error",
     "global-require": "error",
     "guard-for-in": "error",

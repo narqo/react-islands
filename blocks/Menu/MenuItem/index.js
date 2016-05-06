@@ -13,7 +13,7 @@ class MenuItem extends Component {
 
     render() {
         return (
-            <div className={this.className()} data-index={this.props.index}
+            <div className={this.className()}
                 onClick={this.onClick}
                 onMouseEnter={this.onMouseEnter}
                 onMouseLeave={this.onMouseLeave}
@@ -63,7 +63,7 @@ class MenuItem extends Component {
             return;
         }
 
-        this.props.onHover(this.props.index, true);
+        this.props.onHover(true, this.props);
     }
 
     onMouseLeave() {
@@ -71,7 +71,7 @@ class MenuItem extends Component {
             return;
         }
 
-        this.props.onHover(this.props.index, false);
+        this.props.onHover(false, this.props);
     }
 }
 
