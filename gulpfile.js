@@ -63,15 +63,11 @@ function bundleHtml(name) {
 
 gulp.task('examples-js', () => {
     const bundler = bundle({ standalone: 'Example' });
-    return bundleExamples((name, file) => {
-        return bundleJs(name, bundler(file));
-    });
+    return bundleExamples((name, file) => bundleJs(name, bundler(file)));
 });
 
 gulp.task('examples-html', () => {
-    return bundleExamples((name, file) => {
-        return bundleHtml(name);
-    });
+    return bundleExamples((name, file) => bundleHtml(name));
 });
 
 gulp.task('examples-toc', () => {
