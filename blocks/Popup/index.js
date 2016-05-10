@@ -4,6 +4,8 @@ import ReactDOM from 'react-dom';
 import Component from '../Component';
 import Overlay from '../Overlay';
 
+const MAIN_OFFSET = 5; // FIXME(narqo@): this is only valid for theme islands
+const VIEWPORT_OFFSET = 10;
 const VIEWPORT_ACCURACY_FACTOR = 0.99;
 const DEFAULT_DIRECTIONS = [
     'bottom-left', 'bottom-center', 'bottom-right',
@@ -302,9 +304,9 @@ function checkSecondaryDirection(direction, secondaryDirection) {
 Popup.defaultProps = {
     directions: DEFAULT_DIRECTIONS,
     visible: false,
-    mainOffset: 0,
+    mainOffset: MAIN_OFFSET,
     secondaryOffset: 0,
-    viewportOffset: 0,
+    viewportOffset: VIEWPORT_OFFSET,
     onClickOutside() {},
     onVisibleChange() {},
 };
