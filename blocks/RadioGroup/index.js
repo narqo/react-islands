@@ -66,6 +66,10 @@ class RadioGroup extends Component {
             className += ' radio-group_type_' + this.props.type;
         }
 
+        if (this.props.className) {
+            className += ' ' + this.props.className;
+        }
+
         return className;
     }
 
