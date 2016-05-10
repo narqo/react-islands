@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 import Component from '../Component';
 import Button from '../Button';
@@ -19,92 +18,74 @@ class Select extends Component {
 
         this._cachedItems = null;
 
+        this.getPopupTarget = this.getPopupTarget.bind(this);
         this.onButtonClick = this.onButtonClick.bind(this);
         this.onMenuChange = this.onMenuChange.bind(this);
+        this.onPopupClickOutside = this.onPopupClickOutside.bind(this);
+        this.onPopupVisibleChange = this.onPopupVisibleChange.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.children !== this.props.children) {
             this._cachedItems = null;
         }
-
-        if (nextProps.value !== this.props.value) {
-            this.setState({
-                value: nextProps.value
-            });
-        }
     }
 
-    //  TODO: Вынести из Select и Menu подобные методы в одно место.
-    //  Хотя сейчас Menu.prototype._getItems() не совсем такой.
-    //
-    _getItems() {
-        let items = this._cachedItems;
-
-        if (!items) {
-            items = this._cachedItems = [];
-
-            React.Children.forEach(this.props.children, child => {
-                if (Component.is(child, Item)) {
-                    items.push(child);
-
-                } else if (Component.is(child, Group)) {
-                    //  Предполагаем, что ничего, кроме Item внутри Group уже нет.
-                    items = items.concat(
-                        React.Children.toArray(child.props.children)
-                    );
-                }
-            });
-        }
-
-        return items;
+    componentWillUnmount() {
+        this._cachedItems = null;
     }
 
     render() {
-        const selectValue = this.props.value;
+        const { theme, size, disabled, name, mode } = this.props;
+        const menuValue = this.props.value;
 
-        const hiddens = selectValue.map(value =>
-            <input type="hidden" name={this.props.name} value={value}/>
+        const hiddens = menuValue.map(value =>
+            <input type="hidden" name={name} value={value}/>
         );
 
         const texts = [];
-        this._getItems().forEach(item => {
-            if (selectValue.indexOf(item.props.value) !== -1) {
-                if (selectValue.length === 1) {
+        this.getItems().forEach(item => {
+            if (menuValue.indexOf(item.props.value) !== -1) {
+                if (menuValue.length === 1) {
                     texts.push(Component.textValue(item));
-
                 } else {
                     texts.push(item.props.checkedText || Component.textValue(item));
                 }
             }
         });
+
         const text = texts.join(', ') || this.props.text || '—';
 
-        const isButtonChecked = (
-            (this.props.mode === 'check' || this.props.mode === 'radio-check') &&
-            Array.isArray(selectValue) &&
-            selectValue.length > 0
+        const buttonChecked = (
+            (mode === 'check' || mode === 'radio-check') &&
+            Array.isArray(menuValue) &&
+            menuValue.length > 0
         );
 
-        const visible = this.state.popupVisible;
+        const popupVisible = this.state.popupVisible;
 
         return (
             <div className={this.className()}>
                 {hiddens}
 
-                <Button ref="button" className="select__button"
-                    size={this.props.size}
-                    checked={isButtonChecked}
+                <Button ref="button" theme={theme} size={size} disabled={disabled} className="select__button"
+                    checked={buttonChecked}
                     onClick={this.onButtonClick}
                 >
                     {text}
                     <Icon className="select__tick"/>
                 </Button>
-                <Popup
-                    visible={visible}
-                    target={() => ReactDOM.findDOMNode(this.refs.button)}
+                <Popup theme={theme} size={size}
+                    visible={popupVisible}
+                    target={this.getPopupTarget}
+                    directions={['bottom-left', 'bottom-right', 'top-left', 'top-right']}
+                    onClickOutside={this.onPopupClickOutside}
+                    onVisibleChange={this.onPopupVisibleChange}
                 >
-                    <Menu size={this.props.size} mode={this.props.mode} value={selectValue} focused={visible}
+                    <Menu theme={theme} size={size} disabled={disabled} className="select__menu"
+                        mode={mode}
+                        value={menuValue}
+                        focused={popupVisible}
                         onChange={this.onMenuChange}
                     >
                         {this.props.children}
@@ -140,6 +121,31 @@ class Select extends Component {
         return className;
     }
 
+    //  TODO: Вынести из Select и Menu подобные методы в одно место.
+    //  Хотя сейчас Menu.prototype._getItems() не совсем такой.
+    getItems() {
+        if (!this._cachedItems) {
+            let items = [];
+
+            React.Children.forEach(this.props.children, child => {
+                if (Component.is(child, Item)) {
+                    items.push(child);
+                } else if (Component.is(child, Group)) {
+                    //  Предполагаем, что ничего, кроме Item внутри Group уже нет.
+                    items = items.concat(React.Children.toArray(child.props.children));
+                }
+            });
+
+            this._cachedItems = items;
+        }
+
+        return this._cachedItems;
+    }
+
+    getPopupTarget() {
+        return this.refs.button;
+    }
+
     onButtonClick() {
         this.setState({
             popupVisible: !this.state.popupVisible
@@ -147,9 +153,20 @@ class Select extends Component {
     }
 
     onMenuChange(value) {
+        // NOTE(narqo@): select with mode radio* must be closed on change
+        if (this.props.mode === 'radio' || this.props.mode === 'radio-check') {
+            this.setState({ popupVisible: false });
+        }
         this.props.onChange(value, this.props);
     }
 
+    onPopupClickOutside() {
+        this.setState({ popupVisible: false });
+    }
+
+    onPopupVisibleChange(visible) {
+        this.setState({ popupVisible: visible });
+    }
 }
 
 Select.defaultProps = {
