@@ -5,48 +5,65 @@ import Select from './index.js';
 import Group from '../Group';
 import Item from '../Item';
 
-class Example extends React.Component {
+class SelectExample extends React.Component {
     constructor(props) {
         super(props);
-
         this.state = {
-            value: ['1', '2']
+            value: ['1'],
         };
-
-        this.onChange = this.onChange.bind(this);
+        this.onSelectChange = this.onSelectChange.bind(this);
     }
 
     render() {
+        const { mode, disabled } = this.props;
+        const { value } = this.state;
+
         return (
-            <App theme="islands">
-                <div className="examples">
+            <div className="example">
+                <b>Select mode={mode}</b>
 
-                    <div className="example">
-                        <p>Selected: <b>{this.state.value.join(', ')}</b></p>
+                <p>Selected: <b>{value.join(', ')}</b></p>
 
-                        <Select name="foo" value={this.state.value} text="Select days" size="l" mode="check" onChange={this.onChange}>
-                            <Group title="Weekdays">
-                                <Item value="1" checkedText="Mon">Monday</Item>
-                                <Item value="2" checkedText="Tue">Tuesday</Item>
-                                <Item value="3" checkedText="Wed">Wednesday</Item>
-                                <Item value="4" checkedText="Thu" disabled>Thursday</Item>
-                                <Item value="5" checkedText="Fri">Friday</Item>
-                            </Group>
-                            <Group title="Weekends">
-                                <Item value="6" checkedText="Sat">Saturday</Item>
-                                <Item value="7" checkedText="Sun">Sunday</Item>
-                            </Group>
-                        </Select>
-                    </div>
-
-                </div>
-            </App>
+                <Select
+                    name="my-select"
+                    size="l"
+                    text="Select days"
+                    disabled={disabled}
+                    value={value}
+                    mode={mode}
+                    onChange={this.onSelectChange}
+                >
+                    <Group title="Weekdays">
+                        <Item value="1" checkedText="Mon">Monday</Item>
+                        <Item value="2" checkedText="Tue">Tuesday</Item>
+                        <Item value="3" checkedText="Wed">Wednesday</Item>
+                        <Item value="4" checkedText="Thu" disabled>Thursday</Item>
+                        <Item value="5" checkedText="Fri">Friday</Item>
+                    </Group>
+                    <Group title="Weekends">
+                        <Item value="6" checkedText="Sat">Saturday</Item>
+                        <Item value="7" checkedText="Sun">Sunday</Item>
+                    </Group>
+                </Select>
+            </div>
         );
     }
 
-    onChange(value) {
+    onSelectChange(value) {
         this.setState({ value });
     }
+}
+
+function Example() {
+    return (
+        <App theme="islands">
+            <div className="examples">
+                <SelectExample mode="radio" />
+                <SelectExample mode="check" />
+                <SelectExample mode="radio-check" />
+            </div>
+        </App>
+    );
 }
 
 export default Example;
