@@ -83,7 +83,7 @@ class Example extends React.Component {
                 <Button ref="popup2Anchor" theme="islands" size="s" onClick={() => this.handlePopup2AnchorClick()}>Toggle popup 2</Button>
                 <Popup
                     theme="islands"
-                    directions={['right-top', 'bottom-left']}
+                    directions={['bottom-right', 'right-top']}
                     target={() => ReactDOM.findDOMNode(this.refs.popup2Anchor)}
                     visible={this.state.popup2Visible}
                     onVisibleChange={v => this.handlePopup2VisibilityChange(v)}
@@ -93,7 +93,7 @@ class Example extends React.Component {
                     <p>Blah-blah-blah</p>
                     <Popup
                         theme="islands"
-                        target={() => ({ left: 150, top: 550 })}
+                        target={() => ({ left: 50, top: 50 })}
                         visible={this.state.popup3Visible}
                         onVisibleChange={v => this.handlePopup3VisibilityChange(v)}
                         onClickOutside={() => this.handlePopup3ClickOutside()}

@@ -1,9 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import Component from '../../Component';
-
-class Portal extends Component {
+class Portal extends React.Component {
     constructor(props) {
         super(props);
         this.portalNode = null;
