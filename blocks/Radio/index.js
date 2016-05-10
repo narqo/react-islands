@@ -119,12 +119,11 @@ class Radio extends Control {
         }
     }
 
-    onControlChange(e) {
-        const { checked } = e.target;
-        this.setState({ checked });
-        if (checked) {
-            this.props.onCheck(checked, this.props);
-        }
+    onControlChange() {
+        //  Тут checked всегда становится true.
+        //  Измениться с true на falsy оно может только через props.
+        this.setState({ checked: true });
+        this.props.onCheck(true, this.props);
     }
 }
 
