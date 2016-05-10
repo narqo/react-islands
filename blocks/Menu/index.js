@@ -9,7 +9,6 @@ class Menu extends Component {
     constructor(props) {
         super(props);
 
-        const newValue = this._validValue(props.value);
         this.state = {
             ...this.state,
             hoveredIndex: null,
