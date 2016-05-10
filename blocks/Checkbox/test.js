@@ -418,9 +418,9 @@ describe('Checkbox', () => {
             expect(checkbox.find('label').hasClass('checkbox_hovered')).to.not.be.ok;
         });
 
-        /*
-        //  FIXME: Не работает чек с клавиатуры.
-        it('can be checked with space or enter if focused', () => {
+        //  FIXME: Не работает чек с клавиатуры и мыши.
+        //
+        it.skip('can be checked with space or enter if focused', () => {
             const spy = sinon.spy();
             const checkbox = mount(<Checkbox focused onCheck={spy}>checkbox</Checkbox>);
 
@@ -450,7 +450,7 @@ describe('Checkbox', () => {
             expect(spy.getCall(3).args[0]).to.be.false;
         });
 
-        it('can not be checked with space if disabled', () => {
+        it.skip('can not be checked with space if disabled', () => {
             const spy = sinon.spy();
             const checkbox = mount(<Checkbox disabled onCheck={spy}>checkbox</Checkbox>);
 
@@ -463,7 +463,7 @@ describe('Checkbox', () => {
             expect(spy.called).to.be.false;
         });
 
-        it('can be checked with click', () => {
+        it.skip('can be checked with click', () => {
             const spy = sinon.spy();
             const checkbox = mount(<Checkbox onCheck={spy}>checkbox</Checkbox>);
 
@@ -482,7 +482,7 @@ describe('Checkbox', () => {
             expect(spy.getCall(1).args[0]).to.be.false;
         });
 
-        it('onCheck receive props as a second argument', () => {
+        it.skip('onCheck receive props as a second argument', () => {
             const spy = sinon.spy();
             const checkbox = mount(<Checkbox onCheck={spy} name="foo" bar="42">checkbox</Checkbox>);
 
@@ -495,7 +495,7 @@ describe('Checkbox', () => {
 
         //  FIXME: На самом деле это неправильный тест (хоть он и проходит),
         //  так как сейчас вообще никакие клики checked не меняют :(
-        it('can not be checked with click if disabled', () => {
+        it.skip('can not be checked with click if disabled', () => {
             const spy = sinon.spy();
             const checkbox = mount(<Checkbox disabled onCheck={spy}>checkbox</Checkbox>);
 
@@ -505,7 +505,6 @@ describe('Checkbox', () => {
 
             expect(spy.called).to.be.false;
         });
-        */
 
     });
 });
