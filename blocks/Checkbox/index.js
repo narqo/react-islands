@@ -71,8 +71,8 @@ class Checkbox extends Control {
                     <span className="checkbox__box">
                         <input ref="control" className="checkbox__control" type="checkbox" autoComplete="off"
                             name={name}
-                            value={value}
                             disabled={disabled}
+                            value={value}
                             checked={checked}
                             onChange={this.onControlChange}
                         />
@@ -130,8 +130,8 @@ class Checkbox extends Control {
         this.props.onCheck(checked, this.props);
     }
 
-    onControlChange(e) {
-        const checked = e.target.checked;
+    onControlChange() {
+        const checked = !this.state.checked;
         this.setState({ checked });
         this.props.onCheck(checked, this.props);
     }
