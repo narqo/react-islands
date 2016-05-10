@@ -4,7 +4,8 @@ import ReactDOM from 'react-dom';
 import Component from '../Component';
 import Overlay from '../Overlay';
 
-const MAIN_OFFSET = 5; // FIXME(narqo@): this is only valid for theme islands
+// FIXME(narqo@): this is only valid for theme islands
+const MAIN_OFFSET = 5;
 const VIEWPORT_OFFSET = 10;
 const VIEWPORT_ACCURACY_FACTOR = 0.99;
 const DEFAULT_DIRECTIONS = [
