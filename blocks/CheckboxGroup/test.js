@@ -14,7 +14,7 @@ describe('CheckboxGroup', () => {
 
         it('is a checkbox-group', () => {
             const group = shallow(
-                <CheckboxGroup type="checkbox"/>
+                <CheckboxGroup type="button"/>
             );
 
             expect(group.is('.checkbox-group')).to.be.true;
@@ -35,7 +35,7 @@ describe('CheckboxGroup', () => {
 
         it('accepts className prop', () => {
             const group = shallow(
-                <CheckboxGroup type="checkbox" className="my-checkbox-group not-my-checkbox-group"/>
+                <CheckboxGroup type="button" className="my-checkbox-group not-my-checkbox-group"/>
             );
 
             expect(group.hasClass('my-checkbox-group')).to.be.true;
@@ -177,7 +177,7 @@ describe('CheckboxGroup', () => {
 
         it('is a checkbox-group', () => {
             const group = shallow(
-                <CheckboxGroup type="checkbox"/>
+                <CheckboxGroup type="line"/>
             );
 
             expect(group.is('.checkbox-group')).to.be.true;
@@ -198,7 +198,7 @@ describe('CheckboxGroup', () => {
 
         it('accepts className prop', () => {
             const group = shallow(
-                <CheckboxGroup type="checkbox" className="my-checkbox-group not-my-checkbox-group"/>
+                <CheckboxGroup type="line" className="my-checkbox-group not-my-checkbox-group"/>
             );
 
             expect(group.hasClass('my-checkbox-group')).to.be.true;
