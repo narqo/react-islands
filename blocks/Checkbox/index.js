@@ -30,6 +30,15 @@ class Checkbox extends Control {
         }
     }
 
+    //  При получении checked через props не менялось свойства checked у input'а.
+    //  Или же нужно пропихнуть как-то checked (а не в defaultChecked) в render().
+    //  Но тогда нужно будет пустой onChange повесить, видимо.
+    componentDidUpdate(prevProps) {
+        if (this.props.checked !== prevProps.checked) {
+            this.refs.control.checked = this.props.checked;
+        }
+    }
+
     render() {
         const { name, theme, size, type, disabled, value } = this.props;
         const { checked, focused } = this.state;
@@ -62,8 +71,8 @@ class Checkbox extends Control {
                     <span className="checkbox__box">
                         <input ref="control" className="checkbox__control" type="checkbox" autoComplete="off"
                             name={name}
-                            value={value}
                             disabled={disabled}
+                            value={value}
                             checked={checked}
                             onChange={this.onControlChange}
                         />
@@ -121,8 +130,8 @@ class Checkbox extends Control {
         this.props.onCheck(checked, this.props);
     }
 
-    onControlChange(e) {
-        const checked = e.target.checked;
+    onControlChange() {
+        const checked = !this.state.checked;
         this.setState({ checked });
         this.props.onCheck(checked, this.props);
     }
