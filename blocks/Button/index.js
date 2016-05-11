@@ -86,10 +86,17 @@ class Button extends Control {
 
         return className;
     }
+
+    /** @override */
+    onMouseDown(e) {
+        e.preventDefault(); // NOTE: prevents button from being blurred at least in FF and Safari
+        super.onMouseDown(e);
+    }
 }
 
 Button.propTypes = {
-    size: React.PropTypes.oneOf(['s', 'm', 'l', 'xl'])
+    size: React.PropTypes.oneOf(['s', 'm', 'l', 'xl']),
+    onClick: React.PropTypes.func,
 };
 
 Button.contextTypes = {

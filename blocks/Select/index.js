@@ -16,11 +16,14 @@ class Select extends Component {
             popupVisible: false
         };
 
+        this._preventPopupVisibleToggle = false;
         this._cachedItems = null;
 
         this.getPopupTarget = this.getPopupTarget.bind(this);
         this.onButtonClick = this.onButtonClick.bind(this);
+        this.onButtonFocusChange = this.onButtonFocusChange.bind(this);
         this.onMenuChange = this.onMenuChange.bind(this);
+        this.onMenuItemClick = this.onMenuItemClick.bind(this);
         this.onPopupClickOutside = this.onPopupClickOutside.bind(this);
         this.onPopupVisibleChange = this.onPopupVisibleChange.bind(this);
     }
@@ -71,6 +74,7 @@ class Select extends Component {
                 <Button ref="button" theme={theme} size={size} disabled={disabled} className="select__button"
                     checked={buttonChecked}
                     onClick={this.onButtonClick}
+                    onFocusChange={this.onButtonFocusChange}
                 >
                     {text}
                     <Icon className="select__tick"/>
@@ -83,9 +87,11 @@ class Select extends Component {
                     onVisibleChange={this.onPopupVisibleChange}
                 >
                     <Menu theme={theme} size={size} disabled={disabled} className="select__menu"
+                        tabIndex={null}
                         mode={mode}
                         value={menuValue}
                         focused={popupVisible}
+                        onItemClick={this.onMenuItemClick}
                         onChange={this.onMenuChange}
                     >
                         {this.props.children}
@@ -147,16 +153,32 @@ class Select extends Component {
     }
 
     onButtonClick() {
-        this.setState({
-            popupVisible: !this.state.popupVisible
-        });
+        if (this._preventPopupVisibleToggle) {
+            this._preventPopupVisibleToggle = false;
+        } else {
+            this.setState({ popupVisible: !this.state.popupVisible });
+        }
+    }
+
+    onButtonFocusChange(focused) {
+        if (!focused) {
+            // FIXME(narqo@): close popup on button's blur if "relatedTarget" is within <Menu>
+            //this.setState({ popupVisible: false });
+        }
+    }
+
+    onMenuItemClick(e) {
+        if (e.type !== 'click') {
+            // TODO(narqo@): pass eventSource=[mouse, keyboard] to on*Click events
+            this._preventPopupVisibleToggle = true;
+        }
+        if (this.props.mode === 'radio' || this.props.mode === 'radio-check') {
+            // NOTE(narqo@): select with mode radio* must be closed on click within <Menu>
+            this.setState({ popupVisible: false });
+        }
     }
 
     onMenuChange(value) {
-        // NOTE(narqo@): select with mode radio* must be closed on change
-        if (this.props.mode === 'radio' || this.props.mode === 'radio-check') {
-            this.setState({ popupVisible: false });
-        }
         this.props.onChange(value, this.props);
     }
 

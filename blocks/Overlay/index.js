@@ -60,6 +60,7 @@ class Overlay extends Component {
     }
 
     layerWillBecomeHidden() {
+        this.isClickOutsidePrevented = null;
         document.removeEventListener('click', this.onDocumentClick);
         this.releaseZIndex();
         this.dispatchVisibleChange(false);

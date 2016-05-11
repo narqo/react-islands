@@ -9,10 +9,14 @@ class Menu extends Component {
     constructor(props) {
         super(props);
 
+        const tabIndex = typeof props.tabIndex === 'undefined' ? 0 : props.tabIndex;
+        const value = this._validValue(props.value);
+
         this.state = {
             ...this.state,
             hoveredIndex: null,
-            value: this._validValue(props.value)
+            tabIndex,
+            value,
         };
 
         this._cachedItems = null;
@@ -210,7 +214,7 @@ class Menu extends Component {
             );
         }
 
-        const tabIndex = disabled ? -1 : 0;
+        const tabIndex = disabled ? -1 : this.state.tabIndex;
 
         return (
             <div ref="control" className={this.className()} tabIndex={tabIndex}
@@ -248,6 +252,10 @@ class Menu extends Component {
         return className;
     }
 
+    dispatchItemClick(e, itemProps) {
+        this.props.onItemClick(e, itemProps, this.props)
+    }
+
     onItemHover(hovered, itemProps) {
         this.setState({
             hoveredIndex: hovered ? itemProps.index : null
@@ -255,10 +263,10 @@ class Menu extends Component {
     }
 
     onItemClick(e, itemProps) {
-        this._savedIndex = itemProps.index;
-        this.onItemCheck(itemProps.index);
-
-        this.props.onItemClick(e, itemProps, this.props);
+        const { index } = itemProps;
+        this._savedIndex = index;
+        this.dispatchItemClick(e, itemProps);
+        this.onItemCheck(index);
     }
 
     onMouseDown() {
@@ -334,7 +342,7 @@ class Menu extends Component {
             e.preventDefault();
 
             if (this.state.hoveredIndex !== null) {
-                this.onItemCheck(this.state.hoveredIndex);
+                this.onItemClick(e, { index: this.state.hoveredIndex });
             }
         }
     }
@@ -357,10 +365,8 @@ class Menu extends Component {
             }
 
             newMenuValue = [itemValue];
-
         } else if (mode === 'radio-check') {
             newMenuValue = (checked) ? [] : [itemValue];
-
         } else {
             newMenuValue = (checked) ? menuValue.filter(value => (value !== itemValue)) : menuValue.concat(itemValue);
         }

@@ -10,10 +10,10 @@ class Control extends Component {
 
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
-        this.onFocus = this.onFocus.bind(this);
-        this.onBlur = this.onBlur.bind(this);
         this.onMouseEnter = this.onMouseEnter.bind(this);
         this.onMouseLeave = this.onMouseLeave.bind(this);
+        this.onFocus = this.onFocus.bind(this);
+        this.onBlur = this.onBlur.bind(this);
     }
 
     componentDidMount() {
@@ -51,8 +51,14 @@ class Control extends Component {
             onFocus: this.onFocus,
             onBlur: this.onBlur,
             onMouseEnter: this.onMouseEnter,
-            onMouseLeave: this.onMouseLeave
+            onMouseLeave: this.onMouseLeave,
         };
+    }
+
+    dispatchFocusChange(focused) {
+        if (typeof this.props.onFocusChange === 'function') {
+            this.props.onFocusChange(focused);
+        }
     }
 
     onMouseEnter() {
@@ -83,6 +89,7 @@ class Control extends Component {
                 focused = true;
             }
             this.setState({ focused });
+            this.dispatchFocusChange(true);
 
             //  FIXME: А нужно ли это? Кажется да, а то в чекбоксе есть button и label,
             //  они оба подписаны на focus. И в итоге последним отработает label,
@@ -94,7 +101,12 @@ class Control extends Component {
 
     onBlur() {
         this.setState({ focused: false });
+        this.dispatchFocusChange(false);
     }
 }
+
+Control.propTypes = {
+    onFocusChange: React.PropTypes.func,
+};
 
 export default Control;
