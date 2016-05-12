@@ -39,7 +39,7 @@ class Menu extends Component {
         }
 
         if (this.props.focused) {
-            this.onFocus();
+            this.componentWillGainFocus();
         }
     }
 
@@ -55,10 +55,21 @@ class Menu extends Component {
         }
 
         if (nextProps.focused && !this.props.focused) {
-            this.onFocus();
-
+            this.componentWillGainFocus();
         } else if (!nextProps.focused && this.props.focused) {
-            this.onBlur();
+            this.componentWillLostFocus();
+        }
+    }
+
+    componentWillGainFocus() {
+        if (this.refs.control) {
+            this.refs.control.focus();
+        }
+    }
+
+    componentWillLostFocus() {
+        if (this.refs.control) {
+            this.refs.control.blur();
         }
     }
 
@@ -252,6 +263,10 @@ class Menu extends Component {
         return className;
     }
 
+    dispatchFocusChange(focused) {
+        this.props.onFocusChange(focused);
+    }
+
     dispatchItemClick(e, itemProps) {
         this.props.onItemClick(e, itemProps, this.props)
     }
@@ -292,6 +307,8 @@ class Menu extends Component {
                 this.setState({ hoveredIndex });
             }
         }
+
+        this.dispatchFocusChange(true);
     }
 
     onBlur() {
@@ -300,6 +317,8 @@ class Menu extends Component {
         this.setState({
             hoveredIndex: null
         });
+
+        this.dispatchFocusChange(false);
     }
 
     onKeyDown(e) {
@@ -373,7 +392,6 @@ class Menu extends Component {
 
         if (newMenuValue) {
             this.setState({ value: newMenuValue });
-
             this.props.onChange(newMenuValue, this.props);
         }
     }
@@ -381,21 +399,24 @@ class Menu extends Component {
 }
 
 Menu.contextTypes = {
-    theme: React.PropTypes.string
+    theme: React.PropTypes.string,
 };
 
 Menu.propTypes = {
     theme: React.PropTypes.string,
     size: React.PropTypes.string,
     mode: React.PropTypes.string,
+    focused: React.PropTypes.bool,
     disabled: React.PropTypes.bool,
     onChange: React.PropTypes.func,
-    onItemClick: React.PropTypes.func
+    onFocusChange: React.PropTypes.func,
+    onItemClick: React.PropTypes.func,
 };
 
 Menu.defaultProps = {
     onChange() {},
-    onItemClick() {}
+    onFocusChange() {},
+    onItemClick() {},
 };
 
 export default Menu;
