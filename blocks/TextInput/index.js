@@ -20,6 +20,11 @@ class TextInput extends Control {
         super.componentWillReceiveProps(nextProps);
         if (nextProps.value !== this.props.value) {
             this.setState({ value: nextProps.value });
+
+            //  Изменение стейта и ререндер не приводят к событию onChange.
+            //  Так что дергаем колбэк руками.
+            //
+            this.props.onChange(nextProps.value, this.props);
         }
     }
 
@@ -40,6 +45,7 @@ class TextInput extends Control {
             <span className={this.className()}>
                 <span className="input__box">
                     <input {...this.getControlHandlers()} ref="control" className="input__control"
+                        name={this.props.name}
                         type={this.props.type}
                         disabled={this.props.disabled}
                         placeholder={this.props.placeholder}
