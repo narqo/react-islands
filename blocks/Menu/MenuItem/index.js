@@ -83,6 +83,9 @@ MenuItem.propTypes = {
     theme: React.PropTypes.string,
     size: React.PropTypes.string,
     disabled: React.PropTypes.bool,
+    checked: React.PropTypes.bool,
+    onClick: React.PropTypes.func,
+    onHover: React.PropTypes.func,
 };
 
 export default MenuItem;
