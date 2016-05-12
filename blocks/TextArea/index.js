@@ -41,7 +41,7 @@ class TextArea extends Control {
     }
 
     className() {
-        var className = 'textarea textarea__control';
+        var className = 'textarea';
 
         const theme = this.props.theme || this.context.theme;
         if (theme) {
