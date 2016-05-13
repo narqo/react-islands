@@ -5,8 +5,7 @@ import Menu from './index.js';
 import Item from '../Item';
 import Group from '../Group';
 
-class Example extends React.Component {
-
+class MenuExample extends React.Component {
     constructor(props) {
         super(props);
 
@@ -16,104 +15,81 @@ class Example extends React.Component {
         //  Но при выводе в div это начальное значение, получается расхождение между
         //  переданным value и реальным, в стейте меню.
         this.state = {
-            a: ['30', '40'],
-            b: ['30', '40'],
-            c: ['30', '40'],
-            d: ['30', '40']
+            value: ['30', '40'],
+            clicks: 0,
         };
 
-        this.onChange = this.onChange.bind(this);
+        this.onMenuChange = this.onMenuChange.bind(this);
+        this.onItemClick = this.onItemClick.bind(this);
     }
 
     render() {
+        const { name, mode, disabled } = this.props;
+        const { value } = this.state;
+
         return (
-            <App theme="islands">
-                <div className="examples">
-
-                    <div className="example">
-                        <h3>no mode</h3>
-                        <Menu size="l">
-                            <Item value="10" disabled>10</Item>
-                            <Item value="20" disabled>20</Item>
-                            <Item value="30">30</Item>
-                            <Item value="40">40</Item>
-                            <Item value="50">50</Item>
-                        </Menu>
-                    </div>
-
-                    <div className="example">
-                        <h3>mode="radio"</h3>
-                        <Menu size="l" mode="radio" name="a" value={this.state.a} onChange={this.onChange}>
-                            <Item value="10">10</Item>
-                            <Item value="20" disabled>20</Item>
-                            <Item value="30">30</Item>
-                            <Item value="40">40</Item>
-                            <Item value="50">50</Item>
-                        </Menu>
-                        <div>Checked: {this.state.a.join(', ')}</div>
-                    </div>
-
-                    <div className="example">
-                        <h3>mode="check"</h3>
-                        <Menu size="l" mode="check" name="b" value={this.state.b} onChange={this.onChange}>
-                            <Item value="10">10</Item>
-                            <Item value="20" disabled>20</Item>
-                            <Item value="30">30</Item>
-                            <Item value="40">40</Item>
-                            <Item value="50">50</Item>
-                        </Menu>
-                        <div>Checked: {this.state.b.join(', ')}</div>
-                    </div>
-
-                    <div className="example">
-                        <h3>mode="radio-check"</h3>
-                        <Menu size="l" mode="radio-check" name="c" value={this.state.c} onChange={this.onChange}>
-                            <Item value="10">10</Item>
-                            <Item value="20" disabled>20</Item>
-                            <Item value="30">30</Item>
-                            <Item value="40">40</Item>
-                            <Item value="50">50</Item>
-                        </Menu>
-                        <div>Checked: {this.state.c.join(', ')}</div>
-                    </div>
-
-                    <div className="example">
-                        <h3>small menu</h3>
-                        <Menu size="l" mode="radio-check">
-                            <Item value="10">10</Item>
-                        </Menu>
-                    </div>
-
-                    <div className="example">
-                        <h3>mode="radio-check"</h3>
-                        <Menu size="l" mode="check" name="d" value={this.state.d} onChange={this.onChange}>
-                            <Group title="First">
-                                <Item value="10">10</Item>
-                                <Item value="20" disabled>20</Item>
-                                <Item value="30">30</Item>
-                            </Group>
-                            <Group>
-                                <Item value="40">40</Item>
-                                <Item value="50">50</Item>
-                            </Group>
-                            <Group title="Third">
-                                <Item value="60">60</Item>
-                                <Item value="70">70</Item>
-                            </Group>
-                        </Menu>
-                        <div>Checked: {this.state.d.join(', ')}</div>
-                    </div>
-
-                </div>
-            </App>
+            <div className="example">
+                <h3>menu mode="{mode}"</h3>
+                <Menu size="l" mode={mode} name={name} value={this.state.value} onChange={this.onMenuChange}>
+                    <Item value="10">10</Item>
+                    <Item value="20" disabled>20</Item>
+                    <Item value="30" onClick={this.onItemClick}>30</Item>
+                    <Item value="40">40</Item>
+                    <Item value="50">50</Item>
+                    <Group title="First">
+                        <Item value="60">60</Item>
+                        <Item value="70">70</Item>
+                    </Group>
+                    <Group title="Second">
+                        <Item value="80">80</Item>
+                        <Item value="90">90</Item>
+                    </Group>
+                </Menu>
+                <div>Checked: {this.state.value.join(', ')}</div>
+                <span>{this.state.clicks} clicks</span>
+            </div>
         );
     }
 
-    onChange(value, menuProps) {
-        this.setState({
-            [menuProps.name]: value
-        });
+    onMenuChange(value) {
+        this.setState({ value });
     }
+
+    onItemClick() {
+        this.setState({ clicks: this.state.clicks + 1 });
+    }
+}
+
+function Example() {
+    return (
+        <App theme="islands">
+            <div className="examples">
+
+                <div className="example">
+                    <h3>no mode</h3>
+                    <Menu size="l">
+                        <Item value="10" disabled>10</Item>
+                        <Item value="20" disabled>20</Item>
+                        <Item value="30">30</Item>
+                        <Item value="40">40</Item>
+                        <Item value="50">50</Item>
+                    </Menu>
+                </div>
+
+                <MenuExample name="a" mode="radio" />
+                <MenuExample name="b" mode="check" />
+                <MenuExample name="c" mode="radio-check" />
+
+                <div className="example">
+                    <h3>small menu</h3>
+                    <Menu size="l" mode="radio-check">
+                        <Item value="10">10</Item>
+                    </Menu>
+                </div>
+
+            </div>
+        </App>
+    );
 }
 
 export default Example;
