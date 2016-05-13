@@ -32,14 +32,13 @@ class Control extends Component {
         }
     }
 
-    componentWillUpdate(nextProps, nextState) {
-        // TODO(narqo@): sync DOM focus and `focused` on props reconciliation
-        if (nextState.focused) {
-            this.handleFocused();
+    componentDidUpdate() {
+        if (this.state.focused) {
+            this.componentWillGainFocus();
         }
     }
 
-    handleFocused() {
+    componentWillGainFocus() {
         if (this.refs.control) {
             this.refs.control.focus();
         }
