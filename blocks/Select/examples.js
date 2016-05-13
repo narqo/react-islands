@@ -27,7 +27,7 @@ class SelectExample extends React.Component {
                 <Select
                     name="my-select"
                     size="l"
-                    text="Select days"
+                    placeholder="Select days"
                     disabled={disabled}
                     value={value}
                     mode={mode}

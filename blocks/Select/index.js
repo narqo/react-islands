@@ -13,16 +13,17 @@ class Select extends Component {
         super(props);
 
         this.state = {
-            popupVisible: false
+            popupVisible: false,
         };
 
-        this._preventPopupVisibleToggle = false;
+        this._restoreButtonFocused = false;
         this._cachedItems = null;
+        this._cachedChildren = null;
 
         this.getPopupTarget = this.getPopupTarget.bind(this);
         this.onButtonClick = this.onButtonClick.bind(this);
-        this.onButtonFocusChange = this.onButtonFocusChange.bind(this);
         this.onMenuChange = this.onMenuChange.bind(this);
+        this.onMenuFocusChange = this.onMenuFocusChange.bind(this);
         this.onMenuItemClick = this.onMenuItemClick.bind(this);
         this.onPopupClickOutside = this.onPopupClickOutside.bind(this);
         this.onPopupVisibleChange = this.onPopupVisibleChange.bind(this);
@@ -30,42 +31,37 @@ class Select extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.children !== this.props.children) {
+            this._cachedChildren = null;
             this._cachedItems = null;
+        }
+    }
+
+    componentDidUpdate() {
+        if (this._restoreButtonFocused) {
+            this._restoreButtonFocused = false;
         }
     }
 
     componentWillUnmount() {
         this._cachedItems = null;
+        this._cachedChildren = null;
     }
 
     render() {
-        const { theme, size, disabled, name, mode } = this.props;
+        const { theme, size, disabled, mode } = this.props;
+
         const menuValue = this.props.value;
-
-        const hiddens = menuValue.map(value =>
-            <input type="hidden" name={name} value={value}/>
-        );
-
-        const texts = [];
-        this.getItems().forEach(item => {
-            if (menuValue.indexOf(item.props.value) !== -1) {
-                if (menuValue.length === 1) {
-                    texts.push(Component.textValue(item));
-                } else {
-                    texts.push(item.props.checkedText || Component.textValue(item));
-                }
-            }
-        });
-
-        const text = texts.join(', ') || this.props.text || '—';
-
         const buttonChecked = (
             (mode === 'check' || mode === 'radio-check') &&
             Array.isArray(menuValue) &&
             menuValue.length > 0
         );
+        const buttonFocused = this._restoreButtonFocused ? true : undefined;
+        const { popupVisible } = this.state;
 
-        const popupVisible = this.state.popupVisible;
+        const text = this.renderButtonText();
+        const hiddens = this.renderHiddens();
+        const menu = this.renderMenu();
 
         return (
             <div className={this.className()}>
@@ -73,8 +69,8 @@ class Select extends Component {
 
                 <Button ref="button" theme={theme} size={size} disabled={disabled} className="select__button"
                     checked={buttonChecked}
+                    focused={buttonFocused}
                     onClick={this.onButtonClick}
-                    onFocusChange={this.onButtonFocusChange}
                 >
                     {text}
                     <Icon className="select__tick"/>
@@ -86,18 +82,54 @@ class Select extends Component {
                     onClickOutside={this.onPopupClickOutside}
                     onVisibleChange={this.onPopupVisibleChange}
                 >
-                    <Menu theme={theme} size={size} disabled={disabled} className="select__menu"
-                        tabIndex={null}
-                        mode={mode}
-                        value={menuValue}
-                        focused={popupVisible}
-                        onItemClick={this.onMenuItemClick}
-                        onChange={this.onMenuChange}
-                    >
-                        {this.props.children}
-                    </Menu>
+                    {menu}
                 </Popup>
             </div>
+        );
+    }
+
+    renderButtonText() {
+        const text = [];
+        const { value } = this.props;
+        this.getItems().forEach(item => {
+            if (value.indexOf(item.props.value) !== -1) {
+                if (value.length === 1) {
+                    text.push(Component.textValue(item));
+                } else {
+                    text.push(item.props.checkedText || Component.textValue(item));
+                }
+            }
+        });
+        return text.join(', ') || this.props.placeholder || '—';
+    }
+
+    renderHiddens() {
+        if (this.props.disabled) {
+            return null;
+        }
+
+        const { name } = this.props;
+        return this.props.value.map(value => React.createElement('input', { type: 'hidden', name, value }));
+    }
+
+    renderMenu() {
+        const { theme, size, disabled, mode, value } = this.props;
+        const focused = this.state.popupVisible;
+        const tabIndex = -1;
+
+        return (
+            <Menu ref="menu" theme={theme} size={size} className="select__menu"
+                mode={mode}
+                value={value}
+                tabIndex={tabIndex}
+                disabled={disabled}
+                focused={focused}
+                onItemClick={this.onMenuItemClick}
+                onChange={this.onMenuChange}
+                onFocusChange={this.onMenuFocusChange}
+            >
+                {this.props.children}
+            </Menu>
         );
     }
 
@@ -127,8 +159,6 @@ class Select extends Component {
         return className;
     }
 
-    //  TODO: Вынести из Select и Menu подобные методы в одно место.
-    //  Хотя сейчас Menu.prototype._getItems() не совсем такой.
     getItems() {
         if (!this._cachedItems) {
             let items = [];
@@ -152,27 +182,17 @@ class Select extends Component {
         return this.refs.button;
     }
 
-    onButtonClick() {
-        if (this._preventPopupVisibleToggle) {
-            this._preventPopupVisibleToggle = false;
-        } else {
-            this.setState({ popupVisible: !this.state.popupVisible });
-        }
+    getMenu() {
+        return this.refs.menu;
     }
 
-    onButtonFocusChange(focused) {
-        if (!focused) {
-            // FIXME(narqo@): close popup on button's blur if "relatedTarget" is within <Menu>
-            //this.setState({ popupVisible: false });
-        }
+    onButtonClick() {
+        this.setState({ popupVisible: !this.state.popupVisible });
     }
 
     onMenuItemClick(e) {
-        if (e.type !== 'click') {
-            // TODO(narqo@): pass eventSource=[mouse, keyboard] to on*Click events
-            this._preventPopupVisibleToggle = true;
-        }
         if (this.props.mode === 'radio' || this.props.mode === 'radio-check') {
+            this._restoreButtonFocused = true;
             // NOTE(narqo@): select with mode radio* must be closed on click within <Menu>
             this.setState({ popupVisible: false });
         }
@@ -180,6 +200,13 @@ class Select extends Component {
 
     onMenuChange(value) {
         this.props.onChange(value, this.props);
+    }
+
+    onMenuFocusChange(focused) {
+        if (!focused && this.state.popupVisible) {
+            // NOTE(narqo@): restore DOM focus to the Menu if still opened
+            this.getMenu().componentWillGainFocus();
+        }
     }
 
     onPopupClickOutside() {
@@ -191,12 +218,23 @@ class Select extends Component {
     }
 }
 
+Select.contextTypes = {
+    theme: React.PropTypes.string
+};
+
 Select.defaultProps = {
     onChange() {}
 };
 
-Select.contextTypes = {
-    theme: React.PropTypes.string
+Select.propTypes = {
+    theme: React.PropTypes.string,
+    size: React.PropTypes.string,
+    mode: React.PropTypes.string,
+    name: React.PropTypes.string,
+    value: React.PropTypes.any,
+    placeholder: React.PropTypes.string,
+    disabled: React.PropTypes.bool,
+    onChange: React.PropTypes.func,
 };
 
 export default Select;

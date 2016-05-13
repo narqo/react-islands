@@ -37,7 +37,9 @@ class Menu extends Component {
         if (this.props.value !== this.state.value) {
             this.props.onChange(this.state.value, this.props);
         }
+    }
 
+    componentDidMount() {
         if (this.props.focused) {
             this.componentWillGainFocus();
         }
@@ -53,11 +55,13 @@ class Menu extends Component {
                 value: this._validValue(nextProps.value)
             });
         }
+    }
 
-        if (nextProps.focused && !this.props.focused) {
-            this.componentWillGainFocus();
-        } else if (!nextProps.focused && this.props.focused) {
+    componentDidUpdate(prevProps) {
+        if (prevProps.focused && !this.props.focused) {
             this.componentWillLostFocus();
+        } else if (!prevProps.focused && this.props.focused) {
+            this.componentWillGainFocus();
         }
     }
 
@@ -74,12 +78,11 @@ class Menu extends Component {
     }
 
     _getItems() {
-        let items = this._cachedItems;
-
-        if (!items) {
-            let values = [];
-            let statuses = [];
-            items = this._cachedItems = { values, statuses };
+        if (!this._cachedItems) {
+            const values = [];
+            const statuses = [];
+            const items = [];
+            this._cachedItems = { values, statuses };
 
             const doChild = function(child) {
                 values.push(child.props.value);
@@ -89,7 +92,6 @@ class Menu extends Component {
             React.Children.forEach(this.props.children, child => {
                 if (Component.is(child, Item)) {
                     doChild(child);
-
                 } else if (Component.is(child, Group)) {
                     //  Предполагаем, что ничего, кроме Item внутри Group уже нет.
                     React.Children.forEach(child.props.children, doChild);
@@ -97,7 +99,7 @@ class Menu extends Component {
             });
         }
 
-        return items;
+        return this._cachedItems;
     }
 
     _getFirstEnabledIndex() {
@@ -188,23 +190,26 @@ class Menu extends Component {
         });
 
         function mapItem(item) {
-            const r = React.createElement(
+            const menuItem = React.createElement(
                 MenuItem,
                 {
                     theme,
                     size,
+                    key: `menuitem${item}`,
                     checked: checkable && (value.indexOf(item.props.value) !== -1),
                     hovered: (index === hoveredIndex),
-                    disabled: disabled || item.props.disabled,
+                    disabled: disabled,
+                    ...item.props,
                     index,
                     onClick: onItemClick,
-                    onHover: onItemHover
+                    onHover: onItemHover,
                 },
                 item.props.children
             );
+
             index++;
 
-            return r;
+            return menuItem;
         }
 
         function mapGroup(group) {
@@ -254,6 +259,9 @@ class Menu extends Component {
         }
         if (this.props.disabled) {
             className += ' menu_disabled';
+        }
+        if (this.props.focused) {
+            className += ' menu_focused';
         }
 
         if (this.props.className) {
@@ -314,9 +322,7 @@ class Menu extends Component {
     onBlur() {
         document.removeEventListener('keydown', this.onKeyDown, true);
 
-        this.setState({
-            hoveredIndex: null
-        });
+        this.setState({ hoveredIndex: null });
 
         this.dispatchFocusChange(false);
     }
@@ -354,9 +360,8 @@ class Menu extends Component {
 
             if (nextIndex !== null) {
                 this._savedIndex = nextIndex;
-                this.setState({hoveredIndex: nextIndex});
+                this.setState({ hoveredIndex: nextIndex });
             }
-
         } else if (e.code === 'Space' || e.code === 'Enter') {
             e.preventDefault();
 
@@ -395,7 +400,6 @@ class Menu extends Component {
             this.props.onChange(newMenuValue, this.props);
         }
     }
-
 }
 
 Menu.contextTypes = {
@@ -410,7 +414,6 @@ Menu.propTypes = {
     disabled: React.PropTypes.bool,
     onChange: React.PropTypes.func,
     onFocusChange: React.PropTypes.func,
-    onItemClick: React.PropTypes.func,
 };
 
 Menu.defaultProps = {
