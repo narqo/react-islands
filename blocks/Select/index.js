@@ -18,7 +18,6 @@ class Select extends Component {
 
         this._restoreButtonFocused = false;
         this._cachedItems = null;
-        this._cachedChildren = null;
 
         this.getPopupTarget = this.getPopupTarget.bind(this);
         this.onButtonClick = this.onButtonClick.bind(this);
@@ -31,7 +30,6 @@ class Select extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.children !== this.props.children) {
-            this._cachedChildren = null;
             this._cachedItems = null;
         }
     }
@@ -44,37 +42,16 @@ class Select extends Component {
 
     componentWillUnmount() {
         this._cachedItems = null;
-        this._cachedChildren = null;
     }
 
     render() {
         const { theme, size, disabled, mode } = this.props;
-
-        const menuValue = this.props.value;
-        const buttonChecked = (
-            (mode === 'check' || mode === 'radio-check') &&
-            Array.isArray(menuValue) &&
-            menuValue.length > 0
-        );
-        const buttonFocused = this._restoreButtonFocused ? true : undefined;
         const { popupVisible } = this.state;
-
-        const text = this.renderButtonText();
-        const hiddens = this.renderHiddens();
-        const menu = this.renderMenu();
 
         return (
             <div className={this.className()}>
-                {hiddens}
-
-                <Button ref="button" theme={theme} size={size} disabled={disabled} className="select__button"
-                    checked={buttonChecked}
-                    focused={buttonFocused}
-                    onClick={this.onButtonClick}
-                >
-                    {text}
-                    <Icon className="select__tick"/>
-                </Button>
+                {this.renderInputs()}
+                {this.renderButton()}
                 <Popup theme={theme} size={size}
                     visible={popupVisible}
                     target={this.getPopupTarget}
@@ -82,16 +59,21 @@ class Select extends Component {
                     onClickOutside={this.onPopupClickOutside}
                     onVisibleChange={this.onPopupVisibleChange}
                 >
-                    {menu}
+                    {this.renderMenu()}
                 </Popup>
             </div>
         );
     }
 
-    renderButtonText() {
-        const text = [];
-        const { value } = this.props;
-        this.getItems().forEach(item => {
+    renderButton() {
+        const { theme, size, disabled, mode, value } = this.props;
+        const focused = this._restoreButtonFocused ? true : undefined;
+        const checked = (
+            (mode === 'check' || mode === 'radio-check') &&
+            Array.isArray(value) && value.length > 0
+        );
+
+        const text = this.getItems().reduce((text, item) => {
             if (value.indexOf(item.props.value) !== -1) {
                 if (value.length === 1) {
                     text.push(Component.textValue(item));
@@ -99,17 +81,21 @@ class Select extends Component {
                     text.push(item.props.checkedText || Component.textValue(item));
                 }
             }
-        });
-        return text.join(', ') || this.props.placeholder || '—';
-    }
+            return text;
+        }, []);
+        const buttonText = text.join(', ') || this.props.placeholder || '—';
 
-    renderHiddens() {
-        if (this.props.disabled) {
-            return null;
-        }
-
-        const { name } = this.props;
-        return this.props.value.map(value => React.createElement('input', { type: 'hidden', name, value }));
+        return (
+            <Button ref="button" theme={theme} size={size} className="select__button"
+                disabled={disabled}
+                checked={checked}
+                focused={focused}
+                onClick={this.onButtonClick}
+            >
+                {buttonText}
+                <Icon className="select__tick"/>
+            </Button>
+        );
     }
 
     renderMenu() {
@@ -131,6 +117,15 @@ class Select extends Component {
                 {this.props.children}
             </Menu>
         );
+    }
+
+    renderInputs() {
+        if (this.props.disabled) {
+            return null;
+        }
+
+        const { name } = this.props;
+        return this.props.value.map(value => React.createElement('input', { type: 'hidden', name, value }));
     }
 
     className() {
@@ -186,6 +181,10 @@ class Select extends Component {
         return this.refs.menu;
     }
 
+    trapMenuFocus() {
+        this.getMenu().componentWillGainFocus();
+    }
+
     onButtonClick() {
         this.setState({ popupVisible: !this.state.popupVisible });
     }
@@ -205,7 +204,7 @@ class Select extends Component {
     onMenuFocusChange(focused) {
         if (!focused && this.state.popupVisible) {
             // NOTE(narqo@): restore DOM focus to the Menu if still opened
-            this.getMenu().componentWillGainFocus();
+            this.trapMenuFocus();
         }
     }
 

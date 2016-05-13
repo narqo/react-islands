@@ -9,12 +9,10 @@ class Menu extends Component {
     constructor(props) {
         super(props);
 
-        const value = this._validValue(props.value);
-
         this.state = {
             ...this.state,
+            value: this._validValue(props.value),
             hoveredIndex: null,
-            value,
         };
 
         this._cachedItems = null;
@@ -277,6 +275,7 @@ class Menu extends Component {
         if (typeof item.props.onClick === 'function') {
             item.props.onClick(e, item.props, this.props);
         }
+        this.props.onItemClick(e, itemProps);
     }
 
     onItemHover(hovered, itemProps) {
@@ -300,8 +299,6 @@ class Menu extends Component {
         this._mousePressed = false;
     }
 
-    //  TODO: Если меню в фокусе, то по ховеру тоже нужно менять _savedIndex.
-
     onFocus() {
         document.addEventListener('keydown', this.onKeyDown, true);
 
@@ -312,8 +309,8 @@ class Menu extends Component {
             }
             if (hoveredIndex !== this.state.hoveredIndex) {
                 this._savedIndex = hoveredIndex;
-                this.setState({ hoveredIndex });
             }
+            this.setState({ hoveredIndex });
         }
 
         this.dispatchFocusChange(true);
@@ -419,6 +416,7 @@ Menu.defaultProps = {
     tabIndex: 0,
     onChange() {},
     onFocusChange() {},
+    onItemClick() {},
 };
 
 export default Menu;
