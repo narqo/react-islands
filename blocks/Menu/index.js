@@ -189,10 +189,10 @@ class Menu extends Component {
                 {
                     theme,
                     size,
-                    key: `menuitem${item}`,
+                    disabled,
                     checked: checkable && (value.indexOf(item.props.value) !== -1),
                     hovered: (index === hoveredIndex),
-                    disabled: disabled,
+                    key: `menuitem${item}`,
                     ...item.props,
                     index,
                     onClick: onItemClick,

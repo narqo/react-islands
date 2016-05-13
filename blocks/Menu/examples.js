@@ -24,8 +24,7 @@ class MenuExample extends React.Component {
     }
 
     render() {
-        const { name, mode, disabled } = this.props;
-        const { value } = this.state;
+        const { name, mode } = this.props;
 
         return (
             <div className="example">
@@ -84,6 +83,14 @@ function Example() {
                     <h3>small menu</h3>
                     <Menu size="l" mode="radio-check">
                         <Item value="10">10</Item>
+                    </Menu>
+                </div>
+
+                <div className="example">
+                    <h3>disabled menu</h3>
+                    <Menu size="l" mode="radio-check" disabled>
+                        <Item value="10">10</Item>
+                        <Item value="20">20</Item>
                     </Menu>
                 </div>
 

@@ -16,7 +16,7 @@ class Select extends Component {
             popupVisible: false,
         };
 
-        this._restoreButtonFocused = false;
+        this._shouldRestoreButtonFocus = false;
         this._cachedItems = null;
 
         this.getPopupTarget = this.getPopupTarget.bind(this);
@@ -35,8 +35,8 @@ class Select extends Component {
     }
 
     componentDidUpdate() {
-        if (this._restoreButtonFocused) {
-            this._restoreButtonFocused = false;
+        if (this._shouldRestoreButtonFocus) {
+            this._shouldRestoreButtonFocus = false;
         }
     }
 
@@ -45,15 +45,12 @@ class Select extends Component {
     }
 
     render() {
-        const { theme, size, disabled, mode } = this.props;
-        const { popupVisible } = this.state;
-
         return (
             <div className={this.className()}>
                 {this.renderInputs()}
                 {this.renderButton()}
-                <Popup theme={theme} size={size}
-                    visible={popupVisible}
+                <Popup theme={this.props.theme} size={this.props.size}
+                    visible={this.props.popupVisible}
                     target={this.getPopupTarget}
                     directions={['bottom-left', 'bottom-right', 'top-left', 'top-right']}
                     onClickOutside={this.onPopupClickOutside}
@@ -67,21 +64,21 @@ class Select extends Component {
 
     renderButton() {
         const { theme, size, disabled, mode, value } = this.props;
-        const focused = this._restoreButtonFocused ? true : undefined;
+        const focused = this._shouldRestoreButtonFocus ? true : undefined;
         const checked = (
             (mode === 'check' || mode === 'radio-check') &&
             Array.isArray(value) && value.length > 0
         );
 
-        const text = this.getItems().reduce((text, item) => {
+        const text = this.getItems().reduce((res, item) => {
             if (value.indexOf(item.props.value) !== -1) {
                 if (value.length === 1) {
-                    text.push(Component.textValue(item));
+                    res.push(Component.textValue(item));
                 } else {
-                    text.push(item.props.checkedText || Component.textValue(item));
+                    res.push(item.props.checkedText || Component.textValue(item));
                 }
             }
-            return text;
+            return res;
         }, []);
         const buttonText = text.join(', ') || this.props.placeholder || '—';
 
@@ -189,9 +186,9 @@ class Select extends Component {
         this.setState({ popupVisible: !this.state.popupVisible });
     }
 
-    onMenuItemClick(e) {
+    onMenuItemClick() {
         if (this.props.mode === 'radio' || this.props.mode === 'radio-check') {
-            this._restoreButtonFocused = true;
+            this._shouldRestoreButtonFocus = true;
             // NOTE(narqo@): select with mode radio* must be closed on click within <Menu>
             this.setState({ popupVisible: false });
         }
