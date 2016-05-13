@@ -13,6 +13,8 @@ class Radio extends Control {
         };
 
         this.onButtonClick = this.onButtonClick.bind(this);
+        this.onButtonFocusChange = this.onButtonFocusChange.bind(this);
+        this.onButtonHoverChange = this.onButtonHoverChange.bind(this);
         this.onControlChange = this.onControlChange.bind(this);
     }
 
@@ -36,11 +38,13 @@ class Radio extends Control {
 
         if (type === 'button') {
             return (
-                <label className={this.className()} {...this.getControlHandlers()}>
+                <label className={this.className()}>
                     <Button theme={theme} size={size} type={type}
                         disabled={disabled}
                         checked={checked}
                         focused={focused}
+                        onFocusChange={this.onButtonFocusChange}
+                        onHoverChange={this.onButtonHoverChange}
                         onClick={this.onButtonClick}
                     >
                         {this.props.children}
@@ -104,6 +108,14 @@ class Radio extends Control {
         }
 
         return className;
+    }
+
+    onButtonFocusChange(focused) {
+        this.setState({ focused });
+    }
+
+    onButtonHoverChange(hovered) {
+        this.setState({ hovered });
     }
 
     onButtonClick() {
