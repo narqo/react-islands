@@ -64,14 +64,22 @@ class Control extends Component {
         }
     }
 
+    dispatchHoverChange(hovered) {
+        if (typeof this.props.onHoverChange === 'function') {
+            this.props.onHoverChange(hovered);
+        }
+    }
+
     onMouseEnter() {
         if (!this.props.disabled) {
             this.setState({ hovered: true });
+            this.dispatchHoverChange(true);
         }
     }
 
     onMouseLeave() {
         this.setState({ hovered: false });
+        this.dispatchHoverChange(false);
     }
 
     onMouseDown() {
@@ -92,7 +100,7 @@ class Control extends Component {
                 focused = true;
             }
             this.setState({ focused });
-            this.dispatchFocusChange(true);
+            this.dispatchFocusChange(focused);
         }
     }
 
@@ -104,6 +112,7 @@ class Control extends Component {
 
 Control.propTypes = {
     onFocusChange: React.PropTypes.func,
+    onHoverChange: React.PropTypes.func,
 };
 
 export default Control;
