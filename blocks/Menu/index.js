@@ -9,13 +9,11 @@ class Menu extends Component {
     constructor(props) {
         super(props);
 
-        const tabIndex = typeof props.tabIndex === 'undefined' ? 0 : props.tabIndex;
         const value = this._validValue(props.value);
 
         this.state = {
             ...this.state,
             hoveredIndex: null,
-            tabIndex,
             value,
         };
 
@@ -77,16 +75,15 @@ class Menu extends Component {
         }
     }
 
-    _getItems() {
+    getItems(index) {
         if (!this._cachedItems) {
-            const values = [];
-            const statuses = [];
             const items = [];
-            this._cachedItems = { values, statuses };
+            const values = [];
+            this._cachedItems = { items, values };
 
             const doChild = function(child) {
+                items.push(child);
                 values.push(child.props.value);
-                statuses.push(child.props.disabled);
             };
 
             React.Children.forEach(this.props.children, child => {
@@ -99,24 +96,25 @@ class Menu extends Component {
             });
         }
 
+        if (typeof index !== 'undefined') {
+            return this._cachedItems.items[index];
+        }
         return this._cachedItems;
     }
 
     _getFirstEnabledIndex() {
-        const statuses = this._getItems().statuses;
-        for (let i = 0; i < statuses.length; i++) {
-            if (!statuses[i]) {
+        const { items } = this.getItems();
+        for (let i = 0; i < items.length; i++) {
+            if (!items[i].disabled) {
                 return i;
             }
         }
-
         return null;
     }
 
     _getFirstEnabledValue() {
         const index = this._getFirstEnabledIndex();
-
-        return (index === null) ? null : this._getItems().values[index];
+        return (index === null) ? null : this.getItems(index).props.value;
     }
 
     _validValue(value) {
@@ -131,7 +129,7 @@ class Menu extends Component {
             newValue = [value];
         }
 
-        const values = this._getItems().values;
+        const values = this.getItems().values;
         const filteredValue = newValue.filter(aValue => (values.indexOf(aValue) !== -1));
         if (filteredValue.length !== newValue.length) {
             newValue = filteredValue;
@@ -179,10 +177,8 @@ class Menu extends Component {
         const children = React.Children.map(this.props.children, child => {
             if (Component.is(child, Group)) {
                 return mapGroup(child);
-
             } else if (Component.is(child, Item)) {
                 return mapItem(child);
-
             } else {
                 //  FIXME: Или тут бросать ошибку?
                 return child;
@@ -230,10 +226,11 @@ class Menu extends Component {
             );
         }
 
-        const tabIndex = disabled ? -1 : this.state.tabIndex;
+        const tabIndex = disabled ? -1 : this.props.tabIndex;
 
         return (
-            <div ref="control" className={this.className()} tabIndex={tabIndex}
+            <div ref="control" className={this.className()}
+                tabIndex={tabIndex}
                 onMouseDown={this.onMouseDown}
                 onMouseUp={this.onMouseUp}
                 onFocus={this.onFocus}
@@ -276,7 +273,10 @@ class Menu extends Component {
     }
 
     dispatchItemClick(e, itemProps) {
-        this.props.onItemClick(e, itemProps, this.props)
+        const item = this.getItems(itemProps.index);
+        if (typeof item.props.onClick === 'function') {
+            item.props.onClick(e, item.props, this.props);
+        }
     }
 
     onItemHover(hovered, itemProps) {
@@ -337,8 +337,8 @@ class Menu extends Component {
         if (e.code === 'ArrowDown' || e.code === 'ArrowUp') {
             e.preventDefault();
 
-            const statuses = this._getItems().statuses;
-            const len = statuses.length;
+            const { items } = this.getItems();
+            const len = items.length;
             if (!len) {
                 return;
             }
@@ -347,7 +347,6 @@ class Menu extends Component {
             let nextIndex;
             if (this.state.hoveredIndex === null) {
                 nextIndex = this._getFirstEnabledIndex();
-
             } else {
                 nextIndex = this.state.hoveredIndex;
                 do {
@@ -355,7 +354,7 @@ class Menu extends Component {
                     if (nextIndex === this.state.hoveredIndex) {
                         return;
                     }
-                } while (statuses[nextIndex]);
+                } while (items[nextIndex].props.disabled);
             }
 
             if (nextIndex !== null) {
@@ -377,8 +376,8 @@ class Menu extends Component {
             return;
         }
 
-        const items = this._getItems();
-        const itemValue = items.values[index];
+        const item = this.getItems(index);
+        const itemValue = item.props.value;
         const menuValue = this.state.value;
 
         const checked = (menuValue.indexOf(itemValue) !== -1);
@@ -417,9 +416,9 @@ Menu.propTypes = {
 };
 
 Menu.defaultProps = {
+    tabIndex: 0,
     onChange() {},
     onFocusChange() {},
-    onItemClick() {},
 };
 
 export default Menu;
