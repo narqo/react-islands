@@ -1,6 +1,8 @@
 import React from 'react';
 import Component from '../Component';
 
+// TODO(narqo@): invariant for the case when `onFocusChange` present but `focused` is absent
+
 class Control extends Component {
     constructor(props) {
         super(props);
@@ -8,6 +10,8 @@ class Control extends Component {
         this.state = {
             focused: !props.disabled && props.focused
         };
+
+        this._mousePressed = false;
 
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
@@ -19,7 +23,7 @@ class Control extends Component {
 
     componentDidMount() {
         if (this.state.focused) {
-            this.handleFocused();
+            this.componentWillGainFocus();
         }
     }
 
@@ -27,7 +31,6 @@ class Control extends Component {
         if (nextProps.disabled === true) {
             this.setState({ focused: false });
         } else if (nextProps.focused !== this.state.focused && nextProps.focused === true) {
-            //  FIXME: Нужно ли уметь менять focused через задание props'ов?
             this.setState({ focused: nextProps.focused });
         }
     }
@@ -83,19 +86,13 @@ class Control extends Component {
         if (!this.props.disabled) {
             let focused;
             // if focus wasn't set by mouse set focused state to "hard"
-            if (this.props.focused || !this._mousePressed) {
+            if (!this._mousePressed) {
                 focused = 'hard';
             } else {
                 focused = true;
             }
             this.setState({ focused });
             this.dispatchFocusChange(true);
-
-            //  FIXME: А нужно ли это? Кажется да, а то в чекбоксе есть button и label,
-            //  они оба подписаны на focus. И в итоге последним отработает label,
-            //  что вроде неправильно.
-            //  e.stopPropagation();
-            //  e.preventDefault();
         }
     }
 

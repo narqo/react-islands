@@ -7,7 +7,6 @@ import pressable from '../pressable';
 class Button extends Control {
     constructor(...args) {
         super(...args);
-
         this._wrappedChildren = null;
     }
 
@@ -88,10 +87,10 @@ class Button extends Control {
     }
 
     /** @override */
-    onMouseDown(e) {
-        e.preventDefault(); // NOTE: prevents button from being blurred at least in FF and Safari
-        super.onMouseDown(e);
-    }
+    // onMouseDown(e) {
+    //     e.preventDefault(); // NOTE: prevents button from being blurred at least in FF and Safari
+    //     super.onMouseDown(e);
+    // }
 }
 
 Button.propTypes = {

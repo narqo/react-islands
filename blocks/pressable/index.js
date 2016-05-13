@@ -7,7 +7,7 @@ const pressable = BaseComponent => class extends BaseComponent {
 
         this.state = {
             ...this.state,
-            pressed: false
+            pressed: false,
         };
 
         this.onMouseUp = this.onMouseUp.bind(this);
@@ -60,7 +60,7 @@ const pressable = BaseComponent => class extends BaseComponent {
     onMouseUp(e) {
         super.onMouseUp(e);
         if (this.state.pressed) {
-            this.setState({ focused: true, pressed: false });
+            this.setState({ pressed: false });
             this.dispatchClick();
         }
     }
