@@ -7,6 +7,7 @@ Item.propTypes = {
     disabled: React.PropTypes.bool,
     value: React.PropTypes.any,
     checkedText: React.PropTypes.any,
+    onClick: React.PropTypes.func,
 };
 
 export default Item;
