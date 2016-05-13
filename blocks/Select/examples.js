@@ -10,8 +10,10 @@ class SelectExample extends React.Component {
         super(props);
         this.state = {
             value: ['1'],
+            clicks: 0,
         };
         this.onSelectChange = this.onSelectChange.bind(this);
+        this.onItemClick = this.onItemClick.bind(this);
     }
 
     render() {
@@ -22,7 +24,8 @@ class SelectExample extends React.Component {
             <div className="example">
                 <b>Select mode={mode}</b>
 
-                <p>Selected: <b>{value.join(', ')}</b></p>
+                <div>Selected: <b>{value.join(', ')}</b></div>
+                <div>{this.state.clicks} clicks</div>
 
                 <Select
                     name="my-select"
@@ -35,9 +38,9 @@ class SelectExample extends React.Component {
                 >
                     <Group title="Weekdays">
                         <Item value="1" checkedText="Mon">Monday</Item>
-                        <Item value="2" checkedText="Tue">Tuesday</Item>
+                        <Item value="2" checkedText="Tue" onClick={this.onItemClick}>Tuesday</Item>
                         <Item value="3" checkedText="Wed">Wednesday</Item>
-                        <Item value="4" checkedText="Thu" disabled>Thursday</Item>
+                        <Item value="4" checkedText="Thu" disabled onClick={this.onItemClick}>Thursday</Item>
                         <Item value="5" checkedText="Fri">Friday</Item>
                     </Group>
                     <Group title="Weekends">
@@ -51,6 +54,10 @@ class SelectExample extends React.Component {
 
     onSelectChange(value) {
         this.setState({ value });
+    }
+
+    onItemClick() {
+        this.setState({ clicks: this.state.clicks + 1 });
     }
 }
 
