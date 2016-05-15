@@ -1,4 +1,7 @@
+import React from 'react';
 import Component from '../Component';
+
+// TODO(narqo@): invariant for the case when `onFocusChange` present but `focused` is absent
 
 class Control extends Component {
     constructor(props) {
@@ -8,38 +11,37 @@ class Control extends Component {
             focused: !props.disabled && props.focused
         };
 
+        this._mousePressed = false;
+
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
-        this.onFocus = this.onFocus.bind(this);
-        this.onBlur = this.onBlur.bind(this);
         this.onMouseEnter = this.onMouseEnter.bind(this);
         this.onMouseLeave = this.onMouseLeave.bind(this);
+        this.onFocus = this.onFocus.bind(this);
+        this.onBlur = this.onBlur.bind(this);
     }
 
     componentDidMount() {
         if (this.state.focused) {
-            this.handleFocused();
+            this.componentWillGainFocus();
         }
     }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.disabled === true) {
             this.setState({ focused: false });
-
-        } else if (nextProps.focused !== this.state.focused) {
-            //  FIXME: Нужно ли уметь менять focused через задание props'ов?
+        } else if (nextProps.focused !== this.state.focused && nextProps.focused === true) {
             this.setState({ focused: nextProps.focused });
         }
     }
 
-    componentWillUpdate(nextProps, nextState) {
-        // TODO(narqo@): sync DOM focus and `focused` on props reconciliation
-        if (nextState.focused) {
-            this.handleFocused();
+    componentDidUpdate() {
+        if (this.state.focused) {
+            this.componentWillGainFocus();
         }
     }
 
-    handleFocused() {
+    componentWillGainFocus() {
         if (this.refs.control) {
             this.refs.control.focus();
         }
@@ -52,18 +54,32 @@ class Control extends Component {
             onFocus: this.onFocus,
             onBlur: this.onBlur,
             onMouseEnter: this.onMouseEnter,
-            onMouseLeave: this.onMouseLeave
+            onMouseLeave: this.onMouseLeave,
         };
+    }
+
+    dispatchFocusChange(focused) {
+        if (typeof this.props.onFocusChange === 'function') {
+            this.props.onFocusChange(focused);
+        }
+    }
+
+    dispatchHoverChange(hovered) {
+        if (typeof this.props.onHoverChange === 'function') {
+            this.props.onHoverChange(hovered);
+        }
     }
 
     onMouseEnter() {
         if (!this.props.disabled) {
             this.setState({ hovered: true });
+            this.dispatchHoverChange(true);
         }
     }
 
     onMouseLeave() {
         this.setState({ hovered: false });
+        this.dispatchHoverChange(false);
     }
 
     onMouseDown() {
@@ -78,24 +94,25 @@ class Control extends Component {
         if (!this.props.disabled) {
             let focused;
             // if focus wasn't set by mouse set focused state to "hard"
-            if (this.props.focused || !this._mousePressed) {
+            if (!this._mousePressed) {
                 focused = 'hard';
             } else {
                 focused = true;
             }
             this.setState({ focused });
-
-            //  FIXME: А нужно ли это? Кажется да, а то в чекбоксе есть button и label,
-            //  они оба подписаны на focus. И в итоге последним отработает label,
-            //  что вроде неправильно.
-            //  e.stopPropagation();
-            //  e.preventDefault();
+            this.dispatchFocusChange(focused);
         }
     }
 
     onBlur() {
         this.setState({ focused: false });
+        this.dispatchFocusChange(false);
     }
 }
+
+Control.propTypes = {
+    onFocusChange: React.PropTypes.func,
+    onHoverChange: React.PropTypes.func,
+};
 
 export default Control;

@@ -12,6 +12,7 @@ class Modal extends Component {
         this.shouldRenderToOverlay = false;
         this.onLayerClick = this.onLayerClick.bind(this);
         this.onLayerOrderChange = this.onLayerOrderChange.bind(this);
+        this.onLayerRequestHide = this.onLayerRequestHide.bind(this);
     }
 
     componentWillUpdate(nextProps) {
@@ -40,7 +41,7 @@ class Modal extends Component {
                     visible={visible}
                     zIndexGroupLevel={this.props.zIndexGroupLevel}
                     onClick={this.onLayerClick}
-                    onVisibleChange={this.props.onVisible}
+                    onRequestHide={this.onLayerRequestHide}
                     onOrderChange={this.onLayerOrderChange}
                 >
                     {children}
@@ -75,24 +76,38 @@ class Modal extends Component {
         return className;
     }
 
-    dispatchClickOutside() {
-        this.props.onClickOutside();
+    requestHide(e, reason) {
+        this.props.onRequestHide(e, reason);
     }
 
     onLayerClick(e) {
         if (!this.refs.content.contains(e.target)) {
-            this.dispatchClickOutside();
+            this.requestHide(e, 'clickOutside');
         }
     }
 
     onLayerOrderChange(zIndex) {
         this.setState({ zIndex });
     }
+
+    onLayerRequestHide(e, reason) {
+        if (reason === 'escapeKeyPress') {
+            this.requestHide(e, reason);
+        }
+    }
 }
 
+Modal.propsTypes = {
+    theme: React.PropTypes.string,
+    size: React.PropTypes.string,
+    visible: React.PropTypes.bool.isRequired,
+    onRequestHide: React.PropTypes.func,
+};
+
 Modal.defaultProps = {
+    visible: false,
     zIndexGroupLevel: 20,
-    onClickOutside() {},
+    onRequestHide() {},
 };
 
 Modal.contextTypes = {

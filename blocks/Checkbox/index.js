@@ -13,6 +13,8 @@ class Checkbox extends Control {
         };
 
         this.onButtonClick = this.onButtonClick.bind(this);
+        this.onButtonFocusChange = this.onButtonFocusChange.bind(this);
+        this.onButtonHoverChange = this.onButtonHoverChange.bind(this);
         this.onControlChange = this.onControlChange.bind(this);
     }
 
@@ -48,11 +50,13 @@ class Checkbox extends Control {
             //  (а не просто value/checked). Иначе замучает warning'ами.
             //  Или же нужен фейковый onChange.
             return (
-                <label className={this.className()} {...this.getControlHandlers()}>
+                <label className={this.className()}>
                     <Button theme={theme} size={size} type={type}
                         disabled={disabled}
                         checked={checked}
                         focused={focused}
+                        onFocusChange={this.onButtonFocusChange}
+                        onHoverChange={this.onButtonHoverChange}
                         onClick={this.onButtonClick}
                     >
                         {this.props.children}
@@ -116,6 +120,14 @@ class Checkbox extends Control {
         }
 
         return className;
+    }
+
+    onButtonFocusChange(focused) {
+        this.setState({ focused });
+    }
+
+    onButtonHoverChange(hovered) {
+        this.setState({ hovered });
     }
 
     onButtonClick(e) {

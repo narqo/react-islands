@@ -9,7 +9,7 @@ Component.wrap = function(children, wrapper) {
 
     var chunk = null;
     React.Children.forEach(children, child => {
-        if (Component.isComponent(child)) {
+        if (Component.is(child, Component)) {
             if (chunk) {
                 wrapped.push(wrapper(chunk));
                 chunk = null;
@@ -30,8 +30,23 @@ Component.wrap = function(children, wrapper) {
     return wrapped;
 };
 
-Component.isComponent = function(obj) {
-    return (React.isValidElement(obj) && obj.type.prototype instanceof Component);
+Component.textValue = function(component) {
+    let text = '';
+    React.Children.forEach(component.props.children, child => {
+        if (typeof child === 'string') {
+            text += child;
+        }
+    });
+    return text;
+};
+
+Component.is = function(obj, ctor) {
+    return (
+        React.isValidElement(obj) && (
+            obj.type === ctor ||
+            obj.type.prototype instanceof ctor
+        )
+    );
 };
 
 export default Component;

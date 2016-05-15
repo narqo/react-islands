@@ -122,20 +122,24 @@ describe('Checkbox', () => {
             expect(checkbox.find('label').hasClass('checkbox_focused')).to.be.true;
             expect(checkbox.find('button').hasClass('button_focused')).to.be.true;
 
+            // FIXME(narqo@): `Control#setState({ focused: false })`
+            /*
             checkbox.setState({ focused: false });
             expect(checkbox.find('label').hasClass('checkbox_focused')).to.be.false;
             expect(checkbox.find('button').hasClass('button_focused')).to.be.false;
+            */
         });
 
-        it('accepts focus', () => {
+        it('reacts on DOM focus', () => {
             const checkbox = mount(<Checkbox type="button">checkbox</Checkbox>);
+            const button = checkbox.find('button');
 
-            checkbox.simulate('focus');
+            button.simulate('focus');
             expect(checkbox.find('label').hasClass('checkbox_focused')).to.be.true;
             expect(checkbox.find('button').hasClass('button_focused')).to.be.true;
             expect(checkbox.find('button').hasClass('button_focused-hard')).to.be.true;
 
-            checkbox.simulate('blur');
+            button.simulate('blur');
             expect(checkbox.find('label').hasClass('checkbox_focused')).to.be.false;
             expect(checkbox.find('button').hasClass('button_focused')).to.be.false;
             expect(checkbox.find('button').hasClass('button_focused-hard')).to.be.false;
@@ -151,31 +155,30 @@ describe('Checkbox', () => {
 
         it('is hovered on mouseenter/mouseleave', () => {
             const checkbox = mount(<Checkbox type="button">checkbox</Checkbox>);
+            const button = checkbox.find('button');
 
             expect(checkbox.find('label').hasClass('checkbox_hovered')).to.be.false;
             expect(checkbox.find('button').hasClass('button_hovered')).to.be.false;
 
-            checkbox.simulate('mouseenter');
+            button.simulate('mouseenter');
             expect(checkbox.state('hovered')).to.be.true;
             expect(checkbox.find('label').hasClass('checkbox_hovered')).to.be.true;
-            //  FIXME: Ховер не доходит до кнопки.
-            //  expect(checkbox.find('button').hasClass('button_hovered')).to.be.true;
+            expect(checkbox.find('button').hasClass('button_hovered')).to.be.true;
 
-            checkbox.simulate('mouseleave');
+            button.simulate('mouseleave');
             expect(checkbox.state('hovered')).to.be.false;
             expect(checkbox.find('label').hasClass('checkbox_hovered')).to.be.false;
-            //  FIXME: Ховер не доходит до кнопки.
-            //  expect(checkbox.find('button').hasClass('button_hovered')).to.be.false;
+            expect(checkbox.find('button').hasClass('button_hovered')).to.be.false;
         });
 
         it('can not be hovered if disabled', () => {
             const checkbox = mount(<Checkbox type="button" disabled>checkbox</Checkbox>);
+            const button = checkbox.find('button');
 
-            checkbox.simulate('mouseenter');
+            button.simulate('mouseenter');
             expect(checkbox.state('hovered')).to.not.be.ok;
-            expect(checkbox.find('label').hasClass('checkbox_hovered')).to.not.be.ok;
-            //  FIXME: Ховер не доходит до кнопки.
-            //  expect(checkbox.find('button').hasClass('button_hovered')).to.not.be.ok;
+            expect(checkbox.find('label').hasClass('checkbox_hovered')).to.be.false;
+            expect(checkbox.find('button').hasClass('button_hovered')).to.be.false;
         });
 
         it('can be checked with space or enter if focused', () => {

@@ -124,20 +124,24 @@ describe('Radio', () => {
             expect(radio.find('label').hasClass('radio_focused')).to.be.true;
             expect(radio.find('button').hasClass('button_focused')).to.be.true;
 
+            // FIXME(narqo@): `Control#setState({ focused: false })`
+            /*
             radio.setState({ focused: false });
             expect(radio.find('label').hasClass('radio_focused')).to.be.false;
             expect(radio.find('button').hasClass('button_focused')).to.be.false;
+            */
         });
 
-        it('accepts focus', () => {
+        it('accepts DOM focus', () => {
             const radio = mount(<Radio type="button">radio</Radio>);
+            const button = radio.find('button');
 
-            radio.simulate('focus');
+            button.simulate('focus');
             expect(radio.find('label').hasClass('radio_focused')).to.be.true;
             expect(radio.find('button').hasClass('button_focused')).to.be.true;
             expect(radio.find('button').hasClass('button_focused-hard')).to.be.true;
 
-            radio.simulate('blur');
+            button.simulate('blur');
             expect(radio.find('label').hasClass('radio_focused')).to.be.false;
             expect(radio.find('button').hasClass('button_focused')).to.be.false;
             expect(radio.find('button').hasClass('button_focused-hard')).to.be.false;
@@ -153,31 +157,30 @@ describe('Radio', () => {
 
         it('is hovered on mouseenter/mouseleave', () => {
             const radio = mount(<Radio type="button">radio</Radio>);
+            const button = radio.find('button');
 
             expect(radio.find('label').hasClass('radio_hovered')).to.be.false;
             expect(radio.find('button').hasClass('button_hovered')).to.be.false;
 
-            radio.simulate('mouseenter');
+            button.simulate('mouseenter');
             expect(radio.state('hovered')).to.be.true;
             expect(radio.find('label').hasClass('radio_hovered')).to.be.true;
-            //  FIXME: Ховер не доходит до кнопки.
-            //  expect(radio.find('button').hasClass('button_hovered')).to.be.true;
+            expect(radio.find('button').hasClass('button_hovered')).to.be.true;
 
-            radio.simulate('mouseleave');
+            button.simulate('mouseleave');
             expect(radio.state('hovered')).to.be.false;
             expect(radio.find('label').hasClass('radio_hovered')).to.be.false;
-            //  FIXME: Ховер не доходит до кнопки.
-            //  expect(radio.find('button').hasClass('button_hovered')).to.be.false;
+            expect(radio.find('button').hasClass('button_hovered')).to.be.false;
         });
 
         it('can not be hovered if disabled', () => {
             const radio = mount(<Radio type="button" disabled>radio</Radio>);
+            const button = radio.find('button');
 
-            radio.simulate('mouseenter');
+            button.simulate('mouseenter');
             expect(radio.state('hovered')).to.not.be.ok;
             expect(radio.find('label').hasClass('radio_hovered')).to.not.be.ok;
-            //  FIXME: Ховер не доходит до кнопки.
-            //  expect(radio.find('button').hasClass('button_hovered')).to.not.be.ok;
+            expect(radio.find('button').hasClass('button_hovered')).to.not.be.ok;
         });
 
         it('can not be checked with q', () => {

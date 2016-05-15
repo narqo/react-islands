@@ -4,7 +4,12 @@ import Component from '../Component';
 import Portal from './Portal';
 
 const ZINDEX_FACTOR = 1000;
+
 const visibleLayersZIndexes = {};
+const visibleLayersStack = [];
+
+const REASON_CLICK_OUTSIDE = 'clickOutside';
+const REASON_ESC_KEY_PRESS = 'escapeKeyPress';
 
 class Overlay extends Component {
     constructor(props, context) {
@@ -16,6 +21,7 @@ class Overlay extends Component {
         this.preventClickOutside = this.preventClickOutside.bind(this);
         this.onLayerClick = this.onLayerClick.bind(this);
         this.onDocumentClick = this.onDocumentClick.bind(this);
+        this.onDocumentKeyPress = this.onDocumentKeyPress.bind(this);
     }
 
     getChildContext() {
@@ -44,12 +50,16 @@ class Overlay extends Component {
     }
 
     componentWillUnmount() {
+        this.requestHide(null, false);
         this.layerWillBecomeHidden();
     }
 
     layerWillBecomeVisible() {
+        visibleLayersStack.unshift(this);
+
         this.captureZIndex();
-        this.dispatchVisibleChange(true);
+
+        document.addEventListener('keydown', this.onDocumentKeyPress);
         // NOTE(narqo@): we have to use `nextTick` or nested layer will be closed immediately after being opened
         process.nextTick(() => {
             if (this.props.visible) {
@@ -60,13 +70,22 @@ class Overlay extends Component {
     }
 
     layerWillBecomeHidden() {
+        visibleLayersStack.splice(visibleLayersStack.indexOf(this), 1);
+
+        this.isClickOutsidePrevented = null;
+
+        document.removeEventListener('keydown', this.onDocumentKeyPress);
         document.removeEventListener('click', this.onDocumentClick);
+
         this.releaseZIndex();
-        this.dispatchVisibleChange(false);
     }
 
     render() {
-        const children = React.cloneElement(React.Children.only(this.props.children), { onClick: this.onLayerClick });
+        const children = React.cloneElement(
+            React.Children.only(this.props.children),
+            { onClick: this.onLayerClick }
+        );
+
         return (
             <Portal>
                 {children}
@@ -78,12 +97,14 @@ class Overlay extends Component {
         return this.props.visible;
     }
 
-    dispatchVisibleChange(visible) {
-        this.props.onVisibleChange(visible);
+    requestHide(e, reason) {
+        if (this.props.visible) {
+            this.props.onRequestHide(e, reason);
+        }
     }
 
-    dispatchClickOutside(e) {
-        this.props.onClickOutside(e);
+    handleClickOutside(e) {
+        this.requestHide(e, REASON_CLICK_OUTSIDE);
     }
 
     preventClickOutside() {
@@ -93,7 +114,7 @@ class Overlay extends Component {
     handleParentLayerHide() {
         const { isParentLayerVisible } = this.context;
         if (this.props.visible && typeof isParentLayerVisible === 'function' && isParentLayerVisible() === false) {
-            this.dispatchVisibleChange(false);
+            this.requestHide(null, false);
         }
     }
 
@@ -113,14 +134,20 @@ class Overlay extends Component {
         if (this.isClickOutsidePrevented) {
             this.isClickOutsidePrevented = null;
         } else {
-            this.dispatchClickOutside(e);
+            this.handleClickOutside(e);
+        }
+    }
+
+    onDocumentKeyPress(e) {
+        if (e.key === 'Escape' && visibleLayersStack[0] === this) {
+            this.requestHide(e, REASON_ESC_KEY_PRESS);
         }
     }
 
     captureZIndex() {
         const level = this.props.zIndexGroupLevel;
 
-        var zIndexes = visibleLayersZIndexes[level];
+        let zIndexes = visibleLayersZIndexes[level];
         if (!zIndexes) {
             zIndexes = [(level + 1) * ZINDEX_FACTOR];
             visibleLayersZIndexes[level] = zIndexes;
@@ -144,13 +171,19 @@ Overlay.childContextTypes = Overlay.contextTypes = {
     preventParentLayerClickOutside: React.PropTypes.func,
 };
 
+Overlay.propsTypes = {
+    visible: React.PropTypes.bool.isRequired,
+    onClick: React.PropTypes.func,
+    onRequestHide: React.PropTypes.func,
+    onOrderChange: React.PropTypes.func,
+};
+
 Overlay.defaultProps = {
     visible: false,
     zIndexGroupLevel: 0,
     onClick() {},
-    onClickOutside() {},
+    onRequestHide() {},
     onOrderChange() {},
-    onVisibleChange() {},
 };
 
 export default Overlay;

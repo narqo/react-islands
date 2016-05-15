@@ -4,6 +4,9 @@ import ReactDOM from 'react-dom';
 import Component from '../Component';
 import Overlay from '../Overlay';
 
+// FIXME(narqo@): this is only valid for theme islands
+const MAIN_OFFSET = 5;
+const VIEWPORT_OFFSET = 10;
 const VIEWPORT_ACCURACY_FACTOR = 0.99;
 const DEFAULT_DIRECTIONS = [
     'bottom-left', 'bottom-center', 'bottom-right',
@@ -24,9 +27,9 @@ class Popup extends Component {
         };
 
         this.shouldRenderToOverlay = false;
+
         this.onLayerOrderChange = this.onLayerOrderChange.bind(this);
-        this.onLayerVisibleChange = this.onLayerVisibleChange.bind(this);
-        this.onLayerClickOutside = this.onLayerClickOutside.bind(this);
+        this.onLayerRequestHide = this.onLayerRequestHide.bind(this);
         this.onViewportResize = this.onViewportResize.bind(this);
         this.onViewportScroll = this.onViewportScroll.bind(this);
     }
@@ -40,7 +43,12 @@ class Popup extends Component {
     componentDidUpdate(prevProps) {
         if (this.shouldRenderToOverlay && this.props.visible !== prevProps.visible) {
             this.reposition();
+            this.handleVisibleChange(this.props.visible);
         }
+    }
+
+    componentWillUnmount() {
+        this.handleVisibleChange(false);
     }
 
     render() {
@@ -54,8 +62,7 @@ class Popup extends Component {
             return (
                 <Overlay
                     visible={this.props.visible}
-                    onVisibleChange={this.onLayerVisibleChange}
-                    onClickOutside={this.onLayerClickOutside}
+                    onRequestHide={this.onLayerRequestHide}
                     onOrderChange={this.onLayerOrderChange}
                 >
                     <div ref="popup" className={this.className()} style={style}>{this.props.children}</div>
@@ -96,15 +103,7 @@ class Popup extends Component {
         return className;
     }
 
-    onLayerClickOutside(e) {
-        const target = this.getTarget();
-        if (target instanceof Element && target.contains(e.target)) {
-            return;
-        }
-        this.props.onClickOutside();
-    }
-
-    onLayerVisibleChange(visible) {
+    handleVisibleChange(visible) {
         // NOTE(@narqo): subscribe to resize/scroll only if popup can be repositioned within `directions`
         if (visible && this.props.directions.length > 1) {
             window.addEventListener('resize', this.onViewportResize);
@@ -113,7 +112,18 @@ class Popup extends Component {
             window.removeEventListener('resize', this.onViewportResize);
             window.removeEventListener('scroll', this.onViewportScroll);
         }
-        this.props.onVisibleChange(visible);
+    }
+
+    onLayerRequestHide(e, reason) {
+        if (this.props.visible && this.props.onRequestHide) {
+            if (reason === 'clickOutside') {
+                const anchor = this.getAnchor();
+                if (anchor instanceof Element && anchor.contains(e.target)) {
+                    return;
+                }
+            }
+            this.props.onRequestHide(e, reason);
+        }
     }
 
     onLayerOrderChange(zIndex) {
@@ -140,22 +150,29 @@ class Popup extends Component {
         return ReactDOM.findDOMNode(this.refs.popup);
     }
 
-    getTarget() {
-        if (!this.props.target) {
+    getAnchor() {
+        if (!this.props.anchor) {
             return null;
         }
-        const target = this.props.target();
-        if (target instanceof Component) {
-            return ReactDOM.findDOMNode(target);
+
+        let anchor;
+        if (typeof this.props.anchor === 'function') {
+            anchor = this.props.anchor();
         } else {
-            return target || null;
+            anchor = this.props.anchor;
+        }
+
+        if (anchor instanceof Component) {
+            return ReactDOM.findDOMNode(anchor);
+        } else {
+            return anchor || null;
         }
     }
 
     calcBestDrawingParams() {
         const viewport = this.calcViewportDimensions();
         const popup = this.calcPopupDimensions();
-        const target = this.calcTargetDimensions();
+        const anchor = this.calcAnchorDimensions();
 
         let i = 0,
             direction,
@@ -166,7 +183,7 @@ class Popup extends Component {
             bestViewportFactor;
 
         while (direction = this.props.directions[i++]) { // eslint-disable-line no-cond-assign
-            position = this.calcPopupPosition(direction, target, popup);
+            position = this.calcPopupPosition(direction, anchor, popup);
             viewportFactor = this.calcViewportFactor(position, viewport, popup);
 
             if (i === 1 || viewportFactor > bestViewportFactor || (!bestViewportFactor && this.state.direction === direction)) {
@@ -184,22 +201,22 @@ class Popup extends Component {
         };
     }
 
-    calcTargetDimensions() {
-        const target = this.getTarget();
+    calcAnchorDimensions() {
+        const anchor = this.getAnchor();
         let left, top, width, height;
 
-        if (target instanceof Element) {
-            const targetRect = target.getBoundingClientRect();
+        if (anchor instanceof Element) {
+            const anchorRect = anchor.getBoundingClientRect();
             const viewportRect = document.documentElement.getBoundingClientRect();
-            left = targetRect.left - viewportRect.left;
-            top = targetRect.top - viewportRect.top;
-            width = targetRect.width;
-            height = targetRect.height;
-        } else if (target === null) {
+            left = anchorRect.left - viewportRect.left;
+            top = anchorRect.top - viewportRect.top;
+            width = anchorRect.width;
+            height = anchorRect.height;
+        } else if (anchor === null) {
             left = top = height = width = 0;
-        } else if (typeof target === 'object') {
-            left = target.left;
-            top = target.top;
+        } else if (typeof anchor === 'object') {
+            left = anchor.left;
+            top = anchor.top;
             width = height = 0;
         }
 
@@ -257,33 +274,33 @@ class Popup extends Component {
         };
     }
 
-    calcPopupPosition(direction, target, popup) {
+    calcPopupPosition(direction, anchor, popup) {
         const { mainOffset, secondaryOffset } = this.props;
         let top, left;
 
         if (checkMainDirection(direction, 'bottom')) {
-            top = target.top + target.height + mainOffset;
+            top = anchor.top + anchor.height + mainOffset;
         } else if (checkMainDirection(direction, 'top')) {
-            top = target.top - popup.height - mainOffset;
+            top = anchor.top - popup.height - mainOffset;
         } else if (checkMainDirection(direction, 'left')) {
-            left = target.left - popup.width - mainOffset;
+            left = anchor.left - popup.width - mainOffset;
         } else if (checkMainDirection(direction, 'right')) {
-            left = target.left + target.width + mainOffset;
+            left = anchor.left + anchor.width + mainOffset;
         }
 
         if (checkSecondaryDirection(direction, 'right')) {
-            left = target.left + target.width - popup.width - secondaryOffset;
+            left = anchor.left + anchor.width - popup.width - secondaryOffset;
         } else if (checkSecondaryDirection(direction, 'left')) {
-            left = target.left + secondaryOffset;
+            left = anchor.left + secondaryOffset;
         } else if (checkSecondaryDirection(direction, 'bottom')) {
-            top = target.top + target.height - popup.height - secondaryOffset;
+            top = anchor.top + anchor.height - popup.height - secondaryOffset;
         } else if (checkSecondaryDirection(direction, 'top')) {
-            top = target.top + secondaryOffset;
+            top = anchor.top + secondaryOffset;
         } else if (checkSecondaryDirection(direction, 'center')) {
             if (checkMainDirection(direction, 'top', 'bottom')) {
-                left = target.left + target.width / 2 - popup.width / 2;
+                left = anchor.left + anchor.width / 2 - popup.width / 2;
             } else if (checkMainDirection(direction, 'left', 'right')) {
-                top = target.top + target.height / 2 - popup.height / 2;
+                top = anchor.top + anchor.height / 2 - popup.height / 2;
             }
         }
 
@@ -299,14 +316,28 @@ function checkSecondaryDirection(direction, secondaryDirection) {
     return ~direction.indexOf('-' + secondaryDirection);
 }
 
+Popup.propsTypes = {
+    theme: React.PropTypes.string,
+    size: React.PropTypes.string,
+    visible: React.PropTypes.bool.isRequired,
+    anchor: React.PropTypes.oneOfType([
+        React.PropTypes.element,
+        React.PropTypes.shape({ left: React.PropTypes.number, top: React.PropTypes.number }),
+        React.PropTypes.func,
+    ]),
+    directions: React.PropTypes.oneOf(DEFAULT_DIRECTIONS),
+    mainOffset: React.PropTypes.number,
+    secondaryOffset: React.PropTypes.number,
+    onRequestHide: React.PropTypes.func,
+};
+
 Popup.defaultProps = {
     directions: DEFAULT_DIRECTIONS,
     visible: false,
-    mainOffset: 0,
+    mainOffset: MAIN_OFFSET,
     secondaryOffset: 0,
-    viewportOffset: 0,
-    onClickOutside() {},
-    onVisibleChange() {},
+    viewportOffset: VIEWPORT_OFFSET,
+    onRequestHide() {},
 };
 
 Popup.contextTypes = {
