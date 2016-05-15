@@ -229,6 +229,7 @@ class Menu extends Component {
         return (
             <div ref="control" className={this.className()}
                 tabIndex={tabIndex}
+                onKeyDown={this.onKeyDown}
                 onMouseDown={this.onMouseDown}
                 onMouseUp={this.onMouseUp}
                 onFocus={this.onFocus}
@@ -255,7 +256,7 @@ class Menu extends Component {
         if (this.props.disabled) {
             className += ' menu_disabled';
         }
-        if (this.props.focused) {
+        if (this.state.focused) {
             className += ' menu_focused';
         }
 
@@ -300,7 +301,11 @@ class Menu extends Component {
     }
 
     onFocus() {
-        document.addEventListener('keydown', this.onKeyDown, true);
+        if (this.props.disabled) {
+            return;
+        }
+
+        this.setState({ focused: true });
 
         if (!this._mousePressed) {
             let hoveredIndex = this._savedIndex;
@@ -317,21 +322,20 @@ class Menu extends Component {
     }
 
     onBlur() {
-        document.removeEventListener('keydown', this.onKeyDown, true);
-
-        this.setState({ hoveredIndex: null });
+        this.setState({
+            focused: false,
+            hoveredIndex: null,
+        });
 
         this.dispatchFocusChange(false);
     }
 
     onKeyDown(e) {
-        if (this.props.disabled) {
-            //  Кажется, тут нет нужды проверять focused, так как
-            //  иначе этот обработчик и не сработает.
+        if (this.props.disabled || !this.state.focused) {
             return;
         }
 
-        if (e.code === 'ArrowDown' || e.code === 'ArrowUp') {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
             e.preventDefault();
 
             const { items } = this.getItems();
@@ -340,7 +344,7 @@ class Menu extends Component {
                 return;
             }
 
-            const dir = (e.code === 'ArrowDown' ? 1 : -1);
+            const dir = (e.key === 'ArrowDown' ? 1 : -1);
             let nextIndex;
             if (this.state.hoveredIndex === null) {
                 nextIndex = this._getFirstEnabledIndex();
@@ -358,7 +362,7 @@ class Menu extends Component {
                 this._savedIndex = nextIndex;
                 this.setState({ hoveredIndex: nextIndex });
             }
-        } else if (e.code === 'Space' || e.code === 'Enter') {
+        } else if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
 
             if (this.state.hoveredIndex !== null) {

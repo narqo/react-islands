@@ -8,6 +8,8 @@ const ZINDEX_FACTOR = 1000;
 const visibleLayersZIndexes = {};
 const visibleLayersStack = [];
 
+const KEY_ESCAPE = 27;
+
 const REASON_CLICK_OUTSIDE = 'clickOutside';
 const REASON_ESC_KEY_PRESS = 'escapeKeyPress';
 
@@ -139,7 +141,9 @@ class Overlay extends Component {
     }
 
     onDocumentKeyPress(e) {
-        if (e.key === 'Escape' && visibleLayersStack[0] === this) {
+        if (e.keyCode === KEY_ESCAPE && visibleLayersStack[0] === this) {
+            // NOTE(narqo@): we call `preventDefault()` to prevent desktop Safari from exiting the full screen mode
+            e.preventDefault();
             this.requestHide(e, REASON_ESC_KEY_PRESS);
         }
     }
