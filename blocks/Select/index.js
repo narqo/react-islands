@@ -19,13 +19,11 @@ class Select extends Component {
         this._shouldRestoreButtonFocus = false;
         this._cachedItems = null;
 
-        this.getPopupTarget = this.getPopupTarget.bind(this);
         this.onButtonClick = this.onButtonClick.bind(this);
         this.onMenuChange = this.onMenuChange.bind(this);
         this.onMenuFocusChange = this.onMenuFocusChange.bind(this);
         this.onMenuItemClick = this.onMenuItemClick.bind(this);
-        this.onPopupClickOutside = this.onPopupClickOutside.bind(this);
-        this.onPopupVisibleChange = this.onPopupVisibleChange.bind(this);
+        this.onPopupRequestHide = this.onPopupRequestHide.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -50,11 +48,10 @@ class Select extends Component {
                 {this.renderInputs()}
                 {this.renderButton()}
                 <Popup theme={this.props.theme} size={this.props.size}
-                    visible={this.props.popupVisible}
-                    target={this.getPopupTarget}
+                    anchor={this.refs.button}
                     directions={['bottom-left', 'bottom-right', 'top-left', 'top-right']}
-                    onClickOutside={this.onPopupClickOutside}
-                    onVisibleChange={this.onPopupVisibleChange}
+                    visible={this.state.popupVisible}
+                    onRequestHide={this.onPopupRequestHide}
                 >
                     {this.renderMenu()}
                 </Popup>
@@ -64,7 +61,7 @@ class Select extends Component {
 
     renderButton() {
         const { theme, size, disabled, mode, value } = this.props;
-        const focused = this._shouldRestoreButtonFocus ? true : undefined;
+        const focused = (!disabled && this._shouldRestoreButtonFocus) ? true : undefined;
         const checked = (
             (mode === 'check' || mode === 'radio-check') &&
             Array.isArray(value) && value.length > 0
@@ -170,10 +167,6 @@ class Select extends Component {
         return this._cachedItems;
     }
 
-    getPopupTarget() {
-        return this.refs.button;
-    }
-
     getMenu() {
         return this.refs.menu;
     }
@@ -205,21 +198,14 @@ class Select extends Component {
         }
     }
 
-    onPopupClickOutside() {
+    onPopupRequestHide(_, reason) {
+        this._shouldRestoreButtonFocus = reason === 'escapeKeyPress';
         this.setState({ popupVisible: false });
-    }
-
-    onPopupVisibleChange(visible) {
-        this.setState({ popupVisible: visible });
     }
 }
 
 Select.contextTypes = {
     theme: React.PropTypes.string
-};
-
-Select.defaultProps = {
-    onChange() {}
 };
 
 Select.propTypes = {
@@ -231,6 +217,10 @@ Select.propTypes = {
     placeholder: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     onChange: React.PropTypes.func,
+};
+
+Select.defaultProps = {
+    onChange() {}
 };
 
 export default Select;
