@@ -22,7 +22,7 @@ class SelectExample extends React.Component {
 
         return (
             <div className="example">
-                <b>Select mode={mode}</b>
+                <b>mode={mode}</b>
 
                 <div>Selected: <b>{value.join(', ')}</b></div>
                 <div>{this.state.clicks} clicks</div>
