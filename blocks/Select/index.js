@@ -20,6 +20,7 @@ class Select extends Component {
         this._cachedItems = null;
 
         this.onButtonClick = this.onButtonClick.bind(this);
+        this.onButtonKeyDown = this.onButtonKeyDown.bind(this);
         this.onMenuChange = this.onMenuChange.bind(this);
         this.onMenuFocusChange = this.onMenuFocusChange.bind(this);
         this.onMenuItemClick = this.onMenuItemClick.bind(this);
@@ -85,6 +86,7 @@ class Select extends Component {
                 checked={checked}
                 focused={focused}
                 onClick={this.onButtonClick}
+                onKeyDown={this.onButtonKeyDown}
             >
                 {buttonText}
                 <Icon className="select__tick"/>
@@ -177,6 +179,13 @@ class Select extends Component {
 
     onButtonClick() {
         this.setState({ popupVisible: !this.state.popupVisible });
+    }
+
+    onButtonKeyDown(e) {
+        if (!this.state.popupVisible &&
+            ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && !e.shiftKey)) {
+            this.setState({ popupVisible: true });
+        }
     }
 
     onMenuItemClick() {
