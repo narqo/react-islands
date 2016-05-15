@@ -78,7 +78,6 @@ gulp.task('examples-toc', () => {
         }))
         .on('error', gutil.log)
         .pipe(rename('index.html'))
-        .pipe(changed('build'))
         .pipe(gulp.dest('build'));
 });
 
