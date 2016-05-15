@@ -32,12 +32,13 @@ const pressable = BaseComponent => class extends BaseComponent {
             onMouseDown: this.onMouseDown,
             onMouseUp: this.onMouseUp,
             onKeyUp: this.onKeyUp,
-            onKeyDown: this.onKeyDown
+            onKeyDown: this.onKeyDown,
+            onKeyPress: this.props.onKeyPress,
         };
     }
 
     dispatchClick() {
-        if (typeof this.props.onClick === 'function') {
+        if (this.props.onClick) {
             this.props.onClick(this.props);
         }
     }
@@ -80,13 +81,23 @@ const pressable = BaseComponent => class extends BaseComponent {
         if (e.key === KEY_SPACE || e.key === KEY_ENTER) {
             this.setState({ pressed: true });
         }
+        if (this.props.onKeyDown) {
+            this.props.onKeyDown(e, this.props);
+        }
     }
 
     /** @override */
-    onKeyUp() {
-        if (this.state.pressed && this.state.focused) {
+    onKeyUp(e) {
+        if (!this.state.focused) {
+            return
+        }
+        if (this.state.pressed) {
             this.setState({ pressed: false });
             this.dispatchClick();
+
+        }
+        if (this.props.onKeyUp) {
+            this.props.onKeyUp(e, this.props);
         }
     }
 };
