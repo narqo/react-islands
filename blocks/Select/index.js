@@ -21,6 +21,7 @@ class Select extends Component {
 
         this.onButtonClick = this.onButtonClick.bind(this);
         this.onButtonKeyDown = this.onButtonKeyDown.bind(this);
+        this.onButtonKeyPress = this.onButtonKeyPress.bind(this);
         this.onMenuChange = this.onMenuChange.bind(this);
         this.onMenuFocusChange = this.onMenuFocusChange.bind(this);
         this.onMenuItemClick = this.onMenuItemClick.bind(this);
@@ -87,6 +88,7 @@ class Select extends Component {
                 focused={focused}
                 onClick={this.onButtonClick}
                 onKeyDown={this.onButtonKeyDown}
+                onKeyPress={this.onButtonKeyPress}
             >
                 {buttonText}
                 <Icon className="select__tick"/>
@@ -186,6 +188,17 @@ class Select extends Component {
             ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && !e.shiftKey)) {
             this.setState({ popupVisible: true });
         }
+    }
+
+    onButtonKeyPress(e) {
+        // if (!this.state.popupVisible) {
+        //     const menu = this.getMenu();
+        //     const index = menu.searchIndexByKeyboardEvent(e);
+        //     console.log(menu.state.value, menu.state.value[index])
+        //     if (index && this.props.value[index]) {
+        //         this.props.onChange(this.props.value[index], this.props);
+        //     }
+        // }
     }
 
     onMenuItemClick() {

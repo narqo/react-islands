@@ -5,6 +5,9 @@ import Item from '../Item';
 import Group from '../Group';
 import MenuItem from './MenuItem';
 
+const TIMEOUT_KEYBOARD_SEARCH = 1500;
+const KEY_CODE_SPACE = 32;
+
 class Menu extends Component {
     constructor(props) {
         super(props);
@@ -17,12 +20,19 @@ class Menu extends Component {
 
         this._cachedItems = null;
         this._savedIndex = null;
+        this._lastTyping = {
+            char: '',
+            text: '',
+            index: 0,
+            time: 0
+        };
 
         this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onFocus = this.onFocus.bind(this);
         this.onBlur = this.onBlur.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
+        this.onKeyPress = this.onKeyPress.bind(this);
         this.onItemClick = this.onItemClick.bind(this);
         this.onItemHover = this.onItemHover.bind(this);
     }
@@ -76,11 +86,13 @@ class Menu extends Component {
     getItems(index) {
         if (!this._cachedItems) {
             const items = [];
+            const texts = [];
             const values = [];
-            this._cachedItems = { items, values };
+            this._cachedItems = { items, texts, values };
 
             const doChild = function(child) {
                 items.push(child);
+                texts.push(Component.textValue(child));
                 values.push(child.props.value);
             };
 
@@ -98,6 +110,55 @@ class Menu extends Component {
             return this._cachedItems.items[index];
         }
         return this._cachedItems;
+    }
+
+    searchIndexByKeyboardEvent(e) {
+        const timeNow = Date.now();
+        const lastTyping = this._lastTyping;
+
+        if (e.charCode <= KEY_CODE_SPACE || e.ctrlKey || e.altKey || e.metaKey) {
+            lastTyping.time = timeNow;
+            return null;
+        }
+
+        const char = String.fromCharCode(e.charCode).toLowerCase();
+        const isSameChar = char === lastTyping.char && lastTyping.text.length === 1;
+        const { texts, items } = this.getItems();
+
+        if (timeNow - lastTyping.time > TIMEOUT_KEYBOARD_SEARCH || isSameChar) {
+            lastTyping.text = char;
+        } else {
+            lastTyping.text += char;
+        }
+
+        lastTyping.char = char;
+        lastTyping.time = timeNow;
+
+        let nextIndex = lastTyping.index;
+
+        // If key is pressed again, then continue to search to next menu item
+        if (isSameChar && texts[nextIndex].search(lastTyping.char) === 0) {
+            nextIndex = nextIndex >= texts.length - 1 ? 0 : nextIndex + 1;
+        }
+
+        // 2 passes: from index to items.length and from 0 to index.
+        let i = nextIndex;
+        let len = items.length;
+        while (i < len) {
+            if (!items[i].props.disabled && texts[i].toLowerCase().search(lastTyping.text) === 0) {
+                lastTyping.index = i;
+                return i;
+            }
+
+            i++;
+
+            if (i === items.length) {
+                i = 0;
+                len = nextIndex;
+            }
+        }
+
+        return null;
     }
 
     _getFirstEnabledIndex() {
@@ -230,6 +291,7 @@ class Menu extends Component {
             <div ref="control" className={this.className()}
                 tabIndex={tabIndex}
                 onKeyDown={this.onKeyDown}
+                onKeyPress={this.onKeyPress}
                 onMouseDown={this.onMouseDown}
                 onMouseUp={this.onMouseUp}
                 onFocus={this.onFocus}
@@ -368,6 +430,19 @@ class Menu extends Component {
             if (this.state.hoveredIndex !== null) {
                 this.onItemClick(e, { index: this.state.hoveredIndex });
             }
+        }
+    }
+
+    onKeyPress(e) {
+        if (this.props.disabled || !this.state.focused) {
+            return;
+        }
+
+        const hoveredIndex = this.searchIndexByKeyboardEvent(e);
+
+        if (hoveredIndex !== null) {
+            this._savedIndex = hoveredIndex;
+            this.setState({ hoveredIndex: hoveredIndex });
         }
     }
 
