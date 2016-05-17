@@ -4,23 +4,26 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint blocks",
+    "clean": "rm -rf components",
+    "lint": "eslint src",
     "start": "gulp",
-    "unit": "mocha --compilers js:babel-register -r jsdom-global/register blocks/**/test.js",
+    "unit": "mocha --compilers js:babel-register -r jsdom-global/register src/**/test.js",
     "test": "npm run unit",
-    "pretest": "npm run lint"
+    "pretest": "npm run lint",
+    "build": "babel src --only index.js --out-dir components",
+    "prepublish": "npm run clean && npm test && npm run build"
   },
   "author": "Vladimir Varankin <nek.narqo@gmail.com> (http://github.com/narqo)",
   "license": "WTFPL",
   "dependencies": {
     "babel-runtime": "^6.6.1",
-    "react": "^15.0.1",
-    "react-dom": "^15.0.1",
     "warning": "^2.1.0"
   },
   "devDependencies": {
     "babel": "^6.3.26",
+    "babel-cli": "^6.8.0",
     "babel-core": "^6.3.26",
+    "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-dev-expression": "^0.2.1",
     "babel-plugin-transform-node-env-inline": "^6.5.0",
     "babel-plugin-transform-react-constant-elements": "^6.5.0",
@@ -48,7 +51,9 @@
     "jsdom-global": "^2.0.0",
     "merge-stream": "^1.0.0",
     "mocha": "^2.4.5",
+    "react": "^15.0.2",
     "react-addons-test-utils": "^15.0.1",
+    "react-dom": "^15.0.2",
     "sinon": "^1.17.3",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.7.0"
