@@ -90,7 +90,7 @@ describe('TextArea', () => {
         expect(textarea.hasClass('textarea_hovered')).to.be.true;
 
         textarea.find('textarea').simulate('mouseleave');
-        expect(textarea.state('hovered')).to.be.falsy;
+        expect(textarea.state('hovered')).to.not.be.ok;
         expect(textarea.hasClass('textarea_hovered')).to.be.false;
     });
 

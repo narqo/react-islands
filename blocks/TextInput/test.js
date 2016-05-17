@@ -104,7 +104,7 @@ describe('TextInput', () => {
         expect(input.hasClass('input_hovered')).to.be.true;
 
         input.find('input').simulate('mouseleave');
-        expect(input.state('hovered')).to.be.falsy;
+        expect(input.state('hovered')).to.not.be.ok;
         expect(input.hasClass('input_hovered')).to.be.false;
     });
 
@@ -182,7 +182,7 @@ describe('TextInput', () => {
             expect(input.hasClass('input_hovered')).to.be.true;
 
             input.find('.input__clear').simulate('mouseleave');
-            expect(input.state('hovered')).to.be.falsy;
+            expect(input.state('hovered')).to.not.be.ok;
             expect(input.hasClass('input_hovered')).to.be.false;
         });
 
