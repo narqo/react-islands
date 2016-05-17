@@ -1,7 +1,8 @@
 import React from 'react';
+import warning from 'warning';
 import Component from '../Component';
 
-// TODO(narqo@): invariant for the case when `onFocusChange` present but `focused` is absent
+var didWarnFocusChangedFocused = false;
 
 class Control extends Component {
     constructor(props) {
@@ -22,6 +23,19 @@ class Control extends Component {
     }
 
     componentDidMount() {
+        if (
+            this.props.focused !== undefined &&
+            this.props.onFocusChange === undefined &&
+            !didWarnFocusChangedFocused
+        ) {
+            warning(
+                false,
+                'A Control has `focused` prop, but doesn\'t have `onFocusChange` listener. ' +
+                'This may lead to unwanted behaviour, when component kept being focused after ' +
+                're-rendering of the top component.'
+            );
+            didWarnFocusChangedFocused = true;
+        }
         if (this.state.focused) {
             this.componentWillGainFocus();
         }
@@ -111,6 +125,8 @@ class Control extends Component {
 }
 
 Control.propTypes = {
+    disabled: React.PropTypes.bool,
+    focused: React.PropTypes.bool,
     onFocusChange: React.PropTypes.func,
     onHoverChange: React.PropTypes.func,
 };

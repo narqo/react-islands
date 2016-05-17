@@ -15,11 +15,13 @@
   "dependencies": {
     "babel-runtime": "^6.6.1",
     "react": "^15.0.1",
-    "react-dom": "^15.0.1"
+    "react-dom": "^15.0.1",
+    "warning": "^2.1.0"
   },
   "devDependencies": {
     "babel": "^6.3.26",
     "babel-core": "^6.3.26",
+    "babel-plugin-dev-expression": "^0.2.1",
     "babel-plugin-transform-node-env-inline": "^6.5.0",
     "babel-plugin-transform-react-constant-elements": "^6.5.0",
     "babel-plugin-transform-react-inline-elements": "^6.6.5",
