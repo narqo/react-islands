@@ -53,7 +53,7 @@ class Link extends Control {
 }
 
 Link.contextTypes = {
-    theme: React.PropTypes.string
+    theme: React.PropTypes.string,
 };
 
 export default pressable(Link);

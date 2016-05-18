@@ -214,7 +214,7 @@ class Select extends Component {
 }
 
 Select.contextTypes = {
-    theme: React.PropTypes.string
+    theme: React.PropTypes.string,
 };
 
 Select.propTypes = {
@@ -229,7 +229,7 @@ Select.propTypes = {
 };
 
 Select.defaultProps = {
-    onChange() {}
+    onChange() {},
 };
 
 export default Select;

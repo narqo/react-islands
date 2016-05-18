@@ -8,7 +8,7 @@ class Example extends React.Component {
         super(props);
 
         this.state = {
-            value: 'React!'
+            value: 'React!',
         };
 
         this.onInputChange = this.onInputChange.bind(this);

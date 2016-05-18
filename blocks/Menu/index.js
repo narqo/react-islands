@@ -48,7 +48,7 @@ class Menu extends Component {
 
         if (nextProps.value !== this.props.value) {
             this.setState({
-                value: this._validValue(nextProps.value)
+                value: this._validValue(nextProps.value),
             });
         }
     }
@@ -281,7 +281,7 @@ class Menu extends Component {
 
     onItemHover(hovered, itemProps) {
         this.setState({
-            hoveredIndex: hovered ? itemProps.index : null
+            hoveredIndex: hovered ? itemProps.index : null,
         });
     }
 

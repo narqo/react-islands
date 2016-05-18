@@ -14,18 +14,18 @@ class App extends Component {
 
     getChildContext() {
         return {
-            theme: this.props.theme
+            theme: this.props.theme,
         };
     }
 
 }
 
 App.propTypes = {
-    theme: React.PropTypes.string
+    theme: React.PropTypes.string,
 };
 
 App.childContextTypes = {
-    theme: React.PropTypes.string
+    theme: React.PropTypes.string,
 };
 
 export default App;

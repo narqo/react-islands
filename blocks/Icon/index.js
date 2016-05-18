@@ -7,7 +7,7 @@ class Icon extends Component {
         if (this.props.url) {
             return (
                 <span className={this.className()} style={{
-                    backgroundImage: `url(${this.props.url})`
+                    backgroundImage: `url(${this.props.url})`,
                 }}>
                 </span>
             );
@@ -32,7 +32,7 @@ class Icon extends Component {
 }
 
 Icon.propTypes = {
-    url: React.PropTypes.string
+    url: React.PropTypes.string,
 };
 
 export default Icon;

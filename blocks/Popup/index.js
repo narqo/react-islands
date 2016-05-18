@@ -12,7 +12,7 @@ const DEFAULT_DIRECTIONS = [
     'bottom-left', 'bottom-center', 'bottom-right',
     'top-left', 'top-center', 'top-right',
     'right-top', 'right-center', 'right-bottom',
-    'left-top', 'left-center', 'left-bottom'
+    'left-top', 'left-center', 'left-bottom',
 ];
 
 class Popup extends Component {
@@ -197,7 +197,7 @@ class Popup extends Component {
         return {
             direction: bestDirection,
             left: bestPos.left,
-            top: bestPos.top
+            top: bestPos.top,
         };
     }
 
@@ -270,7 +270,7 @@ class Popup extends Component {
         return {
             width,
             height,
-            area: width * height
+            area: width * height,
         };
     }
 
@@ -341,7 +341,7 @@ Popup.defaultProps = {
 };
 
 Popup.contextTypes = {
-    theme: React.PropTypes.string
+    theme: React.PropTypes.string,
 };
 
 export default Popup;

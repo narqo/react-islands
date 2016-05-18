@@ -9,7 +9,7 @@ class Checkbox extends Control {
 
         this.state = {
             ...this.state,
-            checked: props.checked
+            checked: props.checked,
         };
 
         this.onButtonClick = this.onButtonClick.bind(this);
@@ -27,7 +27,7 @@ class Checkbox extends Control {
         if (this.props.checked !== nextProps.checked) {
             this.setState({
                 ...this.state,
-                checked: nextProps.checked
+                checked: nextProps.checked,
             });
         }
     }
@@ -150,12 +150,12 @@ class Checkbox extends Control {
 }
 
 Checkbox.contextTypes = {
-    theme: React.PropTypes.string
+    theme: React.PropTypes.string,
 };
 
 Checkbox.defaultProps = {
     onClick() {},
-    onCheck() {}
+    onCheck() {},
 };
 
 export default Checkbox;

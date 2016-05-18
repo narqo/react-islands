@@ -9,7 +9,7 @@ class Control extends Component {
         super(props);
 
         this.state = {
-            focused: !props.disabled && props.focused
+            focused: !props.disabled && props.focused,
         };
 
         this._mousePressed = false;

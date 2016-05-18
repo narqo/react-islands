@@ -33,7 +33,7 @@ class CheckboxGroup extends Component {
                 disabled,
                 ...child.props,
                 checked,
-                onCheck: onChildCheck
+                onCheck: onChildCheck,
             });
         });
 
@@ -83,11 +83,11 @@ class CheckboxGroup extends Component {
 }
 
 CheckboxGroup.contextTypes = {
-    theme: React.PropTypes.string
+    theme: React.PropTypes.string,
 };
 
 CheckboxGroup.defaultProps = {
-    onChange() {}
+    onChange() {},
 };
 
 CheckboxGroup.propTypes = {
@@ -96,7 +96,7 @@ CheckboxGroup.propTypes = {
     type: React.PropTypes.string,
     name: React.PropTypes.string,
     value: React.PropTypes.any,
-    onChange: React.PropTypes.func
+    onChange: React.PropTypes.func,
 };
 
 export default CheckboxGroup;

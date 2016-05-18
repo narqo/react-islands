@@ -8,7 +8,7 @@ class TextArea extends Control {
 
         this.state = {
             ...this.state,
-            value: props.value
+            value: props.value,
         };
 
         this.onInputChange = this.onInputChange.bind(this);
@@ -76,11 +76,11 @@ class TextArea extends Control {
 
 TextArea.defaultProps = {
     value: '',
-    onChange() {}
+    onChange() {},
 };
 
 TextArea.contextTypes = {
-    theme: React.PropTypes.string
+    theme: React.PropTypes.string,
 };
 
 export default TextArea;
