@@ -8,7 +8,7 @@ class TextInput extends Control {
 
         this.state = {
             ...this.state,
-            value: props.value
+            value: props.value,
         };
 
         this.onClearClick = this.onClearClick.bind(this);
@@ -104,11 +104,11 @@ class TextInput extends Control {
 TextInput.defaultProps = {
     value: '',
     type: 'text',
-    onChange() {}
+    onChange() {},
 };
 
 TextInput.contextTypes = {
-    theme: React.PropTypes.string
+    theme: React.PropTypes.string,
 };
 
 export default TextInput;

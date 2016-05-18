@@ -7,7 +7,7 @@ class RadioGroup extends Component {
         super(props);
 
         this.state = {
-            value: props.value
+            value: props.value,
         };
 
         this.onRadioCheck = this.onRadioCheck.bind(this);
@@ -20,7 +20,7 @@ class RadioGroup extends Component {
         if (props.value !== this.props.value) {
             this.setState({
                 ...this.state,
-                value: props.value
+                value: props.value,
             });
         }
     }
@@ -83,7 +83,7 @@ class RadioGroup extends Component {
 }
 
 RadioGroup.defaultProps = {
-    onChange() {}
+    onChange() {},
 };
 
 RadioGroup.propTypes = {
@@ -92,11 +92,11 @@ RadioGroup.propTypes = {
     type: React.PropTypes.string,
     name: React.PropTypes.string,
     value: React.PropTypes.any,
-    onChange: React.PropTypes.func
+    onChange: React.PropTypes.func,
 };
 
 RadioGroup.contextTypes = {
-    theme: React.PropTypes.string
+    theme: React.PropTypes.string,
 };
 
 module.exports = RadioGroup;

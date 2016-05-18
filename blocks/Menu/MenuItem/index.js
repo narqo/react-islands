@@ -76,7 +76,7 @@ class MenuItem extends Component {
 }
 
 MenuItem.contextTypes = {
-    theme: React.PropTypes.string
+    theme: React.PropTypes.string,
 };
 
 MenuItem.propTypes = {

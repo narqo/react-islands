@@ -9,7 +9,7 @@ class Radio extends Control {
 
         this.state = {
             ...this.state,
-            checked: props.checked
+            checked: props.checked,
         };
 
         this.onButtonClick = this.onButtonClick.bind(this);
@@ -27,7 +27,7 @@ class Radio extends Control {
         if (this.props.checked !== nextProps.checked) {
             this.setState({
                 ...this.state,
-                checked: nextProps.checked
+                checked: nextProps.checked,
             });
         }
     }
@@ -141,11 +141,11 @@ class Radio extends Control {
 
 Radio.defaultProps = {
     onClick() {},
-    onCheck() {}
+    onCheck() {},
 };
 
 Radio.contextTypes = {
-    theme: React.PropTypes.string
+    theme: React.PropTypes.string,
 };
 
 export default Radio;

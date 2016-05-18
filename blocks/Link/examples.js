@@ -9,7 +9,7 @@ class Example extends React.Component {
         super(props);
 
         this.state = {
-            clicks: 0
+            clicks: 0,
         };
 
         this.onClick = this.onClick.bind(this);
@@ -39,7 +39,7 @@ class Example extends React.Component {
 
     onClick() {
         this.setState({
-            clicks: this.state.clicks + 1
+            clicks: this.state.clicks + 1,
         });
     }
 }

@@ -12,7 +12,7 @@ class Example extends React.Component {
             //  FIXME: Не нужно ли автоматически приводить value к строке?
             //  Скажем, здесь просто `a: 20` не сработает.
             a: '20',
-            c: '30'
+            c: '30',
         };
 
         this.onChange = this.onChange.bind(this);
@@ -74,7 +74,7 @@ class Example extends React.Component {
 
     onChange(value, groupProps) {
         this.setState({
-            [groupProps.name]: value
+            [groupProps.name]: value,
         });
     }
 

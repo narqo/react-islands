@@ -12,7 +12,7 @@ class Example extends React.Component {
             a: ['20'],
             b: [],
             c: ['30'],
-            d: []
+            d: [],
         };
 
         this.onChange = this.onChange.bind(this);
@@ -94,7 +94,7 @@ class Example extends React.Component {
 
     onChange(value, groupProps) {
         this.setState({
-            [groupProps.name]: value
+            [groupProps.name]: value,
         });
     }
 
