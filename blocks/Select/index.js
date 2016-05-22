@@ -17,6 +17,7 @@ class Select extends Component {
         };
 
         this._shouldRestoreButtonFocus = false;
+        this._preventTrapMenuFocus = false;
         this._cachedItems = null;
 
         this.onButtonClick = this.onButtonClick.bind(this);
@@ -24,6 +25,7 @@ class Select extends Component {
         this.onMenuChange = this.onMenuChange.bind(this);
         this.onMenuFocusChange = this.onMenuFocusChange.bind(this);
         this.onMenuItemClick = this.onMenuItemClick.bind(this);
+        this.onMenuKeyDown = this.onMenuKeyDown.bind(this);
         this.onPopupRequestHide = this.onPopupRequestHide.bind(this);
     }
 
@@ -34,9 +36,8 @@ class Select extends Component {
     }
 
     componentDidUpdate() {
-        if (this._shouldRestoreButtonFocus) {
-            this._shouldRestoreButtonFocus = false;
-        }
+        this._shouldRestoreButtonFocus = false;
+        this._preventTrapMenuFocus = false;
     }
 
     componentWillUnmount() {
@@ -107,6 +108,7 @@ class Select extends Component {
                 disabled={disabled}
                 focused={focused}
                 onItemClick={this.onMenuItemClick}
+                onKeyDown={this.onMenuKeyDown}
                 onChange={this.onMenuChange}
                 onFocusChange={this.onMenuFocusChange}
             >
@@ -174,7 +176,9 @@ class Select extends Component {
     }
 
     trapMenuFocus() {
-        this.getMenu().componentWillGainFocus();
+        if (!this._preventTrapMenuFocus) {
+            this.getMenu().componentWillGainFocus();
+        }
     }
 
     onButtonClick() {
@@ -192,6 +196,16 @@ class Select extends Component {
         if (this.props.mode === 'radio' || this.props.mode === 'radio-check') {
             this._shouldRestoreButtonFocus = true;
             // NOTE(narqo@): select with mode radio* must be closed on click within <Menu>
+            this.setState({ popupVisible: false });
+        }
+    }
+
+    onMenuKeyDown(e) {
+        // NOTE(narqo@): allow to move focus to another focusable using <Tab>
+        // @see https://www.w3.org/TR/wai-aria-practices-1.1/#menu
+        if (this.state.popupVisible && e.key === 'Tab') {
+            this._preventTrapMenuFocus = true;
+            this._shouldRestoreButtonFocus = true;
             this.setState({ popupVisible: false });
         }
     }

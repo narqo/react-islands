@@ -369,6 +369,10 @@ class Menu extends Component {
                 this.onItemClick(e, { index: this.state.hoveredIndex });
             }
         }
+
+        if (this.props.onKeyDown) {
+            this.props.onKeyDown(e, this.props);
+        }
     }
 
     onItemCheck(index) {
