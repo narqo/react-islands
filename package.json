@@ -1,8 +1,14 @@
 {
   "name": "react-islands",
-  "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
+  "version": "0.1.0",
+  "description": "A set of react components implementing Yandex's islands design",
+  "main": "components/index.js",
+  "files": [
+    "*.md",
+    "LICENSE",
+    "components",
+    "src"
+  ],
   "scripts": {
     "clean": "rm -rf components",
     "lint": "eslint src",
