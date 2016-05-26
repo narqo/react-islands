@@ -16,6 +16,7 @@ class Select extends Component {
             popupVisible: false,
         };
 
+        this._wasPopupVisible = false;
         this._shouldRestoreButtonFocus = false;
         this._preventTrapMenuFocus = false;
         this._cachedItems = null;
@@ -38,6 +39,13 @@ class Select extends Component {
     componentDidUpdate() {
         this._shouldRestoreButtonFocus = false;
         this._preventTrapMenuFocus = false;
+
+        // FIXME(narqo@): an ugly trick to prevent DOM-focus from jumping to the bottom of the page on first open
+        // @see https://github.com/narqo/react-islands/issues/41
+        if (!this._wasPopupVisible && this.state.popupVisible) {
+            this._wasPopupVisible = true;
+            process.nextTick(() => this.trapMenuFocus());
+        }
     }
 
     componentWillUnmount() {
@@ -97,7 +105,7 @@ class Select extends Component {
 
     renderMenu() {
         const { theme, size, disabled, mode, value } = this.props;
-        const focused = this.state.popupVisible;
+        const focused = this._wasPopupVisible && this.state.popupVisible;
         const tabIndex = -1;
 
         return (
