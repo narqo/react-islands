@@ -1,6 +1,7 @@
 {
   "presets": ["es2015", "stage-2", "react"],
   "plugins": [
+    "add-module-exports",
     "dev-expression",
     "transform-runtime",
     "transform-node-env-inline",

@@ -14,7 +14,7 @@ const merge = require('merge-stream');
 const source = require('vinyl-source-stream');
 const watchify = require('watchify');
 
-const examples = glob.sync('blocks/**/examples.js');
+const examples = glob.sync('src/**/examples.js');
 
 const blockName = file => path.basename(path.dirname(file));
 const dest = name => `build/${name}`;
@@ -95,7 +95,7 @@ gulp.task('watch-js', () => {
 
 gulp.task('watch-html', () => {
     gulp.watch([
-        'blocks/**/*.js',
+        'src/**/*.js',
         'templates/*.jade',
     ], gulp.parallel('examples-toc', 'examples-html'));
 });
