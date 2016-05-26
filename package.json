@@ -19,8 +19,12 @@
     "build": "babel src --only index.js --out-dir components",
     "prepublish": "npm run clean && npm test && npm run build"
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/narqo/react-islands.git"
+  },
   "author": "Vladimir Varankin <nek.narqo@gmail.com> (http://github.com/narqo)",
-  "license": "WTFPL",
+  "license": "MIT",
   "dependencies": {
     "babel-runtime": "^6.6.1",
     "warning": "^2.1.0"
