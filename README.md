@@ -10,12 +10,12 @@
 react-islands can be installed as an [npm package](https://www.npmjs.com/package/react-islands):
 
 ~~~
-› npm install react-islands
+› npm install --save react-islands
 ~~~
 
 Require and use components:
 
-~~~
+~~~js
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Button from 'react-islands/components/Button';
@@ -53,4 +53,4 @@ or
 
 ## License
 
-WTFPL
+MIT
