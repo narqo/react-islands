@@ -1,6 +1,15 @@
 var path = require('path');
 var webpack = require('webpack');
 
+const plugins = [
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js', 2),
+    new webpack.NoErrorsPlugin(),
+    new webpack.DefinePlugin({
+        'process.env.NODE_ENV': JSON.stringify('development'),
+    }),
+];
+
 module.exports = {
     context: path.join(__dirname, './src'),
     entry: {
@@ -31,14 +40,9 @@ module.exports = {
             },
         ],
     },
-    plugins: [
-        new webpack.NoErrorsPlugin(),
-        new webpack.DefinePlugin({
-            'process.env.NODE_ENV': JSON.stringify('development'),
-        }),
-    ],
     devtool: 'inline-source-map',
     devServer: {
         contentBase: './src',
     },
+    plugins,
 };
