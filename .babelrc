@@ -3,9 +3,19 @@
   "plugins": [
     "add-module-exports",
     "dev-expression",
-    "transform-runtime",
-    "transform-node-env-inline",
-    "transform-react-constant-elements",
-    "transform-react-inline-elements"
-  ]
+    "transform-runtime"
+  ],
+  "env": {
+    "production": {
+      "plugins": [
+        "add-module-exports",
+        "dev-expression",
+        "transform-runtime",
+        "transform-node-env-inline",
+        "transform-react-constant-elements",
+        "transform-react-remove-prop-types",
+        "transform-react-pure-class-to-function"
+      ]
+    }
+  }
 }
