@@ -5,6 +5,8 @@
 [![Dependency Status](https://david-dm.org/narqo/react-islands.svg)](https://david-dm.org/narqo/react-islands)
 [![devDependency Status](https://david-dm.org/narqo/react-islands/dev-status.svg)](https://david-dm.org/narqo/react-islands#info=devDependencies)
 
+Check out [showcase page](http://narqo.github.io/react-islands/showcase/) first.
+
 ## Usage
 
 react-islands can be installed as an [npm package](https://www.npmjs.com/package/react-islands):
