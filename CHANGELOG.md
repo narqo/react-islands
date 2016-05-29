@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.2.0 - 2016-05-29
+
 ### Fixed
 
 * Add missing "key" props ([#47](https://github.com/narqo/react-islands/issues/47)).

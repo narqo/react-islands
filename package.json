@@ -1,6 +1,6 @@
 {
   "name": "react-islands",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A set of react components implementing Yandex's islands design",
   "main": "components/index.js",
   "files": [
@@ -23,7 +23,12 @@
     "type": "git",
     "url": "git://github.com/narqo/react-islands.git"
   },
-  "author": "Vladimir Varankin <nek.narqo@gmail.com> (http://github.com/narqo)",
+  "author": "Vladimir Varankin <nek.narqo@gmail.com> (https://github.com/narqo)",
+  "contributors": [
+    "Sergey Nikitin <nik.pasaran@gmail.com> (https://github.com/pasaran)",
+    "Ilya Caulfield <ilya.caulfield@gmail.com> (https://github.com/VodkaBears)",
+    "Aleksei Androsov <doochik@ya.ru> (https://github.com/doochik)"
+  ],
   "license": "MIT",
   "dependencies": {
     "babel-runtime": "^6.6.1",
