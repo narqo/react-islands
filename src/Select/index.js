@@ -131,7 +131,8 @@ class Select extends Component {
         }
 
         const { name } = this.props;
-        return this.props.value.map(value => React.createElement('input', { type: 'hidden', name, value }));
+        return this.props.value.map((value, i) =>
+            React.createElement('input', { type: 'hidden', key: `input${i}`, name, value }));
     }
 
     className() {

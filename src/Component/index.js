@@ -5,16 +5,21 @@ class Component extends React.Component {
 }
 
 Component.wrap = function(children, wrapper) {
-    var wrapped = [];
+    const wrapped = [];
 
-    var chunk = null;
-    React.Children.forEach(children, child => {
+    let chunk = null;
+    React.Children.forEach(children, (child, i) => {
         if (Component.is(child, Component)) {
             if (chunk) {
                 wrapped.push(wrapper(chunk));
                 chunk = null;
             }
-            wrapped.push(child);
+            if (child.key) {
+                wrapped.push(child);
+            } else {
+                // FIXME(narqo@): had to add `key` in the runtime, after https://github.com/narqo/react-islands/pull/46
+                wrapped.push(React.cloneElement(child, { key: `wrappedChild${i}` }));
+            }
 
         } else if (chunk) {
             chunk.push(child);
