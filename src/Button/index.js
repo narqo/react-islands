@@ -24,7 +24,8 @@ class Button extends Control {
     render() {
         if (!this._wrappedChildren) {
             this._wrappedChildren = Component.wrap(this.props.children, child => (
-                <span className="button__text">{child}</span>
+                // NOTE: this `key` is to harmonize the one we have in `Component.wrap()`
+                <span key="wrappedText" className="button__text">{child}</span>
             ));
         }
 
