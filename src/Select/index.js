@@ -101,7 +101,7 @@ class Select extends Component {
                 onClick={this.onButtonClick}
                 onKeyDown={this.onButtonKeyDown}
             >
-                {this.renderButtonText() || this.props.placeholder || '—'}
+                {this.renderButtonText() || this.props.placeholder}
                 <Icon className="select__tick"/>
             </Button>
         );
@@ -256,6 +256,7 @@ Select.propTypes = {
 };
 
 Select.defaultProps = {
+    placeholder: '—',
     onChange() {},
 };
 
