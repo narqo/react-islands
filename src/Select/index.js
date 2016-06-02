@@ -69,15 +69,10 @@ class Select extends Component {
         );
     }
 
-    renderButton() {
-        const { theme, size, disabled, mode, value } = this.props;
-        const focused = (!disabled && this._shouldRestoreButtonFocus) ? true : undefined;
-        const checked = (
-            (mode === 'check' || mode === 'radio-check') &&
-            Array.isArray(value) && value.length > 0
-        );
+    renderButtonText() {
+        const value = this.props.value;
 
-        const text = this.getItems().reduce((res, item) => {
+        return this.getItems().reduce((res, item) => {
             if (value.indexOf(item.props.value) !== -1) {
                 if (value.length === 1) {
                     res.push(Component.textValue(item));
@@ -86,8 +81,17 @@ class Select extends Component {
                 }
             }
             return res;
-        }, []);
-        const buttonText = text.join(', ') || this.props.placeholder || '—';
+        }, [])
+        .join(', ');
+    }
+
+    renderButton() {
+        const { theme, size, disabled, mode, value } = this.props;
+        const focused = (!disabled && this._shouldRestoreButtonFocus) ? true : undefined;
+        const checked = (
+            (mode === 'check' || mode === 'radio-check') &&
+            Array.isArray(value) && value.length > 0
+        );
 
         return (
             <Button ref="button" theme={theme} size={size} className="select__button"
@@ -97,7 +101,7 @@ class Select extends Component {
                 onClick={this.onButtonClick}
                 onKeyDown={this.onButtonKeyDown}
             >
-                {buttonText}
+                {this.renderButtonText() || this.props.placeholder || '—'}
                 <Icon className="select__tick"/>
             </Button>
         );
