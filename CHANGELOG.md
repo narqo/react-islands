@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Fixed
+
+* Link: fix type declaration for "type" prop.
+
 ### Other
 
 * Add unit-tests for `Link` ([#53](https://github.com/narqo/react-islands/pull/53)).
