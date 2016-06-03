@@ -2,14 +2,21 @@
 
 ## Unreleased
 
+## 0.3.0 - 2016-06-03
+
+### Added
+
+* Select: add protected method `renderButtonText()` ([#52](https://github.com/narqo/react-islands/issues/47)).
+* Link: add unit-tests ([#53](https://github.com/narqo/react-islands/pull/53)).
+* Start using [chai-enzyme](https://www.npmjs.com/package/chai-enzyme) for unit-tests.
+
+### Changed
+
+* [warning](https://www.npmjs.com/package/warning) was updated to 3.0.0.
+
 ### Fixed
 
 * Link: fix type declaration for "type" prop.
-
-### Other
-
-* Add unit-tests for `Link` ([#53](https://github.com/narqo/react-islands/pull/53)).
-  Start using [chai-enzyme](https://www.npmjs.com/package/chai-enzyme) for unit-tests.
 
 ## 0.2.0 - 2016-05-29
 
