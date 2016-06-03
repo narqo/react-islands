@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Other
+
+* Add unit-tests for `Link` ([#53](https://github.com/narqo/react-islands/pull/53)).
+  Start using [chai-enzyme](https://www.npmjs.com/package/chai-enzyme) for unit-tests.
+
 ## 0.2.0 - 2016-05-29
 
 ### Fixed

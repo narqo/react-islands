@@ -1,69 +1,71 @@
 /* eslint-env mocha */
 
 import React from 'react';
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
+import chaiEnzyme from 'chai-enzyme';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
 import Button from './';
 
+chai.use(chaiEnzyme());
+
 describe('Button', () => {
     it('is a button', () => {
         const button = shallow(<Button>button</Button>);
 
-        expect(button.is('button.button')).to.be.true;
+        expect(button).to.match('button.button');
     });
 
     it('accepts name prop', () => {
         const button = shallow(<Button name="my-button">button</Button>);
 
-        expect(button.prop('name')).to.equal('my-button');
+        expect(button).to.have.prop('name', 'my-button');
     });
 
     it('accepts type prop', () => {
         const button = shallow(<Button type="submit">button</Button>);
 
-        expect(button.hasClass('button_type_submit')).to.be.true;
+        expect(button).to.have.className('button_type_submit');
     });
 
     it('accepts view prop', () => {
         const button = shallow(<Button view="action">button</Button>);
 
-        expect(button.hasClass('button_view_action')).to.be.true;
+        expect(button).to.have.className('button_view_action');
     });
 
     it('accepts className prop', () => {
         const button = shallow(<Button className="my-button">button</Button>);
 
-        expect(button.hasClass('my-button')).to.be.true;
+        expect(button).to.have.className('my-button');
     });
 
     it('accepts checked prop', () => {
         const button = shallow(<Button checked>button</Button>);
 
-        expect(button.hasClass('button_checked')).to.be.true;
+        expect(button).to.have.className('button_checked');
 
         button.setProps({ checked: false });
 
-        expect(button.hasClass('button_checked')).to.be.false;
+        expect(button).to.not.have.className('button_checked');
     });
 
     it('accepts disabled prop', () => {
         const button = shallow(<Button disabled>button</Button>);
 
-        expect(button.prop('disabled')).to.be.true;
-        expect(button.hasClass('button_disabled')).to.be.true;
+        expect(button).to.have.prop('disabled');
+        expect(button).to.have.className('button_disabled');
 
         button.setProps({ disabled: false });
 
-        expect(button.prop('disabled')).to.not.be.ok;
-        expect(button.hasClass('button_disabled')).to.be.false;
+        expect(button).to.not.have.className('button_disabled');
     });
 
     it('accepts focused prop', () => {
         const button = shallow(<Button focused>button</Button>);
 
-        expect(button.hasClass('button_focused')).to.be.true;
+        expect(button).to.have.className('button_focused');
     });
 
     it('removes focused if receives disabled', () => {
@@ -71,15 +73,16 @@ describe('Button', () => {
 
         button.setProps({ disabled: true });
 
-        expect(button.hasClass('button_focused')).to.be.false;
+        expect(button).to.not.have.className('button_focused');
     });
 
     describe('type link', () => {
         it('is a link', () => {
             const button = shallow(<Button type="link">button</Button>);
 
-            expect(button.is('a.button')).to.be.true;
-            expect(button.prop('role')).to.equal('link');
+            expect(button).to.match('a.button');
+            expect(button).to.match('a.button_type_link');
+            expect(button).to.have.prop('role', 'link');
         });
 
         it('has an href if has url prop', () => {
@@ -87,7 +90,7 @@ describe('Button', () => {
                 <Button type="link" url="http://yandex.com">button</Button>
             );
 
-            expect(button.prop('href')).to.equal('http://yandex.com');
+            expect(button).to.have.prop('href', 'http://yandex.com');
         });
 
         it('does not have an href if initially disabled', () => {
@@ -95,7 +98,7 @@ describe('Button', () => {
                 <Button type="link" url="http://yandex.com" disabled>button</Button>
             );
 
-            expect(button.prop('href')).to.be.null;
+            expect(button).to.have.prop('href', null);
         });
 
         it('removes/restores href on being disabled/enabled', () => {
@@ -104,10 +107,10 @@ describe('Button', () => {
             );
 
             button.setProps({ disabled: true });
-            expect(button.prop('href')).to.be.null;
+            expect(button).to.have.prop('href', null);
 
             button.setProps({ disabled: false });
-            expect(button.prop('href')).to.equal('http://yandex.com');
+            expect(button).to.have.prop('href', 'http://yandex.com');
         });
     });
 
@@ -116,12 +119,12 @@ describe('Button', () => {
             const button = shallow(<Button>button</Button>);
 
             button.simulate('mouseenter');
-            expect(button.state('hovered')).to.be.true;
-            expect(button.hasClass('button_hovered')).to.be.true;
+            expect(button).to.have.state('hovered', true);
+            expect(button).to.have.className('button_hovered');
 
             button.simulate('mouseleave');
-            expect(button.state('hovered')).to.not.be.ok;
-            expect(button.hasClass('button_hovered')).to.be.false;
+            expect(button).to.have.state('hovered', false);
+            expect(button).to.not.have.className('button_hovered');
         });
 
         it('can not be hovered if disabled', () => {
@@ -137,12 +140,12 @@ describe('Button', () => {
             const button = shallow(<Button>button</Button>);
 
             button.simulate('mousedown');
-            expect(button.state('pressed')).to.be.true;
-            expect(button.hasClass('button_pressed')).to.be.true;
+            expect(button).to.have.state('pressed', true);
+            expect(button).to.have.className('button_pressed');
 
             button.simulate('mouseup');
-            expect(button.state('pressed')).to.not.be.ok;
-            expect(button.hasClass('button_pressed')).to.be.false;
+            expect(button).to.have.state('pressed', false);
+            expect(button).to.not.have.className('button_pressed');
         });
 
         it('is pressed on keydown with space or enter if focused', () => {

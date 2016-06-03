@@ -19,7 +19,7 @@ class Link extends Control {
             const tabIndex = disabled ? -1 : 0;
 
             return (
-                <span className={this.className()} {...this.getControlHandlers()} tabIndex={tabIndex} title={title}>
+                <span className={this.className()} {...this.getControlHandlers()} role="button" tabIndex={tabIndex} title={title}>
                     {this.props.children}
                 </span>
             );
@@ -27,7 +27,7 @@ class Link extends Control {
     }
 
     className() {
-        var className = 'link link__control';
+        var className = 'link';
 
         const theme = this.props.theme || this.context.theme;
         if (theme) {
@@ -42,15 +42,31 @@ class Link extends Control {
         if (this.props.focused) {
             className += ' link_focused';
         }
+        if (this.state.hovered) {
+            className += ' link_hovered';
+        }
 
         if (this.props.className) {
-            className += ' ' + className;
+            className += ' ' + this.props.className;
         }
 
         return className;
     }
 
 }
+
+Link.propTypes = {
+    theme: React.PropTypes.string,
+    size: React.PropTypes.oneOf(['s', 'm', 'l', 'xl']),
+    className: React.PropTypes.string,
+    type: React.PropTypes.type,
+    disabled: React.PropTypes.bool,
+    focused: React.PropTypes.bool,
+    target: React.PropTypes.string,
+    title: React.PropTypes.string,
+    url: React.PropTypes.string,
+    onClick: React.PropTypes.func,
+};
 
 Link.contextTypes = {
     theme: React.PropTypes.string,
