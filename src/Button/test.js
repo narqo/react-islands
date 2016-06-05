@@ -23,12 +23,6 @@ describe('Button', () => {
         expect(button).to.have.prop('name', 'my-button');
     });
 
-    it('accepts type prop', () => {
-        const button = shallow(<Button type="submit">button</Button>);
-
-        expect(button).to.have.className('button_type_submit');
-    });
-
     it('accepts view prop', () => {
         const button = shallow(<Button view="action">button</Button>);
 
@@ -76,41 +70,50 @@ describe('Button', () => {
         expect(button).to.not.have.className('button_focused');
     });
 
-    describe('type link', () => {
-        it('is a link', () => {
-            const button = shallow(<Button type="link">button</Button>);
+    describe('type', () => {
+        it('accepts type prop', () => {
+            const button = shallow(<Button type="submit">button</Button>);
 
-            expect(button).to.match('a.button');
-            expect(button).to.match('a.button_type_link');
-            expect(button).to.have.prop('role', 'link');
+            expect(button).to.have.className('button_type_submit');
+            expect(button).to.have.prop('type', 'submit');
         });
 
-        it('has an href if has url prop', () => {
-            const button = shallow(
-                <Button type="link" url="http://yandex.com">button</Button>
-            );
+        describe('type="link"', () => {
+            it('is a link', () => {
+                const button = shallow(<Button type="link">button</Button>);
 
-            expect(button).to.have.prop('href', 'http://yandex.com');
-        });
+                expect(button).to.match('a.button');
+                expect(button).to.match('a.button_type_link');
+                expect(button).to.have.prop('role', 'link');
+            });
 
-        it('does not have an href if initially disabled', () => {
-            const button = shallow(
-                <Button type="link" url="http://yandex.com" disabled>button</Button>
-            );
+            it('has an href if has url prop', () => {
+                const button = shallow(
+                    <Button type="link" url="http://yandex.com">button</Button>
+                );
 
-            expect(button).to.have.prop('href', null);
-        });
+                expect(button).to.have.prop('href', 'http://yandex.com');
+            });
 
-        it('removes/restores href on being disabled/enabled', () => {
-            const button = shallow(
-                <Button type="link" url="http://yandex.com">button</Button>
-            );
+            it('does not have an href if initially disabled', () => {
+                const button = shallow(
+                    <Button type="link" url="http://yandex.com" disabled>button</Button>
+                );
 
-            button.setProps({ disabled: true });
-            expect(button).to.have.prop('href', null);
+                expect(button).to.have.prop('href', null);
+            });
 
-            button.setProps({ disabled: false });
-            expect(button).to.have.prop('href', 'http://yandex.com');
+            it('removes/restores href on being disabled/enabled', () => {
+                const button = shallow(
+                    <Button type="link" url="http://yandex.com">button</Button>
+                );
+
+                button.setProps({ disabled: true });
+                expect(button).to.have.prop('href', null);
+
+                button.setProps({ disabled: false });
+                expect(button).to.have.prop('href', 'http://yandex.com');
+            });
         });
     });
 
