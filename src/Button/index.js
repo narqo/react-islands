@@ -39,7 +39,14 @@ class Button extends Control {
             );
         } else {
             return (
-                <button className={this.className()} {...this.getControlHandlers()} ref="control" name={this.props.name} disabled={this.props.disabled}>
+                <button
+                    className={this.className()}
+                    {...this.getControlHandlers()}
+                    ref="control"
+                    type={this.props.type}
+                    name={this.props.name}
+                    disabled={this.props.disabled}
+                >
                     {this._wrappedChildren}
                 </button>
             );
@@ -95,7 +102,9 @@ class Button extends Control {
 }
 
 Button.propTypes = {
+    theme: React.PropTypes.string,
     size: React.PropTypes.oneOf(['s', 'm', 'l', 'xl']),
+    type: React.PropTypes.string,
     onClick: React.PropTypes.func,
 };
 
