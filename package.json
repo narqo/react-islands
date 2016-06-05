@@ -1,6 +1,6 @@
 {
   "name": "react-islands",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A set of react components implementing Yandex's islands design",
   "main": "components/index.js",
   "files": [
