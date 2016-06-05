@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Fixed
+
+* Button: pass "type" prop to underlying <button> ([#54](https://github.com/narqo/react-islands/issues/54)).
+
 ## 0.3.0 - 2016-06-03
 
 ### Added
