@@ -2,8 +2,11 @@
 
 ## Unreleased
 
+## 0.4.0 - 2016-06-06
+
 ### Added
 
+* New ProgressBar component ([#58](https://github.com/narqo/react-islands/pull/58)).
 * New Spinner component ([#57](https://github.com/narqo/react-islands/pull/57)).
 
 ## 0.3.1 - 2016-06-05
