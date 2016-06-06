@@ -5,7 +5,10 @@
 [![Dependency Status](https://david-dm.org/narqo/react-islands.svg)](https://david-dm.org/narqo/react-islands)
 [![devDependency Status](https://david-dm.org/narqo/react-islands/dev-status.svg)](https://david-dm.org/narqo/react-islands#info=devDependencies)
 
+A set of react components implementing [Yandex][yandex]'s islands design.
+
 Check out [showcase page](http://narqo.github.io/react-islands/showcase/) first.
+![react-islands showcase](https://raw.githubusercontent.com/narqo/react-islands/gh-pages/react-islands-showcase.png)
 
 ## Usage
 
@@ -56,3 +59,5 @@ or
 ## License
 
 MIT
+
+[yandex]: https://www.yandex.com/
