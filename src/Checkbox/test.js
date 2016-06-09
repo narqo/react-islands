@@ -233,11 +233,11 @@ describe('Checkbox', () => {
 
             expect(checkbox.state('checked')).to.not.be.ok;
 
-            checkbox.find('button').simulate('mousedown');
+            checkbox.find('button').simulate('mousedown', { button: 0 });
             checkbox.find('button').simulate('mouseup');
             expect(checkbox.state('checked')).to.be.true;
 
-            checkbox.find('button').simulate('mousedown');
+            checkbox.find('button').simulate('mousedown', { button: 0 });
             checkbox.find('button').simulate('mouseup');
             expect(checkbox.state('checked')).to.be.false;
 
@@ -250,7 +250,7 @@ describe('Checkbox', () => {
             const spy = sinon.spy();
             const checkbox = mount(<Checkbox type="button" onCheck={spy} name="foo" bar="42">checkbox</Checkbox>);
 
-            checkbox.find('button').simulate('mousedown');
+            checkbox.find('button').simulate('mousedown', { button: 0 });
             checkbox.find('button').simulate('mouseup');
 
             expect(spy.getCall(0).args[1].name).to.equal('foo');
@@ -261,7 +261,7 @@ describe('Checkbox', () => {
             const spy = sinon.spy();
             const checkbox = mount(<Checkbox type="button" disabled onCheck={spy}>checkbox</Checkbox>);
 
-            checkbox.find('button').simulate('mousedown');
+            checkbox.find('button').simulate('mousedown', { button: 0 });
             checkbox.find('button').simulate('mouseup');
             expect(checkbox.state('checked')).to.not.be.ok;
 

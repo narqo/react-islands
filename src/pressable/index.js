@@ -10,10 +10,13 @@ const pressable = BaseComponent => class extends BaseComponent {
             pressed: false,
         };
 
+        this.shouldPrevenDefaultClick = false;
+
         this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onKeyUp = this.onKeyUp.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
+        this.onClick = this.onClick.bind(this);
     }
 
     /** @override */
@@ -29,6 +32,7 @@ const pressable = BaseComponent => class extends BaseComponent {
     getControlHandlers() {
         return {
             ...super.getControlHandlers(),
+            onClick: this.onClick,
             onMouseDown: this.onMouseDown,
             onMouseUp: this.onMouseUp,
             onKeyUp: this.onKeyUp,
@@ -37,38 +41,54 @@ const pressable = BaseComponent => class extends BaseComponent {
         };
     }
 
-    dispatchClick() {
+    dispatchClick(e) {
         if (this.props.onClick) {
-            this.props.onClick(this.props);
+            this.shouldPrevenDefaultClick = false;
+
+            const eventType = e.type;
+
+            e.type = 'click';
+            this.props.onClick(e, this.props);
+            e.type = eventType;
+
+            if (e.isDefaultPrevented()) {
+                this.shouldPrevenDefaultClick = true;
+            }
         }
     }
 
     /** @override */
     onMouseLeave() {
-        super.onMouseLeave();
+        if (super.onMouseLeave) {
+            super.onMouseLeave();
+        }
         this.setState({ pressed: false });
     }
 
     /** @override */
     onMouseDown(e) {
-        super.onMouseDown(e);
-        if (!this.props.disabled) {
+        if (super.onMouseDown) {
+            super.onMouseDown(e);
+        }
+        if (!this.props.disabled && e.button === 0) {
             this.setState({ pressed: true });
         }
     }
 
     /** @override */
     onMouseUp(e) {
-        super.onMouseUp(e);
+        if (super.onMouseUp) {
+            super.onMouseUp(e);
+        }
         if (this.state.pressed) {
             this.setState({ pressed: false });
-            this.dispatchClick();
+            this.dispatchClick(e);
         }
     }
 
     /** @override */
     onFocus() {
-        if (!this.state.pressed) {
+        if (!this.state.pressed && super.onFocus) {
             super.onFocus();
         }
     }
@@ -93,11 +113,20 @@ const pressable = BaseComponent => class extends BaseComponent {
         }
         if (this.state.pressed) {
             this.setState({ pressed: false });
-            this.dispatchClick();
-
+            this.dispatchClick(e);
         }
         if (this.props.onKeyUp) {
             this.props.onKeyUp(e, this.props);
+        }
+    }
+
+    /** @override */
+    onClick(e) {
+        if (this.shouldPrevenDefaultClick) {
+            e.preventDefault();
+        }
+        if (super.onClick) {
+            super.onClick(e);
         }
     }
 };

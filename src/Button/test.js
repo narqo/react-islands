@@ -142,11 +142,11 @@ describe('Button', () => {
         it('is pressed on mousedown/mouseup', () => {
             const button = shallow(<Button>button</Button>);
 
-            button.simulate('mousedown');
+            simulateEvent(button, 'mousedown', { button: 0 });
             expect(button).to.have.state('pressed', true);
             expect(button).to.have.className('button_pressed');
 
-            button.simulate('mouseup');
+            simulateEvent(button, 'mouseup', { button: 0 });
             expect(button).to.have.state('pressed', false);
             expect(button).to.not.have.className('button_pressed');
         });
@@ -156,31 +156,31 @@ describe('Button', () => {
 
             expect(button.state('pressed')).to.not.be.ok;
 
-            button.simulate('keydown', { key: 'q' });
+            simulateEvent(button, 'keydown', { key: 'q' });
             expect(button.state('pressed')).to.not.be.ok;
-            button.simulate('keyup');
+            simulateEvent(button, 'keyup');
 
-            button.simulate('keydown', { key: ' ' });
+            simulateEvent(button, 'keydown', { key: ' ' });
             expect(button.state('pressed')).to.be.true;
-            button.simulate('keyup');
+            simulateEvent(button, 'keyup');
             expect(button.state('pressed')).to.not.be.ok;
 
-            button.simulate('keydown', { key: 'Enter' });
+            simulateEvent(button, 'keydown', { key: 'Enter' });
             expect(button.state('pressed')).to.be.true;
-            button.simulate('keyup');
+            simulateEvent(button, 'keyup');
             expect(button.state('pressed')).to.not.be.ok;
         });
 
         it('can not be pressed if disabled', () => {
             const button = shallow(<Button disabled>button</Button>);
 
-            button.simulate('mousedown');
+            simulateEvent(button, 'mousedown');
             expect(button.state('pressed')).to.not.be.ok;
 
-            button.simulate('keydown', { key: ' ' });
+            simulateEvent(button, 'keydown', { key: ' ' });
             expect(button.state('pressed')).to.not.be.ok;
 
-            button.simulate('keydown', { key: 'Enter' });
+            simulateEvent(button, 'keydown', { key: 'Enter' });
             expect(button.state('pressed')).to.not.be.ok;
         });
 
@@ -191,11 +191,11 @@ describe('Button', () => {
                 <Button focused onKeyDown={spy1} onKeyUp={spy2}>button</Button>
             );
 
-            button.simulate('keydown', { key: 'LeftArrow' });
+            simulateEvent(button, 'keydown', { key: 'LeftArrow' });
             expect(spy1.calledOnce).to.be.true;
             expect(spy1.calledWithMatch({ key: 'LeftArrow' })).to.be.true;
 
-            button.simulate('keyup', { key: 'LeftArrow' });
+            simulateEvent(button, 'keyup', { key: 'LeftArrow' });
             expect(spy2.calledOnce).to.be.true;
             expect(spy2.calledWithMatch({ key: 'LeftArrow' })).to.be.true;
         });
@@ -207,10 +207,10 @@ describe('Button', () => {
                 <Button disabled onKeyDown={spy1} onKeyUp={spy2}>button</Button>
             );
 
-            button.simulate('keydown', { key: 'LeftArrow' });
+            simulateEvent(button, 'keydown', { key: 'LeftArrow' });
             expect(spy1.called).to.be.false;
 
-            button.simulate('keyup', { key: 'LeftArrow' });
+            simulateEvent(button, 'keyup', { key: 'LeftArrow' });
             expect(spy2.called).to.be.false;
         });
 
@@ -220,24 +220,39 @@ describe('Button', () => {
                 <Button onKeyPress={spy}>button</Button>
             );
 
-            button.simulate('keypress', { key: 'q' });
+            simulateEvent(button, 'keypress', { key: 'q' });
             expect(spy.calledOnce).to.be.true;
             expect(spy.calledWithMatch({ key: 'q' })).to.be.true;
         });
     });
 
     describe('click', () => {
-        it('reacts on click', () => {
+        it('reacts on left button click', () => {
+            const spy = sinon.spy();
+            const onClickHandler = event => {
+                expect(event.type).to.equal('click');
+                spy();
+            };
+            const button = shallow(
+                <Button onClick={onClickHandler}>button</Button>
+            );
+
+            simulateEvent(button, 'mousedown', { button: 0 });
+            simulateEvent(button, 'mouseup');
+
+            expect(spy.calledOnce).to.be.true;
+        });
+
+        it('does not reacts if clicked by button other than left', () => {
             const spy = sinon.spy();
             const button = shallow(
                 <Button onClick={spy}>button</Button>
             );
 
-            button
-                .simulate('mousedown')
-                .simulate('mouseup');
+            simulateEvent(button, 'mousedown', { button: 1 });
+            simulateEvent(button, 'mouseup');
 
-            expect(spy.calledOnce).to.be.true;
+            expect(spy.called).to.not.be.true;
         });
 
         it('reacts on keypress by enter or space', () => {
@@ -246,11 +261,13 @@ describe('Button', () => {
                 <Button onClick={spy} focused>button</Button>
             );
 
-            button
-                .simulate('keydown', { key: 'Enter' })
-                .simulate('keyup')
-                .simulate('keydown', { key: ' ' })
-                .simulate('keyup');
+            simulateEvent(button, 'keydown', { key: 'Enter' });
+            simulateEvent(button, 'keyup');
+
+            expect(spy.calledOnce).to.be.true;
+
+            simulateEvent(button, 'keydown', { key: ' ' });
+            simulateEvent(button, 'keyup');
 
             expect(spy.calledTwice).to.be.true;
         });
@@ -261,11 +278,20 @@ describe('Button', () => {
                 <Button disabled onClick={spy}>button</Button>
             );
 
-            button
-                .simulate('mousedown')
-                .simulate('mouseup');
+            simulateEvent(button, 'mousedown', { button: 0 });
+            simulateEvent(button, 'mouseup');
 
             expect(spy.called).to.be.false;
         });
     });
 });
+
+const simulateEvent = (target, type, args) => {
+    const eventData = {
+        type,
+        isDefaultPrevented() {},
+        preventDefault() {},
+        ...args,
+    };
+    target.simulate(type, eventData);
+};

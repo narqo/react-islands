@@ -93,12 +93,6 @@ class Button extends Control {
 
         return className;
     }
-
-    /** @override */
-    // onMouseDown(e) {
-    //     e.preventDefault(); // NOTE: prevents button from being blurred at least in FF and Safari
-    //     super.onMouseDown(e);
-    // }
 }
 
 Button.propTypes = {

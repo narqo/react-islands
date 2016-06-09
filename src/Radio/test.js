@@ -247,15 +247,15 @@ describe('Radio', () => {
 
             expect(radio.state('checked')).to.not.be.ok;
 
-            radio.find('button').simulate('mousedown');
+            radio.find('button').simulate('mousedown', { button: 0 });
             radio.find('button').simulate('mouseup');
             expect(radio.state('checked')).to.be.true;
 
-            radio.find('button').simulate('mousedown');
+            radio.find('button').simulate('mousedown', { button: 0 });
             radio.find('button').simulate('mouseup');
             expect(radio.state('checked')).to.be.true;
 
-            expect(spy.callCount).to.equal(1);
+            expect(spy.calledOnce).to.be.true;
             expect(spy.getCall(0).args[0]).to.be.true;
         });
 
@@ -263,7 +263,7 @@ describe('Radio', () => {
             const spy = sinon.spy();
             const radio = mount(<Radio type="button" onCheck={spy} name="foo" bar="42">radio</Radio>);
 
-            radio.find('button').simulate('mousedown');
+            radio.find('button').simulate('mousedown', { button: 0 });
             radio.find('button').simulate('mouseup');
 
             expect(spy.getCall(0).args[1].name).to.equal('foo');
