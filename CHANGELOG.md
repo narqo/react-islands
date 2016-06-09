@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+## 0.5.0 - 2016-06-09
+
+### Added
+
+* Components can be imported as a named modules from the package main entrypoint ([#62](https://github.com/narqo/react-islands/pull/62)).
+
+### Changed
+
+* Link, Button: synthetic event is passed as a first argument to the `onClick()` handler ([#61](https://github.com/narqo/react-islands/pull/61)).
+
+### Fixed
+
+* Link, Button: `onClick()` handler must be called only on left button click ([#61](https://github.com/narqo/react-islands/pull/61)).
+* Link, Button: Impossible to do a default prevention in `onClick()` handler ([#61](https://github.com/narqo/react-islands/pull/61)).
+
 ## 0.4.0 - 2016-06-06
 
 ### Added

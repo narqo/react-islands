@@ -30,6 +30,15 @@ ReactDOM.render(
     document.getElementById('root'));
 ~~~
 
+You can use named import as well, however this may lead to the unwanted growth of the bundle.
+Considder to use technics like [tree-shaking](http://www.2ality.com/2015/12/webpack-tree-shaking.html) in this case.
+
+~~~js
+import { Button, Link } from 'react-islands';
+
+// ...
+~~~
+
 ## Development
 
 ~~~
