@@ -10,13 +10,14 @@
     "src"
   ],
   "scripts": {
-    "clean": "rm -rf components",
-    "lint": "eslint src",
+    "clean": "rm -rf components src/index.js",
+    "lint": "eslint --ignore-path .gitignore src",
     "start": "gulp",
     "unit": "mocha --compilers js:babel-register -r jsdom-global/register src/**/test.js",
     "test": "npm run unit",
     "pretest": "npm run lint",
     "build": "NODE_ENV=production babel src --only index.js --out-dir components",
+    "prebuild": "./scripts/generate-main.sh",
     "prepublish": "npm run clean && npm test && npm run build"
   },
   "repository": {
@@ -40,6 +41,7 @@
     "babel-core": "^6.3.26",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-dev-expression": "^0.2.1",
+    "babel-plugin-transform-export-extensions": "^6.8.0",
     "babel-plugin-transform-node-env-inline": "^6.5.0",
     "babel-plugin-transform-react-constant-elements": "^6.5.0",
     "babel-plugin-transform-react-pure-class-to-function": "^1.0.1",

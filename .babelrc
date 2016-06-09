@@ -10,11 +10,12 @@
       "plugins": [
         "add-module-exports",
         "dev-expression",
-        "transform-runtime",
+        "transform-export-extensions",
         "transform-node-env-inline",
         "transform-react-constant-elements",
         "transform-react-remove-prop-types",
-        "transform-react-pure-class-to-function"
+        "transform-react-pure-class-to-function",
+        "transform-runtime"
       ]
     }
   }
