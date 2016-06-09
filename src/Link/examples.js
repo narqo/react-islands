@@ -36,7 +36,7 @@ class Example extends React.Component {
         );
     }
 
-    onClick(e) {
+    onClick() {
         this.setState({
             clicks: this.state.clicks + 1,
         });

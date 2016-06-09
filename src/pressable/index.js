@@ -10,7 +10,7 @@ const pressable = BaseComponent => class extends BaseComponent {
             pressed: false,
         };
 
-        this.shouldPreventDefaultClick = false;
+        this.shouldPrevenDefaultClick = false;
 
         this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
@@ -43,7 +43,7 @@ const pressable = BaseComponent => class extends BaseComponent {
 
     dispatchClick(e) {
         if (this.props.onClick) {
-            this.shouldPreventDefaultClick = false;
+            this.shouldPrevenDefaultClick = false;
 
             const eventType = e.type;
 
@@ -52,7 +52,7 @@ const pressable = BaseComponent => class extends BaseComponent {
             e.type = eventType;
 
             if (e.isDefaultPrevented()) {
-                this.shouldPreventDefaultClick = true;
+                this.shouldPrevenDefaultClick = true;
             }
         }
     }
@@ -122,7 +122,7 @@ const pressable = BaseComponent => class extends BaseComponent {
 
     /** @override */
     onClick(e) {
-        if (this.shouldPreventDefaultClick) {
+        if (this.shouldPrevenDefaultClick) {
             e.preventDefault();
         }
         if (super.onClick) {

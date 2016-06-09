@@ -129,10 +129,10 @@ describe('Link', () => {
         it('is pressed on mousedown/mouseup', () => {
             const link = shallow(<Link url="http://yandex.ru">link</Link>);
 
-            link.simulate('mousedown');
+            simulateEvent(link, 'mousedown', { button: 0 });
             expect(link).to.have.state('pressed', true);
 
-            link.simulate('mouseup');
+            simulateEvent(link, 'mouseup', { button: 0 });
             expect(link).to.have.state('pressed', false);
         });
 
@@ -141,31 +141,31 @@ describe('Link', () => {
 
             expect(link.state('pressed')).to.not.be.ok;
 
-            link.simulate('keydown', { key: 'q' });
+            simulateEvent(link, 'keydown', { key: 'q' });
             expect(link.state('pressed')).to.not.be.ok;
-            link.simulate('keyup');
+            simulateEvent(link, 'keyup');
 
-            link.simulate('keydown', { key: ' ' });
+            simulateEvent(link, 'keydown', { key: ' ' });
             expect(link.state('pressed')).to.be.true;
-            link.simulate('keyup');
+            simulateEvent(link, 'keyup');
             expect(link.state('pressed')).to.not.be.ok;
 
-            link.simulate('keydown', { key: 'Enter' });
+            simulateEvent(link, 'keydown', { key: 'Enter' });
             expect(link.state('pressed')).to.be.true;
-            link.simulate('keyup');
+            simulateEvent(link, 'keyup');
             expect(link.state('pressed')).to.not.be.ok;
         });
 
         it('can not be pressed if disabled', () => {
             const link = shallow(<Link url="http://yandex.ru" disabled>link</Link>);
 
-            link.simulate('mousedown');
+            simulateEvent(link, 'mousedown', { button: 0 });
             expect(link.state('pressed')).to.not.be.ok;
 
-            link.simulate('keydown', { key: ' ' });
+            simulateEvent(link, 'keydown', { key: ' ' });
             expect(link.state('pressed')).to.not.be.ok;
 
-            link.simulate('keydown', { key: 'Enter' });
+            simulateEvent(link, 'keydown', { key: 'Enter' });
             expect(link.state('pressed')).to.not.be.ok;
         });
 
@@ -176,11 +176,11 @@ describe('Link', () => {
                 <Link focused onKeyDown={spy1} onKeyUp={spy2}>link</Link>
             );
 
-            link.simulate('keydown', { key: 'LeftArrow' });
+            simulateEvent(link, 'keydown', { key: 'LeftArrow' });
             expect(spy1.calledOnce).to.be.true;
             expect(spy1.calledWithMatch({ key: 'LeftArrow' })).to.be.true;
 
-            link.simulate('keyup', { key: 'LeftArrow' });
+            simulateEvent(link, 'keyup', { key: 'LeftArrow' });
             expect(spy2.calledOnce).to.be.true;
             expect(spy2.calledWithMatch({ key: 'LeftArrow' })).to.be.true;
         });
@@ -192,10 +192,10 @@ describe('Link', () => {
                 <Link disabled onKeyDown={spy1} onKeyUp={spy2}>link</Link>
             );
 
-            link.simulate('keydown', { key: 'LeftArrow' });
+            simulateEvent(link, 'keydown', { key: 'LeftArrow' });
             expect(spy1.called).to.be.false;
 
-            link.simulate('keyup', { key: 'LeftArrow' });
+            simulateEvent(link, 'keyup', { key: 'LeftArrow' });
             expect(spy2.called).to.be.false;
         });
 
@@ -203,14 +203,14 @@ describe('Link', () => {
             const spy = sinon.spy();
             const link = shallow(<Link onKeyPress={spy}>link</Link>);
 
-            link.simulate('keypress', { key: 'q' });
+            simulateEvent(link, 'keypress', { key: 'q' });
             expect(spy.calledOnce).to.be.true;
             expect(spy.calledWithMatch({ key: 'q' })).to.be.true;
         });
     });
 
     describe('click', () => {
-        it('reacts on click', () => {
+        it('reacts on left button click', () => {
             const spy = sinon.spy();
             const onClickHandler = event => {
                 expect(event.type).to.equal('click');
@@ -218,22 +218,33 @@ describe('Link', () => {
             };
             const link = shallow(<Link onClick={onClickHandler}>button</Link>);
 
-            link
-                .simulate('mousedown')
-                .simulate('mouseup');
+            simulateEvent(link, 'mousedown', { button: 0 });
+            simulateEvent(link, 'mouseup');
 
             expect(spy.calledOnce).to.be.true;
+        });
+
+        it('does not reacts if clicked by button other than left', () => {
+            const spy = sinon.spy();
+            const link = shallow(<Link onClick={spy}>button</Link>);
+
+            simulateEvent(link, 'mousedown', { button: 1 });
+            simulateEvent(link, 'mouseup');
+
+            expect(spy.called).to.not.be.true;
         });
 
         it('reacts on keypress by enter or space', () => {
             const spy = sinon.spy();
             const link = shallow(<Link onClick={spy} focused>button</Link>);
 
-            link
-                .simulate('keydown', { key: 'Enter' })
-                .simulate('keyup')
-                .simulate('keydown', { key: ' ' })
-                .simulate('keyup');
+            simulateEvent(link, 'keydown', { key: 'Enter' });
+            simulateEvent(link, 'keyup');
+
+            expect(spy.calledOnce).to.be.true;
+
+            simulateEvent(link, 'keydown', { key: ' ' });
+            simulateEvent(link, 'keyup');
 
             expect(spy.calledTwice).to.be.true;
         });
@@ -242,11 +253,20 @@ describe('Link', () => {
             const spy = sinon.spy();
             const link = shallow(<Link disabled onClick={spy}>button</Link>);
 
-            link
-                .simulate('mousedown')
-                .simulate('mouseup');
+            simulateEvent(link, 'mousedown', { button: 0 });
+            simulateEvent(link, 'mouseup');
 
             expect(spy.called).to.be.false;
         });
     });
 });
+
+const simulateEvent = (target, type, args) => {
+    const eventData = {
+        type,
+        isDefaultPrevented() {},
+        preventDefault() {},
+        ...args,
+    };
+    target.simulate(type, eventData);
+};
