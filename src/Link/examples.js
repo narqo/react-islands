@@ -4,7 +4,6 @@ import App from '../App';
 import Link from './index.js';
 
 class Example extends React.Component {
-
     constructor(props) {
         super(props);
 
@@ -20,7 +19,7 @@ class Example extends React.Component {
             <App theme="islands">
                 <div className="examples">
                     <div className="example">
-                        <Link size="l" url="#/Yandex">Yandex</Link>
+                        <Link size="l" url="#/Yandex" onClick={this.onLinkClick}>Yandex</Link>
                     </div>
 
                     <div className="example">
@@ -28,7 +27,7 @@ class Example extends React.Component {
                     </div>
 
                     <div className="example">
-                        <Link size="l" onClick={this.onClick} disabled>Google</Link>
+                        <Link size="l" onClick={this.onClick} disabled>Google (disabled)</Link>
                     </div>
 
                     <p>Clicks: {this.state.clicks}</p>
@@ -37,10 +36,14 @@ class Example extends React.Component {
         );
     }
 
-    onClick() {
+    onClick(e) {
         this.setState({
             clicks: this.state.clicks + 1,
         });
+    }
+
+    onLinkClick(e) {
+        e.preventDefault();
     }
 }
 

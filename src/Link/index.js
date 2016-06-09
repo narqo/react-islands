@@ -52,7 +52,6 @@ class Link extends Control {
 
         return className;
     }
-
 }
 
 Link.propTypes = {

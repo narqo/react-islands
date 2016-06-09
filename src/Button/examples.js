@@ -38,7 +38,7 @@ class Example extends React.Component {
                     </div>
 
                     <div className="example">
-                        <Button size="l" type="link" url="https://yandex.ru">Link</Button>
+                        <Button size="l" type="link" url="https://yandex.ru" onClick={this.onLinkClick}>Link</Button>
                     </div>
 
                     <div className="example">
@@ -55,6 +55,10 @@ class Example extends React.Component {
         this.setState({
             clicks: this.state.clicks + 1,
         });
+    }
+
+    onLinkClick(e) {
+        e.preventDefault();
     }
 }
 
