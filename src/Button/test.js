@@ -229,8 +229,12 @@ describe('Button', () => {
     describe('click', () => {
         it('reacts on click', () => {
             const spy = sinon.spy();
+            const onClickHandler = event => {
+                expect(event.type).to.equal('click');
+                spy();
+            };
             const button = shallow(
-                <Button onClick={spy}>button</Button>
+                <Button onClick={onClickHandler}>button</Button>
             );
 
             button

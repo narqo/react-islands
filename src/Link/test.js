@@ -212,7 +212,11 @@ describe('Link', () => {
     describe('click', () => {
         it('reacts on click', () => {
             const spy = sinon.spy();
-            const link = shallow(<Link onClick={spy}>button</Link>);
+            const onClickHandler = event => {
+                expect(event.type).to.equal('click');
+                spy();
+            };
+            const link = shallow(<Link onClick={onClickHandler}>button</Link>);
 
             link
                 .simulate('mousedown')
