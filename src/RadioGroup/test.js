@@ -162,7 +162,7 @@ describe('RadioGroup', () => {
                 .find('.radio')
                 .at(1)
                 .find('button');
-            secondRadioButton.simulate('mousedown');
+            secondRadioButton.simulate('mousedown', { button: 0 });
             secondRadioButton.simulate('mouseup');
 
             expect(wrapper.state('value')).to.equal('20');
@@ -326,7 +326,7 @@ describe('RadioGroup', () => {
                 .find('.radio')
                 .at(1)
                 .find('button');
-            secondRadioButton.simulate('mousedown');
+            secondRadioButton.simulate('mousedown', { button: 0 });
             secondRadioButton.simulate('mouseup');
 
             expect(wrapper.state('value')).to.equal('20');

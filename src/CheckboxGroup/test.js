@@ -162,7 +162,7 @@ describe('CheckboxGroup', () => {
                 .find('.checkbox')
                 .at(1)
                 .find('button');
-            secondCheckboxButton.simulate('mousedown');
+            secondCheckboxButton.simulate('mousedown', { button: 0 });
             secondCheckboxButton.simulate('mouseup');
 
             expect(wrapper.state('value')).to.be.eql(['10', '30', '20']);
@@ -326,7 +326,7 @@ describe('CheckboxGroup', () => {
                 .find('.checkbox')
                 .at(1)
                 .find('button');
-            secondCheckboxButton.simulate('mousedown');
+            secondCheckboxButton.simulate('mousedown', { button: 0 });
             secondCheckboxButton.simulate('mouseup');
 
             expect(wrapper.state('value')).to.be.eql(['10', '30', '20']);
