@@ -1,5 +1,4 @@
 import React from 'react';
-
 import Control from '../Control';
 import Button from '../Button';
 
@@ -7,50 +6,20 @@ class Checkbox extends Control {
     constructor(props) {
         super(props);
 
-        this.state = {
-            ...this.state,
-            checked: props.checked,
-        };
-
+        this.onControlChange = this.onControlChange.bind(this);
         this.onButtonClick = this.onButtonClick.bind(this);
         this.onButtonFocusChange = this.onButtonFocusChange.bind(this);
         this.onButtonHoverChange = this.onButtonHoverChange.bind(this);
-        this.onControlChange = this.onControlChange.bind(this);
-    }
-
-    /** @override */
-    componentWillReceiveProps(nextProps) {
-        super.componentWillReceiveProps(nextProps);
-
-        // NOTE(narqo@): `setState({ checked })` must be called only if new `checked` value was passed
-        // or `Checkbox` will stay in the `checked` state regardless the DOM events.
-        if (this.props.checked !== nextProps.checked) {
-            this.setState({
-                ...this.state,
-                checked: nextProps.checked,
-            });
-        }
-    }
-
-    //  При получении checked через props не менялось свойства checked у input'а.
-    //  Или же нужно пропихнуть как-то checked (а не в defaultChecked) в render().
-    //  Но тогда нужно будет пустой onChange повесить, видимо.
-    componentDidUpdate(prevProps) {
-        if (this.props.checked !== prevProps.checked) {
-            this.refs.control.checked = this.props.checked;
-        }
     }
 
     render() {
-        const { name, theme, size, type, disabled, value } = this.props;
-        const { checked, focused } = this.state;
+        const { name, theme, size, type, checked, disabled, value } = this.props;
+        const { focused } = this.state;
 
         if (type === 'button') {
-            //  В первом input'е нужно одновременно defaultValue и defaultChecked
-            //  (а не просто value/checked). Иначе замучает warning'ами.
-            //  Или же нужен фейковый onChange.
             return (
                 <label className={this.className()}>
+                    {checked && <input type="hidden" name={name} value={value} disabled={disabled} />}
                     <Button theme={theme} size={size} type={type}
                         disabled={disabled}
                         checked={checked}
@@ -61,12 +30,6 @@ class Checkbox extends Control {
                     >
                         {this.props.children}
                     </Button>
-                    <input ref="control" className="checkbox__control" type="checkbox" autoComplete="off"
-                        name={name}
-                        disabled={disabled}
-                        defaultValue={value}
-                        defaultChecked={checked}
-                    />
                 </label>
             )
         } else {
@@ -90,7 +53,7 @@ class Checkbox extends Control {
     }
 
     className() {
-        var className = 'checkbox';
+        let className = 'checkbox';
 
         const theme = this.props.theme || this.context.theme;
         if (theme) {
@@ -105,14 +68,14 @@ class Checkbox extends Control {
         if (this.props.disabled) {
             className += ' checkbox_disabled';
         }
+        if (this.props.checked) {
+            className += ' checkbox_checked';
+        }
         if (this.state.hovered) {
             className += ' checkbox_hovered';
         }
         if (this.state.focused) {
             className += ' checkbox_focused';
-        }
-        if (this.state.checked) {
-            className += ' checkbox_checked';
         }
 
         if (this.props.className) {
@@ -120,6 +83,14 @@ class Checkbox extends Control {
         }
 
         return className;
+    }
+
+    onControlChange() {
+        if (this.props.disabled) {
+            return;
+        }
+        const checked = !this.props.checked;
+        this.props.onCheck(checked, this.props);
     }
 
     onButtonFocusChange(focused) {
@@ -131,21 +102,12 @@ class Checkbox extends Control {
     }
 
     onButtonClick(e) {
-        this.props.onClick(e, this.props);
-
-        const checked = !this.state.checked;
-
-        // FIXME(narqo@): `this.refs.control.checked = checked`
-        this.refs.control.checked = checked;
-        this.setState({ checked });
-
-        this.props.onCheck(checked, this.props);
-    }
-
-    onControlChange() {
-        const checked = !this.state.checked;
-        this.setState({ checked });
-        this.props.onCheck(checked, this.props);
+        if (this.props.onClick) {
+            this.props.onClick(e, this.props);
+        }
+        if (!e.isDefaultPrevented()) {
+            this.onControlChange();
+        }
     }
 }
 
@@ -153,8 +115,18 @@ Checkbox.contextTypes = {
     theme: React.PropTypes.string,
 };
 
+Checkbox.propTypes = {
+    theme: React.PropTypes.string,
+    size: React.PropTypes.oneOf(['s', 'm', 'l', 'xl']),
+    type: React.PropTypes.string,
+    disabled: React.PropTypes.bool,
+    checked: React.PropTypes.bool,
+    value: React.PropTypes.any,
+    onClick: React.PropTypes.func,
+    onCheck: React.PropTypes.func,
+};
+
 Checkbox.defaultProps = {
-    onClick() {},
     onCheck() {},
 };
 

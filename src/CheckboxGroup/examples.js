@@ -35,7 +35,7 @@ class Example extends React.Component {
                     </div>
 
                     <div className="example">
-                        <CheckboxGroup size="m" type="button" name="b" onChange={this.onChange}>
+                        <CheckboxGroup size="m" type="button" name="b" value={this.state.b} onChange={this.onChange}>
                             <Checkbox value="10">10</Checkbox>
                             <Checkbox value="20">20</Checkbox>
                             <Checkbox value="30">30</Checkbox>
@@ -57,7 +57,7 @@ class Example extends React.Component {
                     </div>
 
                     <div className="example">
-                        <CheckboxGroup size="m" type="line" name="d" onChange={this.onChange}>
+                        <CheckboxGroup size="m" type="line" name="d" value={this.state.d} onChange={this.onChange}>
                             <Checkbox value="10">10</Checkbox>
                             <Checkbox value="20">20</Checkbox>
                             <Checkbox value="30">30</Checkbox>
