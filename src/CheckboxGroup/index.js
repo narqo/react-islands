@@ -6,22 +6,11 @@ class CheckboxGroup extends Component {
     constructor(props) {
         super(props);
 
-        const value = props.value != null ? [...props.value] : [];
-        this.state = { value };
-
         this.onChildCheck = this.onChildCheck.bind(this);
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.value !== this.props.value) {
-            this.setState({ value: nextProps.value != null ? [...nextProps.value] : []});
-        }
-    }
-
     render() {
-        const onChildCheck = this.onChildCheck;
-        const { value } = this.state;
-        const { theme, size, type, name, disabled } = this.props;
+        const { theme, size, type, name, disabled, value } = this.props;
 
         const children = React.Children.map(this.props.children, child => {
             const checked = value.indexOf(child.props.value) !== -1;
@@ -33,7 +22,7 @@ class CheckboxGroup extends Component {
                 disabled,
                 ...child.props,
                 checked,
-                onCheck: onChildCheck,
+                onCheck: this.onChildCheck,
             });
         });
 
@@ -66,17 +55,16 @@ class CheckboxGroup extends Component {
     }
 
     onChildCheck(checked, childProps) {
-        const value = childProps.value;
-        if (checked && this.state.value.indexOf(value) === -1) {
+        const { value } = this.props;
+        const childValue = childProps.value;
+        if (checked && value.indexOf(childValue) === -1) {
             //  FIXME: Не нужно ли тут возвращать массив в том же порядке,
             //  как эти значение в RadioGroup расположены?
             //
-            let newValue = this.state.value.concat(value);
-            this.setState({ value: newValue });
+            const newValue = value.concat(childValue);
             this.props.onChange(newValue, this.props);
         } else if (!checked) {
-            let newValue = this.state.value.filter(item => (item !== value));
-            this.setState({ value: newValue });
+            const newValue = value.filter(item => (item !== childValue));
             this.props.onChange(newValue, this.props);
         }
     }
@@ -86,17 +74,19 @@ CheckboxGroup.contextTypes = {
     theme: React.PropTypes.string,
 };
 
-CheckboxGroup.defaultProps = {
-    onChange() {},
-};
-
 CheckboxGroup.propTypes = {
     theme: React.PropTypes.string,
-    size: React.PropTypes.oneOf(['m', 'l']),
+    size: React.PropTypes.oneOf(['m', 'l', 'xl']),
     type: React.PropTypes.string,
     name: React.PropTypes.string,
+    disabled: React.PropTypes.bool,
     value: React.PropTypes.any,
     onChange: React.PropTypes.func,
+};
+
+CheckboxGroup.defaultProps = {
+    value: [],
+    onChange() {},
 };
 
 export default CheckboxGroup;
