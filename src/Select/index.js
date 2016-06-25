@@ -49,6 +49,7 @@ class Select extends Component {
     }
 
     componentWillUnmount() {
+        this.setState({ popupVisible: false });
         this._cachedItems = null;
     }
 
@@ -108,7 +109,7 @@ class Select extends Component {
     }
 
     renderMenu() {
-        const { theme, size, disabled, mode, value } = this.props;
+        const { theme, size, disabled, mode, value, maxHeight } = this.props;
         const focused = this._wasPopupVisible && this.state.popupVisible;
         const tabIndex = -1;
 
@@ -119,6 +120,7 @@ class Select extends Component {
                 tabIndex={tabIndex}
                 disabled={disabled}
                 focused={focused}
+                maxHeight={maxHeight}
                 onItemClick={this.onMenuItemClick}
                 onKeyDown={this.onMenuKeyDown}
                 onChange={this.onMenuChange}
@@ -252,6 +254,7 @@ Select.propTypes = {
     value: React.PropTypes.any,
     placeholder: React.PropTypes.string,
     disabled: React.PropTypes.bool,
+    maxHeight: React.PropTypes.number,
     onChange: React.PropTypes.func,
 };
 

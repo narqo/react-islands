@@ -164,7 +164,7 @@ class Menu extends Component {
     }
 
     render() {
-        const { theme, size, mode, disabled } = this.props;
+        const { theme, size, mode, disabled, maxHeight } = this.props;
         const { value, hoveredIndex } = this.state;
 
         const onItemClick = this.onItemClick;
@@ -226,8 +226,16 @@ class Menu extends Component {
 
         const tabIndex = disabled ? -1 : this.props.tabIndex;
 
+        let style;
+        if (maxHeight) {
+            style = {
+                maxHeight,
+            }
+        }
+
         return (
             <div ref="control" className={this.className()}
+                style={style}
                 tabIndex={tabIndex}
                 onKeyDown={this.onKeyDown}
                 onMouseDown={this.onMouseDown}
@@ -416,11 +424,13 @@ Menu.propTypes = {
     mode: React.PropTypes.string,
     focused: React.PropTypes.bool,
     disabled: React.PropTypes.bool,
+    maxHeight: React.PropTypes.number,
     onChange: React.PropTypes.func,
     onFocusChange: React.PropTypes.func,
 };
 
 Menu.defaultProps = {
+    maxHeight: null,
     tabIndex: 0,
     onChange() {},
     onFocusChange() {},
