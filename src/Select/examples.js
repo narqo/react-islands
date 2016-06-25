@@ -20,6 +20,10 @@ class SelectExample extends React.Component {
         const { mode, disabled } = this.props;
         const { value } = this.state;
 
+        const children = Array.apply(null, { length: 1000 }).map((_, i) =>
+            <Item value={i} key={`item${i}`}>{`item-${i}`}</Item>
+        );
+
         return (
             <div className="example">
                 <b>mode={mode}</b>
@@ -34,6 +38,7 @@ class SelectExample extends React.Component {
                     disabled={disabled}
                     value={value}
                     mode={mode}
+                    maxHeight={150}
                     onChange={this.onSelectChange}
                 >
                     <Group title="Weekdays">
@@ -43,6 +48,7 @@ class SelectExample extends React.Component {
                         <Item value="4" checkedText="Thu" disabled onClick={this.onItemClick}>Thursday</Item>
                         <Item value="5" checkedText="Fri">Friday</Item>
                     </Group>
+                    {children}
                     <Group title="Weekends">
                         <Item value="6" checkedText="Sat">Saturday</Item>
                         <Item value="7" checkedText="Sun">Sunday</Item>
@@ -66,8 +72,8 @@ function Example() {
         <App theme="islands">
             <div className="examples">
                 <SelectExample mode="radio" />
-                <SelectExample mode="check" />
-                <SelectExample mode="radio-check" />
+                {/*<SelectExample mode="check" />*/}
+                {/*<SelectExample mode="radio-check" />*/}
             </div>
         </App>
     );

@@ -1,5 +1,4 @@
 import React from 'react';
-
 import Component from '../../Component';
 
 class MenuItem extends Component {
@@ -13,7 +12,8 @@ class MenuItem extends Component {
 
     render() {
         return (
-            <div className={this.className()}
+            <div
+                className={this.className()}
                 onClick={this.onClick}
                 onMouseEnter={this.onMouseEnter}
                 onMouseLeave={this.onMouseLeave}
@@ -24,7 +24,7 @@ class MenuItem extends Component {
     }
 
     className() {
-        var className = 'menu-item';
+        let className = 'menu-item';
 
         const theme = this.props.theme || this.context.theme;
         if (theme) {
@@ -80,6 +80,7 @@ MenuItem.contextTypes = {
 };
 
 MenuItem.propTypes = {
+    index: React.PropTypes.number,
     theme: React.PropTypes.string,
     size: React.PropTypes.string,
     disabled: React.PropTypes.bool,

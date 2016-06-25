@@ -1,9 +1,53 @@
 import React from 'react';
-
 import Component from '../Component';
 import Item from '../Item';
 import Group from '../Group';
 import MenuItem from './MenuItem';
+
+function menuItem(props, index, menu) {
+    const { theme, size, disabled, mode } = menu.props;
+    const { value, hoveredIndex } = menu.state;
+    const checkable = Boolean(mode);
+
+    const key = `menuitem${props.id || index}`;
+
+    return React.createElement(
+        MenuItem,
+        {
+            theme,
+            size,
+            disabled,
+            checked: checkable && (value.indexOf(props.value) !== -1),
+            hovered: (index === hoveredIndex),
+            key,
+            index,
+            ...props,
+            onClick: menu.onItemClick,
+            onHover: menu.onItemHover,
+        },
+        props.children
+    );
+}
+
+function menuGroup(props, children) {
+    let title;
+    if (props.title) {
+        title = <div className="menu__group-title">{props.title}</div>;
+    }
+
+    return (
+        <div className="menu__group">
+            {title}
+            {children}
+        </div>
+    );
+}
+
+function appendItemToCache(item, cache) {
+    if (Component.is(item, Item)) {
+        cache.push(item);
+    }
+}
 
 class Menu extends Component {
     constructor(props) {
@@ -11,12 +55,12 @@ class Menu extends Component {
 
         this.state = {
             ...this.state,
-            value: this._validValue(props.value),
+            value: this._validateValue(this.props.value),
             hoveredIndex: null,
         };
 
-        this._cachedItems = null;
-        this._savedIndex = null;
+        this._cachedChildren = null;
+        this._hoveredItemIndex = null;
 
         this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
@@ -43,13 +87,11 @@ class Menu extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.children !== this.props.children) {
-            this._cachedItems = null;
+            this._cachedChildren = null;
         }
 
         if (nextProps.value !== this.props.value) {
-            this.setState({
-                value: this._validValue(nextProps.value),
-            });
+            this.setState({ value: this._validateValue(nextProps.value) });
         }
     }
 
@@ -59,6 +101,10 @@ class Menu extends Component {
         } else if (!prevProps.focused && this.props.focused) {
             this.componentWillGainFocus();
         }
+    }
+
+    componentWillUnmount() {
+        this._cachedChildren = null;
     }
 
     componentWillGainFocus() {
@@ -73,75 +119,74 @@ class Menu extends Component {
         }
     }
 
-    getItems(index) {
-        if (!this._cachedItems) {
-            const items = [];
-            const values = [];
-            this._cachedItems = { items, values };
-
-            const doChild = function(child) {
-                items.push(child);
-                values.push(child.props.value);
-            };
+    _getChildren() {
+        if (!this._cachedChildren) {
+            this._cachedChildren = [];
 
             React.Children.forEach(this.props.children, child => {
-                if (Component.is(child, Item)) {
-                    doChild(child);
-                } else if (Component.is(child, Group)) {
-                    //  Предполагаем, что ничего, кроме Item внутри Group уже нет.
-                    React.Children.forEach(child.props.children, doChild);
+                if (Component.is(child, Group)) {
+                    React.Children.forEach(child.props.children, item => appendItemToCache(item, this._cachedChildren));
+                } else {
+                    appendItemToCache(child, this._cachedChildren);
                 }
             });
         }
 
-        if (typeof index !== 'undefined') {
-            return this._cachedItems.items[index];
-        }
-        return this._cachedItems;
+        return this._cachedChildren;
     }
 
-    _getFirstEnabledIndex() {
-        const { items } = this.getItems();
-        for (let i = 0; i < items.length; i++) {
-            if (!items[i].disabled) {
-                return i;
+    _getFirstEnabledChild() {
+        if (this.props.disabled) return null;
+
+        const children = this._getChildren();
+
+        for (let i = 0; i < children.length; i++) {
+            const item = children[i];
+            if (!item.props.disabled) {
+                return item;
             }
         }
+
         return null;
     }
 
-    _getFirstEnabledValue() {
-        const index = this._getFirstEnabledIndex();
-        return (index === null) ? null : this.getItems(index).props.value;
+    _getFirstEnabledChildIndex() {
+        return this._getChildren().indexOf(this._getFirstEnabledChild());
     }
 
-    _validValue(value) {
+    _validateValue(value) {
         let newValue;
+
         if (value == null) {
             newValue = [];
-
         } else if (Array.isArray(value)) {
             newValue = value;
-
         } else {
             newValue = [value];
         }
 
-        const values = this.getItems().values;
-        const filteredValue = newValue.filter(aValue => (values.indexOf(aValue) !== -1));
+        const filteredValue = this._getChildren().reduce((res, item) => {
+            const itemValue = item.props.value;
+
+            if (newValue.indexOf(itemValue) !== -1) {
+                res.push(itemValue);
+            }
+
+            return res;
+        }, []);
+
         if (filteredValue.length !== newValue.length) {
             newValue = filteredValue;
         }
 
         if (this.props.mode === 'radio') {
             if (newValue.length === 0) {
-                const firstValue = this._getFirstEnabledValue();
-                newValue = (firstValue === null) ? [] : [firstValue];
+                const firstChild = this._getFirstEnabledChild();
 
-            } else if (newValue.length > 1) {
+                newValue = firstChild === null ? [] : [firstChild.props.value];
+            } else {
                 newValue = [newValue[0]];
             }
-
         } else if (this.props.mode === 'radio-check' && newValue.length > 1) {
             newValue = [newValue[0]];
         }
@@ -164,67 +209,9 @@ class Menu extends Component {
     }
 
     render() {
-        const { theme, size, mode, disabled, maxHeight } = this.props;
-        const { value, hoveredIndex } = this.state;
-
-        const onItemClick = this.onItemClick;
-        const onItemHover = this.onItemHover;
-        const checkable = Boolean(mode);
-
-        let index = 0;
-        const children = React.Children.map(this.props.children, child => {
-            if (Component.is(child, Group)) {
-                return mapGroup(child);
-            } else if (Component.is(child, Item)) {
-                return mapItem(child);
-            } else {
-                //  FIXME: Или тут бросать ошибку?
-                return child;
-            }
-        });
-
-        function mapItem(item) {
-            const menuItem = React.createElement(
-                MenuItem,
-                {
-                    theme,
-                    size,
-                    disabled,
-                    checked: checkable && (value.indexOf(item.props.value) !== -1),
-                    hovered: (index === hoveredIndex),
-                    key: `menuitem${item}`,
-                    ...item.props,
-                    index,
-                    onClick: onItemClick,
-                    onHover: onItemHover,
-                },
-                item.props.children
-            );
-
-            index++;
-
-            return menuItem;
-        }
-
-        function mapGroup(group) {
-            const items = React.Children.map(group.props.children, mapItem);
-
-            let title;
-            if (group.props.title) {
-                title = (
-                    <div className="menu__group-title">{group.props.title}</div>
-                );
-            }
-
-            return (
-                <div className="menu__group">
-                    {title}
-                    {items}
-                </div>
-            );
-        }
-
+        const { disabled, maxHeight } = this.props;
         const tabIndex = disabled ? -1 : this.props.tabIndex;
+        const menu = this._renderMenu();
 
         let style;
         if (maxHeight) {
@@ -243,13 +230,31 @@ class Menu extends Component {
                 onFocus={this.onFocus}
                 onBlur={this.onBlur}
             >
-                {children}
+                {menu}
             </div>
         );
     }
 
+    _renderMenu() {
+        let index = 0;
+
+        return React.Children.map(this.props.children, child => {
+            if (Component.is(child, Item)) {
+                return menuItem(child.props, index++, this);
+            } else if (Component.is(child, Group)) {
+                const groupedItems = React.Children.map(child.props.children, groupChild =>
+                    menuItem(groupChild.props, index++, this));
+
+                return menuGroup(child.props, groupedItems);
+            } else {
+                //  FIXME: Или тут бросать ошибку?
+                return child;
+            }
+        });
+    }
+
     className() {
-        var className = 'menu';
+        let className = 'menu';
 
         const theme = this.props.theme || this.context.theme;
         if (theme) {
@@ -280,7 +285,7 @@ class Menu extends Component {
     }
 
     dispatchItemClick(e, itemProps) {
-        const item = this.getItems(itemProps.index);
+        const item = this._getChildren()[itemProps.index];
         if (typeof item.props.onClick === 'function') {
             item.props.onClick(e, item.props, this.props);
         }
@@ -295,7 +300,7 @@ class Menu extends Component {
 
     onItemClick(e, itemProps) {
         const { index } = itemProps;
-        this._savedIndex = index;
+        this._hoveredItemIndex = index;
         this.dispatchItemClick(e, itemProps);
         this.onItemCheck(index);
     }
@@ -316,14 +321,14 @@ class Menu extends Component {
         this.setState({ focused: true });
 
         if (!this._mousePressed) {
-            let hoveredIndex = this._savedIndex;
+            let hoveredIndex = this._hoveredItemIndex;
             if (hoveredIndex === null) {
-                hoveredIndex = this._getFirstEnabledIndex();
+                hoveredIndex = this._getFirstEnabledChildIndex()
             }
             if (hoveredIndex !== this.state.hoveredIndex) {
-                this._savedIndex = hoveredIndex;
+                this._hoveredItemIndex = hoveredIndex;
+                this.setState({ hoveredIndex });
             }
-            this.setState({ hoveredIndex });
         }
 
         this.dispatchFocusChange(true);
@@ -346,28 +351,28 @@ class Menu extends Component {
         if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
             e.preventDefault();
 
-            const { items } = this.getItems();
-            const len = items.length;
+            const children = this._getChildren();
+            const len = children.length;
             if (!len) {
                 return;
             }
 
             const dir = (e.key === 'ArrowDown' ? 1 : -1);
             let nextIndex;
-            if (this.state.hoveredIndex === null) {
-                nextIndex = this._getFirstEnabledIndex();
-            } else {
+            // if (this.state.hoveredIndex === null) {
+            //     nextIndex = this._getFirstEnabledChildIndex();
+            // } else {
                 nextIndex = this.state.hoveredIndex;
                 do {
                     nextIndex = (nextIndex + len + dir) % len;
                     if (nextIndex === this.state.hoveredIndex) {
                         return;
                     }
-                } while (items[nextIndex].props.disabled);
-            }
+                } while (children[nextIndex].props.disabled);
+            // }
 
             if (nextIndex !== null) {
-                this._savedIndex = nextIndex;
+                this._hoveredItemIndex = nextIndex;
                 this.setState({ hoveredIndex: nextIndex });
             }
         } else if (e.key === ' ' || e.key === 'Enter') {
@@ -389,11 +394,11 @@ class Menu extends Component {
             return;
         }
 
-        const item = this.getItems(index);
+        const item = this._getChildren()[index];
         const itemValue = item.props.value;
         const menuValue = this.state.value;
+        const checked = menuValue.indexOf(itemValue) !== -1;
 
-        const checked = (menuValue.indexOf(itemValue) !== -1);
         let newMenuValue;
         if (mode === 'radio') {
             if (checked) {
