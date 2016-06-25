@@ -95,7 +95,7 @@ function Example() {
                         <Item value="40">40</Item>
                         <Item value="50">50</Item>
                         <Item value="60">60</Item>
-                        <Item value="70">60</Item>
+                        <Item value="70">70</Item>
                     </Menu>
                 </div>
 

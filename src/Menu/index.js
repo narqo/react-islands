@@ -1,47 +1,9 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import Component from '../Component';
 import Item from '../Item';
 import Group from '../Group';
 import MenuItem from './MenuItem';
-
-function menuItem(props, index, menu) {
-    const { theme, size, disabled, mode } = menu.props;
-    const { value, hoveredIndex } = menu.state;
-    const checkable = Boolean(mode);
-
-    const key = `menuitem${props.id || index}`;
-
-    return React.createElement(
-        MenuItem,
-        {
-            theme,
-            size,
-            disabled,
-            checked: checkable && (value.indexOf(props.value) !== -1),
-            hovered: (index === hoveredIndex),
-            key,
-            index,
-            ...props,
-            onClick: menu.onItemClick,
-            onHover: menu.onItemHover,
-        },
-        props.children
-    );
-}
-
-function menuGroup(props, children) {
-    let title;
-    if (props.title) {
-        title = <div className="menu__group-title">{props.title}</div>;
-    }
-
-    return (
-        <div className="menu__group">
-            {title}
-            {children}
-        </div>
-    );
-}
 
 function appendItemToCache(item, cache) {
     if (Component.is(item, Item)) {
@@ -61,6 +23,7 @@ class Menu extends Component {
 
         this._cachedChildren = null;
         this._hoveredItemIndex = null;
+        this._shouldScrollToItem = false;
 
         this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
@@ -83,6 +46,7 @@ class Menu extends Component {
         if (this.props.focused) {
             this.componentWillGainFocus();
         }
+        this._scrollToMenuItem();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -100,6 +64,11 @@ class Menu extends Component {
             this.componentWillLostFocus();
         } else if (!prevProps.focused && this.props.focused) {
             this.componentWillGainFocus();
+        }
+
+        if (this._shouldScrollToItem) {
+            this._shouldScrollToItem = false;
+            this._scrollToMenuItem();
         }
     }
 
@@ -208,6 +177,20 @@ class Menu extends Component {
         return newValue;
     }
 
+    _scrollToMenuItem() {
+        if (this.refs.control && this.refs.focusedMenuItem) {
+            const menuDOMNode = ReactDOM.findDOMNode(this.refs.control);
+            const focusedItemDOMNode = ReactDOM.findDOMNode(this.refs.focusedMenuItem);
+            const menuRect = menuDOMNode.getBoundingClientRect();
+            const focusedRect = focusedItemDOMNode.getBoundingClientRect();
+
+            if (focusedRect.bottom > menuRect.bottom || focusedRect.top < menuRect.top) {
+                menuDOMNode.scrollTop = focusedItemDOMNode.offsetTop + focusedItemDOMNode.clientHeight -
+                    menuDOMNode.offsetTop - menuDOMNode.offsetHeight;
+            }
+        }
+    }
+
     render() {
         const { disabled, maxHeight } = this.props;
         const tabIndex = disabled ? -1 : this.props.tabIndex;
@@ -240,17 +223,58 @@ class Menu extends Component {
 
         return React.Children.map(this.props.children, child => {
             if (Component.is(child, Item)) {
-                return menuItem(child.props, index++, this);
+                return this._renderMenuItem(child.props, index++);
             } else if (Component.is(child, Group)) {
-                const groupedItems = React.Children.map(child.props.children, groupChild =>
-                    menuItem(groupChild.props, index++, this));
+                const groupedItems = React.Children.map(
+                    child.props.children,
+                    groupChild => this._renderMenuItem(groupChild.props, index++)
+                );
 
-                return menuGroup(child.props, groupedItems);
+                return this._renderMenuGroup(child.props, groupedItems);
             } else {
                 //  FIXME: Или тут бросать ошибку?
                 return child;
             }
         });
+    }
+
+    _renderMenuItem(props, index) {
+        const { theme, size, disabled, mode } = this.props;
+        const { value, hoveredIndex } = this.state;
+        const checkable = Boolean(mode);
+        const hovered = index === hoveredIndex;
+        const key = `menuitem${props.id || index}`;
+
+        return React.createElement(
+            MenuItem,
+            {
+                theme,
+                size,
+                disabled,
+                hovered,
+                checked: checkable && (value.indexOf(props.value) !== -1),
+                ref: hovered ? 'focusedMenuItem' : null,
+                key,
+                index,
+                ...props,
+                onClick: this.onItemClick,
+                onHover: this.onItemHover,
+            }
+        );
+    }
+
+    _renderMenuGroup(props, children) {
+        let title;
+        if (props.title) {
+            title = <div className="menu__group-title">{props.title}</div>;
+        }
+
+        return (
+            <div className="menu__group">
+                {title}
+                {children}
+            </div>
+        );
     }
 
     className() {
@@ -358,21 +382,17 @@ class Menu extends Component {
             }
 
             const dir = (e.key === 'ArrowDown' ? 1 : -1);
-            let nextIndex;
-            // if (this.state.hoveredIndex === null) {
-            //     nextIndex = this._getFirstEnabledChildIndex();
-            // } else {
-                nextIndex = this.state.hoveredIndex;
-                do {
-                    nextIndex = (nextIndex + len + dir) % len;
-                    if (nextIndex === this.state.hoveredIndex) {
-                        return;
-                    }
-                } while (children[nextIndex].props.disabled);
-            // }
+            let nextIndex = this.state.hoveredIndex;
+            do {
+                nextIndex = (nextIndex + len + dir) % len;
+                if (nextIndex === this.state.hoveredIndex) {
+                    return;
+                }
+            } while (children[nextIndex].props.disabled);
 
             if (nextIndex !== null) {
                 this._hoveredItemIndex = nextIndex;
+                this._shouldScrollToItem = true;
                 this.setState({ hoveredIndex: nextIndex });
             }
         } else if (e.key === ' ' || e.key === 'Enter') {
