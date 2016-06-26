@@ -13,13 +13,15 @@ class Select extends Component {
         super(props);
 
         this.state = {
+            menuHeight: null,
+            menuFocused: false,
             popupVisible: false,
         };
 
         this._wasPopupVisible = false;
         this._shouldRestoreButtonFocus = false;
         this._preventTrapMenuFocus = false;
-        this._cachedItems = null;
+        this._cachedChildren = null;
 
         this.onButtonClick = this.onButtonClick.bind(this);
         this.onButtonKeyDown = this.onButtonKeyDown.bind(this);
@@ -28,11 +30,19 @@ class Select extends Component {
         this.onMenuItemClick = this.onMenuItemClick.bind(this);
         this.onMenuKeyDown = this.onMenuKeyDown.bind(this);
         this.onPopupRequestHide = this.onPopupRequestHide.bind(this);
+        this.onPopupLayout = this.onPopupLayout.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.children !== this.props.children) {
-            this._cachedItems = null;
+            this._cachedChildren = null;
+        }
+    }
+
+    componentWillUpdate(_, nextState) {
+        if (nextState.popupVisible !== this.state.popupVisible && !nextState.popupVisible) {
+            this._wasPopupVisible = false;
+            this.setState({ menuFocused: false });
         }
     }
 
@@ -44,13 +54,16 @@ class Select extends Component {
         // @see https://github.com/narqo/react-islands/issues/41
         if (!this._wasPopupVisible && this.state.popupVisible) {
             this._wasPopupVisible = true;
-            process.nextTick(() => this.trapMenuFocus());
+            process.nextTick(() => {
+                this.setState({ menuFocused: true });
+                this.trapMenuFocus()
+            });
         }
     }
 
     componentWillUnmount() {
         this.setState({ popupVisible: false });
-        this._cachedItems = null;
+        this._cachedChildren = null;
     }
 
     render() {
@@ -62,6 +75,7 @@ class Select extends Component {
                     anchor={this.refs.button}
                     directions={['bottom-left', 'bottom-right', 'top-left', 'top-right']}
                     visible={this.state.popupVisible}
+                    onLayout={this.onPopupLayout}
                     onRequestHide={this.onPopupRequestHide}
                 >
                     {this.renderMenu()}
@@ -109,8 +123,9 @@ class Select extends Component {
     }
 
     renderMenu() {
-        const { theme, size, disabled, mode, value, maxHeight } = this.props;
-        const focused = this._wasPopupVisible && this.state.popupVisible;
+        const { theme, size, disabled, mode, value } = this.props;
+        const { menuHeight, menuFocused, popupVisible } = this.state;
+        const focused = popupVisible && menuFocused;
         const tabIndex = -1;
 
         return (
@@ -120,7 +135,7 @@ class Select extends Component {
                 tabIndex={tabIndex}
                 disabled={disabled}
                 focused={focused}
-                maxHeight={maxHeight}
+                maxHeight={menuHeight}
                 onItemClick={this.onMenuItemClick}
                 onKeyDown={this.onMenuKeyDown}
                 onChange={this.onMenuChange}
@@ -142,7 +157,7 @@ class Select extends Component {
     }
 
     className() {
-        var className = 'select';
+        let className = 'select';
 
         const theme = this.props.theme || this.context.theme;
         if (theme) {
@@ -168,7 +183,7 @@ class Select extends Component {
     }
 
     getItems() {
-        if (!this._cachedItems) {
+        if (!this._cachedChildren) {
             let items = [];
 
             React.Children.forEach(this.props.children, child => {
@@ -180,10 +195,10 @@ class Select extends Component {
                 }
             });
 
-            this._cachedItems = items;
+            this._cachedChildren = items;
         }
 
-        return this._cachedItems;
+        return this._cachedChildren;
     }
 
     getMenu() {
@@ -236,6 +251,24 @@ class Select extends Component {
         }
     }
 
+    onPopupLayout({ layout }, popupProps) {
+        const { maxHeight } = this.props;
+        const { viewportOffset } = popupProps;
+        const { pageYOffset } = window;
+
+        if (layout.direction.indexOf('top-') > -1) {
+            let newTop = maxHeight ? layout.bottom - maxHeight : layout.top;
+            layout.top = Math.max(newTop, pageYOffset + viewportOffset);
+        } else {
+            let newBottom = maxHeight ? layout.top + maxHeight : layout.bottom;
+            layout.bottom = Math.min(newBottom, pageYOffset + window.innerHeight - viewportOffset);
+        }
+
+        const menuHeight = layout.bottom - layout.top;
+
+        this.setState({ menuHeight });
+    }
+
     onPopupRequestHide(_, reason) {
         this._shouldRestoreButtonFocus = reason === 'escapeKeyPress';
         this.setState({ popupVisible: false });
@@ -260,6 +293,7 @@ Select.propTypes = {
 
 Select.defaultProps = {
     placeholder: '—',
+    maxHeight: 0,
     onChange() {},
 };
 
