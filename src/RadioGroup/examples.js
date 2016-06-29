@@ -1,7 +1,7 @@
 import React from 'react';
 
 import App from '../App';
-import RadioGroup from './index.js';
+import RadioGroup from './';
 import Radio from '../Radio';
 
 class Example extends React.Component {
@@ -35,7 +35,7 @@ class Example extends React.Component {
                     </div>
 
                     <div className="example">
-                        <RadioGroup size="l" type="button" name="b" onChange={this.onChange}>
+                        <RadioGroup size="m" type="button" name="b" value={this.state.b} onChange={this.onChange}>
                             <Radio value="10">10</Radio>
                             <Radio value="20">20</Radio>
                             <Radio value="30">30</Radio>
@@ -57,7 +57,7 @@ class Example extends React.Component {
                     </div>
 
                     <div className="example">
-                        <RadioGroup size="l" type="line" name="d" onChange={this.onChange}>
+                        <RadioGroup size="m" type="line" name="d" value={this.state.d} onChange={this.onChange}>
                             <Radio value="10">10</Radio>
                             <Radio value="20">20</Radio>
                             <Radio value="30">30</Radio>
@@ -65,6 +65,26 @@ class Example extends React.Component {
                             <Radio value="50">50</Radio>
                         </RadioGroup>
                         <div>Selected: {this.state.d}</div>
+                    </div>
+
+                    <div className="example">
+                        <RadioGroup size="l" type="button" name="e" disabled>
+                            <Radio value="10">10</Radio>
+                            <Radio value="20">20</Radio>
+                            <Radio value="30">30</Radio>
+                            <Radio value="40" disabled>40</Radio>
+                            <Radio value="50">50</Radio>
+                        </RadioGroup>
+                    </div>
+
+                    <div className="example">
+                        <RadioGroup size="l" type="line" name="f" disabled>
+                            <Radio value="10">10</Radio>
+                            <Radio value="20">20</Radio>
+                            <Radio value="30">30</Radio>
+                            <Radio value="40" disabled>40</Radio>
+                            <Radio value="50">50</Radio>
+                        </RadioGroup>
                     </div>
 
                 </div>

@@ -1,5 +1,4 @@
 import React from 'react';
-
 import Control from '../Control';
 import Button from '../Button';
 
@@ -7,38 +6,20 @@ class Radio extends Control {
     constructor(props) {
         super(props);
 
-        this.state = {
-            ...this.state,
-            checked: props.checked,
-        };
-
         this.onButtonClick = this.onButtonClick.bind(this);
         this.onButtonFocusChange = this.onButtonFocusChange.bind(this);
         this.onButtonHoverChange = this.onButtonHoverChange.bind(this);
         this.onControlChange = this.onControlChange.bind(this);
     }
 
-    /** @override */
-    componentWillReceiveProps(nextProps) {
-        super.componentWillReceiveProps(nextProps);
-
-        // NOTE(narqo@): `setState({ checked })` must be called only if new `checked` value was passed
-        // or `Checkbox` will stay in the `checked` state regardless the DOM events.
-        if (this.props.checked !== nextProps.checked) {
-            this.setState({
-                ...this.state,
-                checked: nextProps.checked,
-            });
-        }
-    }
-
     render() {
-        const { name, theme, size, type, disabled, value } = this.props;
-        const { checked, focused } = this.state;
+        const { name, theme, size, type, checked, disabled, value } = this.props;
+        const { focused } = this.state;
 
         if (type === 'button') {
             return (
                 <label className={this.className()}>
+                    {checked && <input type="hidden" name={name} value={value} disabled={disabled} />}
                     <Button theme={theme} size={size} type={type}
                         disabled={disabled}
                         checked={checked}
@@ -49,12 +30,6 @@ class Radio extends Control {
                     >
                         {this.props.children}
                     </Button>
-                    <input ref="control" className="radio__control" type="radio" autoComplete="off"
-                        name={name}
-                        disabled={disabled}
-                        defaultValue={value}
-                        defaultChecked={checked}
-                    />
                 </label>
             )
         } else {
@@ -78,7 +53,7 @@ class Radio extends Control {
     }
 
     className() {
-        var className = 'radio';
+        let className = 'radio';
 
         const theme = this.props.theme || this.context.theme;
         if (theme) {
@@ -93,14 +68,14 @@ class Radio extends Control {
         if (this.props.disabled) {
             className += ' radio_disabled';
         }
+        if (this.props.checked) {
+            className += ' radio_checked';
+        }
         if (this.state.hovered) {
             className += ' radio_hovered';
         }
         if (this.state.focused) {
             className += ' radio_focused';
-        }
-        if (this.state.checked) {
-            className += ' radio_checked';
         }
 
         if (this.props.className) {
@@ -108,6 +83,13 @@ class Radio extends Control {
         }
 
         return className;
+    }
+
+    onControlChange() {
+        if (this.props.disabled || this.props.checked) {
+            return;
+        }
+        this.props.onCheck(true, this.props);
     }
 
     onButtonFocusChange(focused) {
@@ -118,29 +100,28 @@ class Radio extends Control {
         this.setState({ hovered });
     }
 
-    onButtonClick() {
-        //  FIXME: Может передавать туда name, value?
-        this.props.onClick();
-
-        if (!this.state.checked) {
-            // FIXME(narqo@): `this.refs.control.checked = checked`
-            this.refs.control.checked = true;
-            this.setState({ checked: true });
-
-            this.props.onCheck(true, this.props);
+    onButtonClick(e) {
+        if (this.props.onClick) {
+            this.props.onClick(e, this.props);
         }
-    }
-
-    onControlChange() {
-        //  Тут checked всегда становится true.
-        //  Измениться с true на falsy оно может только через props.
-        this.setState({ checked: true });
-        this.props.onCheck(true, this.props);
+        if (!e.isDefaultPrevented()) {
+            this.onControlChange();
+        }
     }
 }
 
+Radio.propTypes = {
+    theme: React.PropTypes.string,
+    size: React.PropTypes.oneOf(['s', 'm', 'l', 'xl']),
+    type: React.PropTypes.string,
+    disabled: React.PropTypes.bool,
+    checked: React.PropTypes.bool,
+    value: React.PropTypes.any,
+    onClick: React.PropTypes.func,
+    onCheck: React.PropTypes.func,
+};
+
 Radio.defaultProps = {
-    onClick() {},
     onCheck() {},
 };
 
