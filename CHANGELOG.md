@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Changed
+
+* Checkbox, CheckboxGroup: Make components stateless ([#64](https://github.com/narqo/react-islands/pull/64)).
+
+### Fixed
+
+* Select: Fit popup into viewport ([#65](https://github.com/narqo/react-islands/pull/65)).
+
 ## 0.5.0 - 2016-06-09
 
 ### Added
