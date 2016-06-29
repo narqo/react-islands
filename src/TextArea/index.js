@@ -1,30 +1,11 @@
 import React from 'react';
-
 import Control from '../Control';
 
 class TextArea extends Control {
     constructor(props) {
         super(props);
 
-        this.state = {
-            ...this.state,
-            value: props.value,
-        };
-
         this.onInputChange = this.onInputChange.bind(this);
-    }
-
-    /** @override */
-    componentWillReceiveProps(nextProps) {
-        super.componentWillReceiveProps(nextProps);
-        if (nextProps.value !== this.props.value) {
-            this.setState({ value: nextProps.value });
-
-            //  Изменение стейта и ререндер не приводят к событию onChange.
-            //  Так что дергаем колбэк руками.
-            //
-            this.props.onChange(nextProps.value, this.props);
-        }
     }
 
     render() {
@@ -33,7 +14,7 @@ class TextArea extends Control {
                 name={this.props.name}
                 disabled={this.props.disabled}
                 placeholder={this.props.placeholder}
-                value={this.state.value}
+                value={this.props.value}
                 onChange={this.onInputChange}
             >
             </textarea>
@@ -41,7 +22,7 @@ class TextArea extends Control {
     }
 
     className() {
-        var className = 'textarea';
+        let className = 'textarea';
 
         const theme = this.props.theme || this.context.theme;
         if (theme) {
@@ -68,19 +49,29 @@ class TextArea extends Control {
     }
 
     onInputChange(e) {
-        const { value } = e.target;
-        this.setState({ value });
-        this.props.onChange(value, this.props);
+        if (this.props.disabled) {
+            return;
+        }
+        this.props.onChange(e.target.value, this.props);
     }
 }
 
-TextArea.defaultProps = {
-    value: '',
-    onChange() {},
-};
-
 TextArea.contextTypes = {
     theme: React.PropTypes.string,
+};
+
+TextArea.propTypes = {
+    theme: React.PropTypes.string,
+    size: React.PropTypes.oneOf(['s', 'm', 'l', 'xl']),
+    name: React.PropTypes.string,
+    value: React.PropTypes.string,
+    placeholder: React.PropTypes.string,
+    disabled: React.PropTypes.bool,
+    onChange: React.PropTypes.func,
+};
+
+TextArea.defaultProps = {
+    onChange() {},
 };
 
 export default TextArea;

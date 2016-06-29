@@ -1,32 +1,40 @@
 /* eslint-env mocha */
 
 import React from 'react';
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
+import chaiEnzyme from 'chai-enzyme';
 import { shallow, mount } from 'enzyme';
 import sinon from 'sinon';
-
+import sinonChai from 'sinon-chai';
 import TextArea from './';
 
-describe('TextArea', () => {
+chai.use(sinonChai);
+chai.use(chaiEnzyme());
 
+describe('TextArea', () => {
     it('is a textarea', () => {
         const textarea = shallow(<TextArea/>);
 
-        expect(textarea.is('textarea.textarea')).to.be.true;
+        expect(textarea.is('textarea')).to.be.true;
+        expect(textarea).to.have.className('textarea');
     });
 
     it('accepts name prop', () => {
         const wrapper = mount(<TextArea name="foo"/>);
-        const textarea = wrapper.find('textarea');
 
-        expect(textarea.node.getAttribute('name')).to.equal('foo');
+        expect(wrapper.find('textarea')).to.have.attr('name', 'foo');
     });
 
     it('accepts placeholder prop', () => {
         const wrapper = mount(<TextArea placeholder="Something"/>);
-        const textarea = wrapper.find('textarea');
 
-        expect(textarea.node.getAttribute('placeholder')).to.equal('Something');
+        expect(wrapper.find('textarea')).to.have.prop('placeholder', 'Something');
+    });
+
+    it('accepts value prop', () => {
+        const wrapper = mount(<TextArea value="hello"/>);
+
+        expect(wrapper.find('textarea')).to.have.prop('value', 'hello');
     });
 
     it('accepts theme prop', () => {
@@ -52,10 +60,12 @@ describe('TextArea', () => {
         const textarea = shallow(<TextArea disabled/>);
 
         expect(textarea.hasClass('textarea_disabled')).to.be.true;
+        expect(textarea.find('textarea')).to.have.attr('disabled');
 
         textarea.setProps({ disabled: false });
 
         expect(textarea.hasClass('textarea_disabled')).to.be.false;
+        expect(textarea.find('textarea')).to.not.have.attr('disabled');
     });
 
     it('accepts focused prop', () => {
@@ -64,7 +74,7 @@ describe('TextArea', () => {
         expect(textarea.hasClass('textarea_focused')).to.be.true;
     });
 
-    it('accepts focus', () => {
+    it('accepts DOM focus', () => {
         const textarea = shallow(<TextArea/>);
 
         expect(textarea.hasClass('textarea_focused')).to.be.false;
@@ -101,31 +111,24 @@ describe('TextArea', () => {
         expect(textarea.state('hovered')).to.not.be.ok;
     });
 
-    it.skip('accepts keypress', done => {
+    it('calls onChange on textarea change', () => {
         const spy = sinon.spy();
-        const wrapper = mount(<TextArea onChange={spy}/>);
-        const textarea = wrapper.find('textarea');
+        const textarea = mount(<TextArea name="foo" onChange={spy}/>);
 
-        textarea.simulate('keydown', { key: 'q' });
-        textarea.simulate('keyup');
+        textarea.find('textarea').simulate('change', { target: { value: 'hello' } });
 
-        setTimeout(() => {
-            expect(wrapper.state('value')).to.equal('q');
-            expect(spy.callCount).to.equal(1);
-            done();
-        }, 50);
+        expect(spy).to.have.been.called;
+        expect(spy.lastCall).to.have.been.calledWithMatch('hello', { name: 'foo' });
     });
 
-    it('calls onChange if value changed', () => {
+    it('does not call onChange on textarea change if disabled', () => {
         const spy = sinon.spy();
-        const textarea = shallow(<TextArea onChange={spy} name="foo"/>);
+        const textarea = mount(<TextArea disabled onChange={spy}/>);
+        const control = textarea.find('textarea');
 
-        textarea.setProps({ value: 'hello' });
+        control.node.setAttribute('value', 'hello');
+        control.simulate('change');
 
-        expect(textarea.state('value')).to.equal('hello');
-        expect(spy.callCount).to.equal(1);
-        expect(spy.getCall(0).args[0]).to.equal('hello');
-        expect(spy.getCall(0).args[1].name).to.equal('foo');
+        expect(spy).to.not.have.been.called;
     });
-
 });

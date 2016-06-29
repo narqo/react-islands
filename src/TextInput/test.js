@@ -1,39 +1,51 @@
 /* eslint-env mocha */
 
 import React from 'react';
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
+import chaiEnzyme from 'chai-enzyme';
 import { shallow, mount } from 'enzyme';
 import sinon from 'sinon';
-
+import sinonChai from 'sinon-chai';
 import TextInput from './';
 
-describe('TextInput', () => {
+chai.use(sinonChai);
+chai.use(chaiEnzyme());
 
+describe('TextInput', () => {
     it('is a input', () => {
         const input = shallow(<TextInput/>);
 
         expect(input.is('.input')).to.be.true;
     });
 
+    it('has input', () => {
+        const input = shallow(<TextInput/>);
+
+        expect(input.find('input').length).to.equal(1);
+    });
+
     it('accepts name prop', () => {
         const wrapper = mount(<TextInput name="foo"/>);
-        const input = wrapper.find('input');
 
-        expect(input.node.getAttribute('name')).to.equal('foo');
+        expect(wrapper.find('input')).to.have.attr('name', 'foo');
     });
 
     it('accepts type prop', () => {
         const wrapper = mount(<TextInput type="password"/>);
-        const input = wrapper.find('input');
 
-        expect(input.node.getAttribute('type')).to.equal('password');
+        expect(wrapper.find('input')).to.have.attr('type', 'password');
     });
 
     it('accepts placeholder prop', () => {
         const wrapper = mount(<TextInput placeholder="Something"/>);
-        const input = wrapper.find('input');
 
-        expect(input.node.getAttribute('placeholder')).to.equal('Something');
+        expect(wrapper.find('input')).to.have.prop('placeholder', 'Something');
+    });
+
+    it('accepts value prop', () => {
+        const wrapper = mount(<TextInput value="hello"/>);
+
+        expect(wrapper.find('input')).to.have.prop('value', 'hello');
     });
 
     it('accepts theme prop', () => {
@@ -49,20 +61,22 @@ describe('TextInput', () => {
     });
 
     it('accepts className prop', () => {
-        const input = shallow(<TextInput className="my-input not-my-input"/>);
+        const input = shallow(<TextInput className="my-textinput not-my-textinput"/>);
 
-        expect(input.hasClass('my-input')).to.be.true;
-        expect(input.hasClass('not-my-input')).to.be.true;
+        expect(input.hasClass('my-textinput')).to.be.true;
+        expect(input.hasClass('not-my-textinput')).to.be.true;
     });
 
     it('accepts disabled prop', () => {
         const input = shallow(<TextInput disabled/>);
 
         expect(input.hasClass('input_disabled')).to.be.true;
+        expect(input.find('input')).to.have.attr('disabled');
 
         input.setProps({ disabled: false });
 
         expect(input.hasClass('input_disabled')).to.be.false;
+        expect(input.find('input')).to.not.have.attr('disabled');
     });
 
     it('accepts focused prop', () => {
@@ -71,7 +85,7 @@ describe('TextInput', () => {
         expect(input.hasClass('input_focused')).to.be.true;
     });
 
-    it('accepts focus', () => {
+    it('accepts DOM focus', () => {
         const input = shallow(<TextInput/>);
 
         expect(input.hasClass('input_focused')).to.be.false;
@@ -87,13 +101,6 @@ describe('TextInput', () => {
         input.setProps({ disabled: true });
 
         expect(input.hasClass('input_focused')).to.be.false;
-    });
-
-    it('has input', () => {
-        const wrapper = mount(<TextInput/>);
-        const input = wrapper.find('input');
-
-        expect(input.length).to.equal(1);
     });
 
     it('is hovered on mouseenter/mouseleave', () => {
@@ -115,77 +122,53 @@ describe('TextInput', () => {
         expect(input.state('hovered')).to.not.be.ok;
     });
 
-    it.skip('accepts keypress', done => {
+    it('calls onChange on input change', () => {
         const spy = sinon.spy();
-        const wrapper = mount(<TextInput onChange={spy}/>);
-        const input = wrapper.find('input');
+        const input = mount(<TextInput name="foo" onChange={spy}/>);
+        const control = input.find('input');
 
-        input.simulate('keydown', { key: 'q' });
-        input.simulate('keyup');
+        control.node.setAttribute('value', 'hello');
+        control.simulate('change');
 
-        setTimeout(() => {
-            expect(wrapper.state('value')).to.equal('q');
-            expect(spy.callCount).to.equal(1);
-            done();
-        }, 50);
+        expect(spy).to.have.been.called;
+        expect(spy.lastCall).to.have.been.calledWithMatch('hello', { name: 'foo' });
     });
 
-    it('calls onChange if value changed', () => {
+    it('does not call onChange on input change if disabled', () => {
         const spy = sinon.spy();
-        const input = shallow(<TextInput onChange={spy} name="foo"/>);
+        const input = mount(<TextInput disabled onChange={spy}/>);
 
-        input.setProps({ value: 'hello' });
+        input.find('input').simulate('change', { target: { value: 'hello' } });
 
-        expect(input.state('value')).to.equal('hello');
-        expect(spy.callCount).to.equal(1);
-        expect(spy.getCall(0).args[0]).to.equal('hello');
-        expect(spy.getCall(0).args[1].name).to.equal('foo');
+        expect(spy).to.not.have.been.called;
     });
 
     describe('hasClear', () => {
-
         it('accepts hasClear prop', () => {
             const wrapper = mount(<TextInput hasClear/>);
 
-            wrapper.hasClass('input_has-clear');
-
-            const hasClear = wrapper.find('.input__clear');
-            expect(hasClear.length).to.equal(1);
-            expect(hasClear.hasClass('input__clear_visible')).to.be.false;
+            expect(wrapper).to.have.className('input_has-clear');
+            expect(wrapper.find('.input__clear').length).to.equal(1);
         });
 
-        it('hasClear is visible if input has value', () => {
-            const wrapper = mount(<TextInput value="hello" hasClear/>);
-            const hasClear = wrapper.find('.input__clear');
+        it('is visible if input has value', () => {
+            const wrapper = mount(<TextInput hasClear/>);
 
-            expect(hasClear.hasClass('input__clear_visible')).to.be.true;
+            expect(wrapper.find('.input__clear')).to.not.have.className('input__clear_visible');
+
+            wrapper.setProps({ value: 'hello' });
+
+            expect(wrapper.find('.input__clear')).to.have.className('input__clear_visible');
         });
 
-        it('click to hasClear clears value', () => {
+        it('calls onChange with empty value on clear click', () => {
             const spy = sinon.spy();
-            const wrapper = mount(<TextInput value="hello" hasClear onChange={spy}/>);
-            const hasClear = wrapper.find('.input__clear');
+            const wrapper = mount(<TextInput name="foo" value="hello" hasClear onChange={spy}/>);
 
-            expect(wrapper.state('value')).to.equal('hello');
-            hasClear.simulate('click');
-            expect(wrapper.state('value')).to.equal('');
-            expect(spy.callCount).to.equal(1);
-            expect(spy.getCall(0).args[2]).to.be.eql({ source: 'clear' });
+            wrapper.find('.input__clear').simulate('click');
+
+            expect(spy).to.have.been.called;
+            expect(spy.lastCall).to.have.been.calledWithMatch('', { name: 'foo' }, { source: 'clear' });
         });
-
-        //  FIXME: При наведении на clear ховер не срабатывает.
-        it.skip('is hovered on mouseenter/mouseleave over hasClear', () => {
-            const input = mount(<TextInput hasClear/>);
-
-            input.find('.input__clear').simulate('mouseenter');
-            expect(input.state('hovered')).to.be.true;
-            expect(input.hasClass('input_hovered')).to.be.true;
-
-            input.find('.input__clear').simulate('mouseleave');
-            expect(input.state('hovered')).to.not.be.ok;
-            expect(input.hasClass('input_hovered')).to.be.false;
-        });
-
     });
-
 });

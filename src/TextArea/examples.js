@@ -1,6 +1,5 @@
 import React from 'react';
 
-import App from '../App';
 import TextArea from './index.js';
 
 class Example extends React.Component {
@@ -16,23 +15,21 @@ class Example extends React.Component {
 
     render() {
         return (
-            <App theme="islands">
-                <div className="examples">
+            <div className="examples">
 
-                    <div className="example">
-                        <TextArea theme="islands" size="l" value={this.state.value} placeholder="Fill me!" onChange={this.onInputChange}/>
-                    </div>
-
-                    <div className="example">
-                        <TextArea theme="islands" size="m" value={this.state.value.toUpperCase()}/>
-                    </div>
-
-                    <div className="example">
-                        <TextArea theme="islands" size="s" value={this.state.value} disabled placeholder="Fill me!"/>
-                    </div>
-
+                <div className="example">
+                    <TextArea theme="islands" size="l" value={this.state.value} placeholder="Fill me!" onChange={this.onInputChange}/>
                 </div>
-            </App>
+
+                <div className="example">
+                    <TextArea theme="islands" size="m" value={this.state.value.toUpperCase()}/>
+                </div>
+
+                <div className="example">
+                    <TextArea theme="islands" size="s" value={this.state.value} disabled placeholder="Fill me!"/>
+                </div>
+
+            </div>
         );
     }
 
