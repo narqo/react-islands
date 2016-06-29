@@ -1,34 +1,15 @@
 import React from 'react';
-
 import Component from '../Component';
 
 class RadioGroup extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            value: props.value,
-        };
-
-        this.onRadioCheck = this.onRadioCheck.bind(this);
-    }
-
-    componentWillReceiveProps(props) {
-        //  FIXME: А нужно ли вообще перевыставлять value в стейт?
-        //  Ведь то, что в RadioGroup задается — это начальное значение,
-        //  дальше оно меняется в собственном стейте.
-        if (props.value !== this.props.value) {
-            this.setState({
-                ...this.state,
-                value: props.value,
-            });
-        }
+        this.onChildCheck = this.onChildCheck.bind(this);
     }
 
     render() {
-        const onRadioCheck = this.onRadioCheck;
-        const { value } = this.state;
-        const { theme, size, type, name, disabled } = this.props;
+        const { theme, size, type, name, disabled, value } = this.props;
 
         const children = React.Children.map(this.props.children, child => {
             const checked = child.props.value === value;
@@ -41,7 +22,7 @@ class RadioGroup extends Component {
                 disabled,
                 ...child.props,
                 checked,
-                onCheck: onRadioCheck,
+                onCheck: this.onChildCheck,
             });
         });
 
@@ -53,7 +34,7 @@ class RadioGroup extends Component {
     }
 
     className() {
-        var className = 'radio-group control-group';
+        let className = 'radio-group control-group';
 
         const theme = this.props.theme || this.context.theme;
         if (theme) {
@@ -73,17 +54,16 @@ class RadioGroup extends Component {
         return className;
     }
 
-    onRadioCheck(checked, radioProps) {
+    onChildCheck(_, radioProps) {
         const value = radioProps.value;
-        if (value !== this.state.value) {
-            this.setState({ value });
+        if (value !== this.props.value) {
             this.props.onChange(value, this.props);
         }
     }
 }
 
-RadioGroup.defaultProps = {
-    onChange() {},
+RadioGroup.contextTypes = {
+    theme: React.PropTypes.string,
 };
 
 RadioGroup.propTypes = {
@@ -92,11 +72,12 @@ RadioGroup.propTypes = {
     type: React.PropTypes.string,
     name: React.PropTypes.string,
     value: React.PropTypes.any,
+    disabled: React.PropTypes.bool,
     onChange: React.PropTypes.func,
 };
 
-RadioGroup.contextTypes = {
-    theme: React.PropTypes.string,
+RadioGroup.defaultProps = {
+    onChange() {},
 };
 
 module.exports = RadioGroup;
