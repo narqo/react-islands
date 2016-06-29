@@ -1,38 +1,22 @@
 import React from 'react';
-
 import Control from '../Control';
 
 class TextInput extends Control {
     constructor(props) {
         super(props);
 
-        this.state = {
-            ...this.state,
-            value: props.value,
-        };
-
         this.onClearClick = this.onClearClick.bind(this);
         this.onInputChange = this.onInputChange.bind(this);
     }
 
-    /** @override */
-    componentWillReceiveProps(nextProps) {
-        super.componentWillReceiveProps(nextProps);
-        if (nextProps.value !== this.props.value) {
-            this.setState({ value: nextProps.value });
-
-            //  Изменение стейта и ререндер не приводят к событию onChange.
-            //  Так что дергаем колбэк руками.
-            //
-            this.props.onChange(nextProps.value, this.props);
-        }
-    }
-
     render() {
-        var hasClear;
+        const { value } = this.props;
+
+        let hasClear;
         if (this.props.hasClear) {
             let clearClassName = 'input__clear';
-            if (this.state.value) {
+
+            if (value) {
                 clearClassName += ' input__clear_visible';
             }
 
@@ -49,7 +33,7 @@ class TextInput extends Control {
                         type={this.props.type}
                         disabled={this.props.disabled}
                         placeholder={this.props.placeholder}
-                        value={this.state.value}
+                        value={value}
                         onChange={this.onInputChange}
                     />
                     {hasClear}
@@ -59,7 +43,7 @@ class TextInput extends Control {
     }
 
     className() {
-        var className = 'input';
+        let className = 'input';
 
         const theme = this.props.theme || this.context.theme;
         if (theme) {
@@ -89,26 +73,44 @@ class TextInput extends Control {
     }
 
     onInputChange(e) {
-        const { value } = e.target;
-        this.setState({ value });
-        this.props.onChange(value, this.props);
+        if (this.props.disabled) {
+            return;
+        }
+        this.props.onChange(e.target.value, this.props);
     }
 
-    onClearClick() {
-        const newValue = '';
-        this.setState({ value: newValue, focused: true });
-        this.props.onChange(newValue, this.props, { source: 'clear' });
+    onClearClick(e) {
+        this.setState({ focused: true });
+
+        if (this.props.onClearClick) {
+            this.props.onClearClick(e);
+        }
+
+        if (!e.isDefaultPrevented()) {
+            this.props.onChange('', this.props, { source: 'clear' });
+        }
     }
 }
 
-TextInput.defaultProps = {
-    value: '',
-    type: 'text',
-    onChange() {},
-};
-
 TextInput.contextTypes = {
     theme: React.PropTypes.string,
+};
+
+TextInput.propTypes = {
+    theme: React.PropTypes.string,
+    size: React.PropTypes.oneOf(['s', 'm', 'l', 'xl']),
+    type: React.PropTypes.string,
+    name: React.PropTypes.string,
+    value: React.PropTypes.string,
+    placeholder: React.PropTypes.string,
+    disabled: React.PropTypes.bool,
+    hasClear: React.PropTypes.bool,
+    onChange: React.PropTypes.func,
+};
+
+TextInput.defaultProps = {
+    type: 'text',
+    onChange() {},
 };
 
 export default TextInput;
