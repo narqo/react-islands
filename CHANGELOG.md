@@ -2,9 +2,14 @@
 
 ## Unreleased
 
+## 0.6.0 - 2016-06-29
+
 ### Changed
 
-* Checkbox, CheckboxGroup: Make components stateless ([#64](https://github.com/narqo/react-islands/pull/64)).
+* Got rid of own states that represented "value" of components:
+  - Checkbox, CheckboxGroup: Make components stateless ([#64](https://github.com/narqo/react-islands/pull/64))
+  - Radio, RadioGroup: make components stateless ([#66](https://github.com/narqo/react-islands/pull/66))
+  - TextInput, TextArea: make components stateless ([#67](https://github.com/narqo/react-islands/pull/67)).
 
 ### Fixed
 
