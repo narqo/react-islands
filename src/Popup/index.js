@@ -76,7 +76,7 @@ class Popup extends Component {
     }
 
     className() {
-        var className = 'popup';
+        let className = 'popup';
 
         const theme = this.props.theme || this.context.theme;
         if (theme) {
@@ -141,7 +141,14 @@ class Popup extends Component {
     reposition() {
         if (this.props.visible) {
             // TODO(@narqo): don't call DOMNode measurements in case nothing has changed
-            const { direction, left, top } = this.calcBestDrawingParams();
+            const layout = this.calcBestLayoutParams();
+
+            if (this.props.onLayout) {
+                this.props.onLayout({ layout }, this.props);
+            }
+
+            const { direction, left, top } = layout;
+
             this.setState({ direction, left, top });
         }
     }
@@ -169,22 +176,20 @@ class Popup extends Component {
         }
     }
 
-    calcBestDrawingParams() {
+    calcBestLayoutParams() {
         const viewport = this.calcViewportDimensions();
         const popup = this.calcPopupDimensions();
         const anchor = this.calcAnchorDimensions();
 
         let i = 0,
-            direction,
-            position,
-            viewportFactor,
+            bestViewportFactor = 0,
             bestDirection,
             bestPos,
-            bestViewportFactor;
+            direction;
 
         while (direction = this.props.directions[i++]) { // eslint-disable-line no-cond-assign
-            position = this.calcPopupPosition(direction, anchor, popup);
-            viewportFactor = this.calcViewportFactor(position, viewport, popup);
+            const position = this.calcPopupPosition(direction, anchor, popup);
+            const viewportFactor = this.calcViewportFactor(position, viewport, popup);
 
             if (i === 1 || viewportFactor > bestViewportFactor || (!bestViewportFactor && this.state.direction === direction)) {
                 bestDirection = direction;
@@ -196,8 +201,7 @@ class Popup extends Component {
 
         return {
             direction: bestDirection,
-            left: bestPos.left,
-            top: bestPos.top,
+            ...bestPos,
         };
     }
 
@@ -243,7 +247,7 @@ class Popup extends Component {
     }
 
     calcViewportFactor(pos, viewport, popup) {
-        const viewportOffset = this.props.viewportOffset;
+        const { viewportOffset } = this.props;
         const intersectionLeft = Math.max(pos.left, viewport.left + viewportOffset);
         const intersectionRight = Math.min(pos.left + popup.width, viewport.right - viewportOffset);
         const intersectionTop = Math.max(pos.top, viewport.top + viewportOffset);
@@ -304,7 +308,10 @@ class Popup extends Component {
             }
         }
 
-        return { top, left };
+        const bottom = top + popup.height;
+        const right = left + popup.width;
+
+        return { top, left, bottom, right };
     }
 }
 
@@ -329,6 +336,7 @@ Popup.propsTypes = {
     mainOffset: React.PropTypes.number,
     secondaryOffset: React.PropTypes.number,
     onRequestHide: React.PropTypes.func,
+    onLayout: React.PropTypes.func,
 };
 
 Popup.defaultProps = {

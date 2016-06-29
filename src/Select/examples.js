@@ -17,7 +17,7 @@ class SelectExample extends React.Component {
     }
 
     render() {
-        const { mode, disabled } = this.props;
+        const { mode, disabled, ...restProps } = this.props;
         const { value } = this.state;
 
         return (
@@ -34,18 +34,28 @@ class SelectExample extends React.Component {
                     disabled={disabled}
                     value={value}
                     mode={mode}
+                    {...restProps}
                     onChange={this.onSelectChange}
                 >
-                    <Group title="Weekdays">
-                        <Item value="1" checkedText="Mon">Monday</Item>
-                        <Item value="2" checkedText="Tue" onClick={this.onItemClick}>Tuesday</Item>
-                        <Item value="3" checkedText="Wed">Wednesday</Item>
-                        <Item value="4" checkedText="Thu" disabled onClick={this.onItemClick}>Thursday</Item>
-                        <Item value="5" checkedText="Fri">Friday</Item>
+                    <Group title="Winter">
+                        <Item value="12" checkedText="Dec">December</Item>
+                        <Item value="1" checkedText="Jan">January</Item>
+                        <Item value="2" checkedText="Feb" onClick={this.onItemClick}>February</Item>
                     </Group>
-                    <Group title="Weekends">
-                        <Item value="6" checkedText="Sat">Saturday</Item>
-                        <Item value="7" checkedText="Sun">Sunday</Item>
+                    <Group title="Spring">
+                        <Item value="3" checkedText="Mar">March</Item>
+                        <Item value="4" checkedText="Apr" disabled onClick={this.onItemClick}>April</Item>
+                        <Item value="5" checkedText="May">May</Item>
+                    </Group>
+                    <Group title="Summer">
+                        <Item value="6" checkedText="Jun">June</Item>
+                        <Item value="7" checkedText="Jul">July</Item>
+                        <Item value="8" checkedText="Aug">August</Item>
+                    </Group>
+                    <Group title="Autumn">
+                        <Item value="9" checkedText="Sep">September</Item>
+                        <Item value="10" checkedText="Oct">October</Item>
+                        <Item value="11" checkedText="Nov">November</Item>
                     </Group>
                 </Select>
             </div>
@@ -65,7 +75,7 @@ function Example() {
     return (
         <App theme="islands">
             <div className="examples">
-                <SelectExample mode="radio" />
+                <SelectExample mode="radio" maxHeight={400} />
                 <SelectExample mode="check" />
                 <SelectExample mode="radio-check" />
             </div>
