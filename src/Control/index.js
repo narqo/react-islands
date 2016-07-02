@@ -24,9 +24,9 @@ class Control extends Component {
 
     componentDidMount() {
         if (
+            !didWarnFocusChangedFocused &&
             this.props.focused !== undefined &&
-            this.props.onFocusChange === undefined &&
-            !didWarnFocusChangedFocused
+            this.props.onFocusChange === undefined
         ) {
             warning(
                 false,
