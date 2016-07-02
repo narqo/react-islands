@@ -125,10 +125,8 @@ describe('TextInput', () => {
     it('calls onChange on input change', () => {
         const spy = sinon.spy();
         const input = mount(<TextInput name="foo" onChange={spy}/>);
-        const control = input.find('input');
 
-        control.node.setAttribute('value', 'hello');
-        control.simulate('change');
+        input.find('input').simulate('change', { target: { value: 'hello' } });
 
         expect(spy).to.have.been.called;
         expect(spy.lastCall).to.have.been.calledWithMatch('hello', { name: 'foo' });
