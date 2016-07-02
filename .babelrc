@@ -1,21 +1,22 @@
 {
-  "presets": ["es2015", "stage-2", "react"],
+  "presets": ["es2015-loose", "react"],
   "plugins": [
     "add-module-exports",
-    "dev-expression",
-    "transform-runtime"
+    "transform-class-properties",
+    "transform-export-extensions",
+    "transform-object-rest-spread",
+    ["transform-runtime", {
+      "polyfill": false,
+      "regenerator": false
+    }]
   ],
   "env": {
     "production": {
       "plugins": [
-        "add-module-exports",
         "dev-expression",
-        "transform-export-extensions",
-        "transform-node-env-inline",
         "transform-react-constant-elements",
         "transform-react-remove-prop-types",
-        "transform-react-pure-class-to-function",
-        "transform-runtime"
+        "transform-react-pure-class-to-function"
       ]
     }
   }

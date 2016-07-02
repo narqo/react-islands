@@ -16,9 +16,10 @@
     "unit": "mocha --compilers js:babel-register -r jsdom-global/register src/**/test.js",
     "test": "npm run unit",
     "pretest": "npm run lint",
-    "build": "NODE_ENV=production babel src --only index.js --out-dir components",
+    "build": "babel src --only index.js --out-dir components",
+    "build-prod": " NODE_ENV=production npm run build",
     "prebuild": "./scripts/generate-main.sh",
-    "prepublish": "npm run clean && npm test && npm run build"
+    "prepublish": "npm run clean && npm test && npm run build-prod"
   },
   "repository": {
     "type": "git",
@@ -31,6 +32,10 @@
     "Aleksei Androsov <doochik@ya.ru> (https://github.com/doochik)"
   ],
   "license": "MIT",
+  "peerDependencies": {
+    "react": "^15.0.0",
+    "react-dom": "^15.0.0"
+  },
   "dependencies": {
     "babel-runtime": "^6.6.1",
     "warning": "^3.0.0"
@@ -41,15 +46,16 @@
     "babel-core": "^6.3.26",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-dev-expression": "^0.2.1",
+    "babel-plugin-transform-class-properties": "^6.10.2",
     "babel-plugin-transform-export-extensions": "^6.8.0",
-    "babel-plugin-transform-node-env-inline": "^6.5.0",
+    "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "babel-plugin-transform-react-constant-elements": "^6.5.0",
     "babel-plugin-transform-react-pure-class-to-function": "^1.0.1",
     "babel-plugin-transform-react-remove-prop-types": "^0.2.7",
-    "babel-plugin-transform-runtime": "^6.7.5",
-    "babel-preset-es2015": "^6.6.0",
+    "babel-plugin-transform-runtime": "^6.9.0",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-es2015-loose": "^7.0.0",
     "babel-preset-react": "^6.5.0",
-    "babel-preset-stage-2": "^6.5.0",
     "babel-register": "^6.7.2",
     "babelify": "^7.3.0",
     "browser-sync": "^2.12.5",
