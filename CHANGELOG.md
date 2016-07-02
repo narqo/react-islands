@@ -2,13 +2,20 @@
 
 ## Unreleased
 
+## 0.7.0 - 2016-07-03
+
+### Added
+
+- Add a `pre-commit` hook to automatically lint the code before commit ([#70](https://github.com/narqo/react-islands/pull/70)).
+- Reduce the overall production size of the module by applying some Babel magic ([#69](https://github.com/narqo/react-islands/pull/69)).
+
 ## 0.6.0 - 2016-06-29
 
 ### Changed
 
 * Got rid of own states that represented "value" of components:
-  - Checkbox, CheckboxGroup: Make components stateless ([#64](https://github.com/narqo/react-islands/pull/64))
-  - Radio, RadioGroup: make components stateless ([#66](https://github.com/narqo/react-islands/pull/66))
+  - Checkbox, CheckboxGroup: Make components stateless ([#64](https://github.com/narqo/react-islands/pull/64)).
+  - Radio, RadioGroup: make components stateless ([#66](https://github.com/narqo/react-islands/pull/66)).
   - TextInput, TextArea: make components stateless ([#67](https://github.com/narqo/react-islands/pull/67)).
 
 ### Fixed
