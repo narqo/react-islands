@@ -67,14 +67,14 @@ gulp.task('examples-js', () => {
 });
 
 gulp.task('examples-html', () => {
-    return bundleExamples((name, file) => bundleHtml(name));
+    return bundleExamples(name => bundleHtml(name));
 });
 
 gulp.task('examples-toc', () => {
     const blocks = examples.map(blockName);
     return gulp.src('templates/examples-toc.jade')
         .pipe(jade({
-            locals: { blocks }
+            locals: { blocks },
         }))
         .on('error', gutil.log)
         .pipe(rename('index.html'))
