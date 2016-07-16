@@ -4,7 +4,13 @@
 
 ### Fixed
 
+- Control: `textValue()` doesn't play nice with numbers ([#73](https://github.com/narqo/react-islands/pull/73)).
 - Select: menu must not be narrower than button ([#71](https://github.com/narqo/react-islands/pull/71)).
+
+### Other
+
+- Add tests for Control.
+- Add Select with `_width_available` CSS class example.
 
 ## 0.7.0 - 2016-07-03
 
