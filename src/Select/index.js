@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 import Component from '../Component';
 import Button from '../Button';
@@ -46,7 +47,7 @@ class Select extends Component {
         }
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps) {
         this._shouldRestoreButtonFocus = false;
         this._preventTrapMenuFocus = false;
 
@@ -54,10 +55,13 @@ class Select extends Component {
         // @see https://github.com/narqo/react-islands/issues/41
         if (!this._wasPopupVisible && this.state.popupVisible) {
             this._wasPopupVisible = true;
+            this.updateMenuWidth();
             process.nextTick(() => {
                 this.setState({ menuFocused: true });
                 this.trapMenuFocus()
             });
+        } else if (this.props.value !== prevProps.value) {
+            this.updateMenuWidth();
         }
     }
 
@@ -201,6 +205,10 @@ class Select extends Component {
         return this._cachedChildren;
     }
 
+    getButton() {
+        return this.refs.button;
+    }
+
     getMenu() {
         return this.refs.menu;
     }
@@ -209,6 +217,11 @@ class Select extends Component {
         if (!this._preventTrapMenuFocus) {
             this.getMenu().componentWillGainFocus();
         }
+    }
+
+    updateMenuWidth() {
+        const buttonWidth = ReactDOM.findDOMNode(this.getButton()).offsetWidth;
+        ReactDOM.findDOMNode(this.getMenu()).style['min-width'] = `${buttonWidth}px`;
     }
 
     onButtonClick() {
