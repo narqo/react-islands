@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Fixed
+
+- Select: menu must not be narrower than button ([#71](https://github.com/narqo/react-islands/pull/71)).
+
 ## 0.7.0 - 2016-07-03
 
 ### Added
