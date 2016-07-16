@@ -1,5 +1,4 @@
 import React from 'react';
-
 import App from '../App';
 import Select from './index.js';
 import Group from '../Group';
@@ -71,6 +70,29 @@ class SelectExample extends React.Component {
     }
 }
 
+class SelectWidthAvailableExample extends React.Component {
+    constructor() {
+        super();
+        this.state = { value: [1902] };
+        this.years = Array.from({ length: 150 }, (_, i) => <Item key={`y${i}`} value={1900 + i}>{1900 + i}</Item>);
+    }
+
+    render() {
+        return (
+            <Select
+                theme="islands"
+                size="l"
+                className="select_width_available"
+                mode="radio"
+                value={this.state.value}
+                onChange={value => this.setState({ value })}
+            >
+                {this.years}
+            </Select>
+        );
+    }
+}
+
 function Example() {
     return (
         <App theme="islands">
@@ -78,6 +100,9 @@ function Example() {
                 <SelectExample mode="radio" maxHeight={400} />
                 <SelectExample mode="check" />
                 <SelectExample mode="radio-check" />
+
+                <b>with "width_available"</b>
+                <SelectWidthAvailableExample />
             </div>
         </App>
     );
