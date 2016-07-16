@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.7.1 - 2016-07-16
+
 ### Fixed
 
 - Control: `textValue()` doesn't play nice with numbers ([#73](https://github.com/narqo/react-islands/pull/73)).
