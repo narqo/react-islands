@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.8.0 - 2016-07-17
+
+### Added
+
+- Button: support for `title` property ([#74](https://github.com/narqo/react-islands/pull/74)).
+
 ## 0.7.1 - 2016-07-16
 
 ### Fixed
