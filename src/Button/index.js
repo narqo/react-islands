@@ -22,15 +22,17 @@ class Button extends Control {
     }
 
     render() {
+        const props = this.props;
+
         if (!this._wrappedChildren) {
-            this._wrappedChildren = Component.wrap(this.props.children, child => (
+            this._wrappedChildren = Component.wrap(props.children, child => (
                 // NOTE: this `key` is to harmonize the one we have in `Component.wrap()`
                 <span key="wrappedText" className="button__text">{child}</span>
             ));
         }
 
-        if (this.props.type === 'link') {
-            const url = this.props.disabled ? null : this.props.url;
+        if (props.type === 'link') {
+            const url = props.disabled ? null : props.url;
 
             return (
                 <a className={this.className()} {...this.getControlHandlers()} ref="control" role="link" href={url}>
@@ -43,9 +45,10 @@ class Button extends Control {
                     className={this.className()}
                     {...this.getControlHandlers()}
                     ref="control"
-                    type={this.props.type}
-                    name={this.props.name}
-                    disabled={this.props.disabled}
+                    type={props.type}
+                    name={props.name}
+                    title={props.title}
+                    disabled={props.disabled}
                 >
                     {this._wrappedChildren}
                 </button>
@@ -99,6 +102,7 @@ Button.propTypes = {
     theme: React.PropTypes.string,
     size: React.PropTypes.oneOf(['s', 'm', 'l', 'xl']),
     type: React.PropTypes.string,
+    title: React.PropTypes.string,
     onClick: React.PropTypes.func,
 };
 
