@@ -23,6 +23,12 @@ describe('Button', () => {
         expect(button).to.have.prop('name', 'my-button');
     });
 
+    it('accepts title prop', () => {
+        const button = shallow(<Button title="my-button">button</Button>);
+
+        expect(button).to.have.prop('title', 'my-button');
+    });
+
     it('accepts view prop', () => {
         const button = shallow(<Button view="action">button</Button>);
 

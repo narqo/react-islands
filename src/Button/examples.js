@@ -20,10 +20,10 @@ class Example extends React.Component {
                 <div className="examples">
 
                     <div className="example">
-                        <Button size="s">Small</Button>
-                        <Button size="m">Medium</Button>
-                        <Button size="l">Large</Button>
-                        <Button size="xl">Extra Large</Button>
+                        <Button size="s" title="title">Small</Button>
+                        <Button size="m" title="title">Medium</Button>
+                        <Button size="l" title="title">Large</Button>
+                        <Button size="xl" title="title">Extra Large</Button>
                     </div>
 
                     <div className="example">
@@ -33,12 +33,12 @@ class Example extends React.Component {
                     </div>
 
                     <div className="example">
-                        <Button size="l" disabled>Disabled</Button>
-                        <Button size="l" focused>Focused</Button>
+                        <Button size="l" title="title" disabled>Disabled</Button>
+                        <Button size="l" title="title" focused>Focused</Button>
                     </div>
 
                     <div className="example">
-                        <Button size="l" type="link" url="https://yandex.ru" onClick={this.onLinkClick}>Link</Button>
+                        <Button size="l" title="title" type="link" url="https://yandex.ru" onClick={this.onLinkClick}>Link</Button>
                     </div>
 
                     <div className="example">
