@@ -33,6 +33,9 @@ class MenuItem extends Component {
         if (this.props.size) {
             className += ' menu-item_size_' + this.props.size;
         }
+        if (this.props.type) {
+            className += ' menu-item_type_' + this.props.type;
+        }
         if (this.props.disabled) {
             className += ' menu-item_disabled';
         }
@@ -83,6 +86,7 @@ MenuItem.propTypes = {
     index: React.PropTypes.number,
     theme: React.PropTypes.string,
     size: React.PropTypes.string,
+    type: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     checked: React.PropTypes.bool,
     onClick: React.PropTypes.func,
