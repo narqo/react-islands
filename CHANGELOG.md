@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.9.0 - 2016-07-20
+
+### Added
+
+- MenuItem: support for `type` property ([#75](https://github.com/narqo/react-islands/pull/75)).
+
 ## 0.8.0 - 2016-07-17
 
 ### Added
