@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Fixed
+
+- Overlay: `layerWillBecomeHidden()` and `releaseZIndex()` must be idempotent.
+
 ## 0.9.0 - 2016-07-20
 
 ### Added
