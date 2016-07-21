@@ -3,7 +3,7 @@
 SRCDIR=src
 MAIN=$SRCDIR/index.js
 
-COMPONENTS=$(find ${SRCDIR}/* -type f -name index.js -depth 1 | cut -f2 -d '/')
+COMPONENTS=$(find ${SRCDIR}/* -mindepth 1 -maxdepth 1 -type f -name index.js | cut -f2 -d '/')
 
 echo "/* eslint-disable */\n" > $MAIN
 
