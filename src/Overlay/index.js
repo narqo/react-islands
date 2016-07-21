@@ -72,7 +72,10 @@ class Overlay extends Component {
     }
 
     layerWillBecomeHidden() {
-        visibleLayersStack.splice(visibleLayersStack.indexOf(this), 1);
+        const idx = visibleLayersStack.indexOf(this);
+        if (idx > -1) {
+            visibleLayersStack.splice(idx, 1);
+        }
 
         this.isClickOutsidePrevented = null;
 
@@ -166,7 +169,10 @@ class Overlay extends Component {
 
     releaseZIndex() {
         const zIndexes = visibleLayersZIndexes[this.props.zIndexGroupLevel];
-        zIndexes.splice(zIndexes.indexOf(this.zIndex), 1);
+        const idx = zIndexes.indexOf(this.zIndex);
+        if (idx > -1) {
+            zIndexes.splice(idx, 1);
+        }
     }
 }
 
