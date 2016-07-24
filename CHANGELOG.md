@@ -2,9 +2,16 @@
 
 ## Unreleased
 
+## 0.10.0 - 2016-07-24
+
+### Added
+
+- pressable: Add "displayName" to wrapped class ([#82](https://github.com/narqo/react-islands/pull/82)).
+
 ### Fixed
 
-- Overlay: `layerWillBecomeHidden()` and `releaseZIndex()` must be idempotent.
+- `generate-main` script doesn't work on Linux ([#80](https://github.com/narqo/react-islands/pull/80)).
+- Overlay: `layerWillBecomeHidden()` and `releaseZIndex()` must be idempotent ([#81](https://github.com/narqo/react-islands/pull/81)).
 
 ## 0.9.0 - 2016-07-20
 
