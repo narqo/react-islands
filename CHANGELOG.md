@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 0.11.0 - 2016-07-25
+
+### Added
+
+- Control: pass `this.props` as a second argument to `onFocusChange()` and `onHoverChange()` handlers ([#84](https://github.com/narqo/react-islands/pull/84)), ([#86](https://github.com/narqo/react-islands/pull/86)).
+- TextInput: support for `autocomplete` property ([#85](https://github.com/narqo/react-islands/pull/85)).
+
 ## 0.10.0 - 2016-07-24
 
 ### Added
