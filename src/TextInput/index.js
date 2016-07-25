@@ -33,6 +33,7 @@ class TextInput extends Control {
                         type={this.props.type}
                         disabled={this.props.disabled}
                         placeholder={this.props.placeholder}
+                        autoComplete={this.props.autocomplete}
                         value={value}
                         onChange={this.onInputChange}
                     />
@@ -103,6 +104,7 @@ TextInput.propTypes = {
     name: React.PropTypes.string,
     value: React.PropTypes.string,
     placeholder: React.PropTypes.string,
+    autocomplete: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     hasClear: React.PropTypes.bool,
     onChange: React.PropTypes.func,
