@@ -74,13 +74,13 @@ class Control extends Component {
 
     dispatchFocusChange(focused) {
         if (typeof this.props.onFocusChange === 'function') {
-            this.props.onFocusChange(focused);
+            this.props.onFocusChange(focused, this.props);
         }
     }
 
     dispatchHoverChange(hovered) {
         if (typeof this.props.onHoverChange === 'function') {
-            this.props.onHoverChange(hovered);
+            this.props.onHoverChange(hovered, this.props);
         }
     }
 
