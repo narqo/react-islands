@@ -33,6 +33,7 @@ class TextInput extends Control {
                         type={this.props.type}
                         disabled={this.props.disabled}
                         placeholder={this.props.placeholder}
+                        autoComplete="off"
                         value={value}
                         onChange={this.onInputChange}
                     />
