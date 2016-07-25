@@ -79,6 +79,12 @@ describe('TextInput', () => {
         expect(input.find('input')).to.not.have.attr('disabled');
     });
 
+    it('accepts autocomplete prop', () => {
+        const input = shallow(<TextInput autocomplete="off"/>);
+
+        expect(input.find('input')).to.have.attr('autocomplete', 'off');
+    });
+
     it('accepts focused prop', () => {
         const input = shallow(<TextInput focused/>);
 
