@@ -153,7 +153,7 @@ class Menu extends Component {
                 const firstChild = this._getFirstEnabledChild();
 
                 newValue = firstChild === null ? [] : [firstChild.props.value];
-            } else {
+            } else if (newValue.length > 1) {
                 newValue = [newValue[0]];
             }
         } else if (this.props.mode === 'radio-check' && newValue.length > 1) {
