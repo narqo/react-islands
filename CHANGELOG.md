@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.11.1 - 2016-07-28
+
+### Fixed
+
+- Menu: Fix value validation in `mode=radio` ([#87](https://github.com/narqo/react-islands/pull/87)).
+
 ## 0.11.0 - 2016-07-25
 
 ### Added
