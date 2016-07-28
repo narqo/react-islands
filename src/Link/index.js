@@ -42,6 +42,9 @@ class Link extends Control {
         if (this.props.focused) {
             className += ' link_focused';
         }
+        if (this.props.view) {
+            className += ' link_view_' + this.props.view;
+        }
         if (this.state.hovered) {
             className += ' link_hovered';
         }
@@ -57,6 +60,7 @@ class Link extends Control {
 Link.propTypes = {
     theme: React.PropTypes.string,
     size: React.PropTypes.oneOf(['s', 'm', 'l', 'xl']),
+    view: React.PropTypes.oneOf(['minor', 'external']),
     className: React.PropTypes.string,
     type: React.PropTypes.string,
     disabled: React.PropTypes.bool,
