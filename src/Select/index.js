@@ -114,6 +114,7 @@ class Select extends Component {
 
         return (
             <Button ref="button" theme={theme} size={size} className="select__button"
+                type="button"
                 disabled={disabled}
                 checked={checked}
                 focused={focused}
