@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.12.1 - 2016-08-01
+
+### Fixed
+
+- Select: prevent internal Button from form submission ([#91](https://github.com/narqo/react-islands/pull/91)).
+
 ## 0.12.0 - 2016-07-28
 
 ### Added
