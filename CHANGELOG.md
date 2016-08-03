@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.13.0 - 2016-08-04
+
+### Added
+
+- Link: add examples and tests for `view` prop ([#94](https://github.com/narqo/react-islands/pull/94)).
+
 ## 0.12.1 - 2016-08-01
 
 ### Fixed
