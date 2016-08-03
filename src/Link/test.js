@@ -50,6 +50,12 @@ describe('Link', () => {
         expect(link).to.not.have.className('link_disabled');
     });
 
+    it('accepts view prop', () => {
+        const link = shallow(<Link view="external" url="http://yandex.ru">link</Link>);
+
+        expect(link).to.have.className('link_view_external');
+    });
+
     it('does not have an href if initially disabled', () => {
         const link = shallow(<Link url="http://yandex.ru" disabled>link</Link>);
 

@@ -30,6 +30,13 @@ class Example extends React.Component {
                         <Link size="l" onClick={this.onClick} disabled>Google (disabled)</Link>
                     </div>
 
+                    <div className="example">
+                        <h3>Views</h3>
+                        <Link size="l" view="external" onClick={this.onClick}>external</Link>
+                        <br/>
+                        <Link size="l" view="minor" onClick={this.onClick}>minor</Link>
+                    </div>
+
                     <p>Clicks: {this.state.clicks}</p>
                 </div>
             </App>
