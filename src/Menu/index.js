@@ -15,10 +15,13 @@ class Menu extends Component {
     constructor(props) {
         super(props);
 
+        const value = this._validateValue(this.props.value);
+
         this.state = {
             ...this.state,
-            value: this._validateValue(this.props.value),
+            value,
             hoveredIndex: null,
+            focusedIndex: null,
         };
 
         this._cachedChildren = null;
@@ -39,6 +42,11 @@ class Menu extends Component {
         //  то нужно сообщить про это наверх.
         if (this.props.value !== this.state.value) {
             this.props.onChange(this.state.value, this.props);
+        }
+
+        const selectedIdx = this._getFirstSelectedChildIndex();
+        if (selectedIdx) {
+            this.setState({ focusedIndex: selectedIdx });
         }
     }
 
@@ -117,6 +125,20 @@ class Menu extends Component {
         }
 
         return null;
+    }
+
+    _getFirstSelectedChildIndex() {
+        const { value } = this.state;
+        const children = this._getChildren();
+
+        for (let i = 0; i < children.length; i++) {
+            const item = children[i];
+            if (!item.props.disabled && value.indexOf(item.props.value) !== -1) {
+                return i;
+            }
+        }
+
+        return this._getFirstEnabledChildIndex();
     }
 
     _getFirstEnabledChildIndex() {
@@ -204,7 +226,8 @@ class Menu extends Component {
         }
 
         return (
-            <div ref="control" className={this.className()}
+            <div ref="control"
+                className={this.className()}
                 style={style}
                 tabIndex={tabIndex}
                 onKeyDown={this.onKeyDown}
@@ -240,9 +263,10 @@ class Menu extends Component {
 
     _renderMenuItem(props, index) {
         const { theme, size, disabled, mode } = this.props;
-        const { value, hoveredIndex } = this.state;
+        const { value, hoveredIndex, focusedIndex } = this.state;
         const checkable = Boolean(mode);
         const hovered = index === hoveredIndex;
+        const focused = index === focusedIndex;
         const key = `menuitem${props.id || index}`;
 
         return React.createElement(
@@ -253,7 +277,7 @@ class Menu extends Component {
                 disabled,
                 hovered,
                 checked: checkable && (value.indexOf(props.value) !== -1),
-                ref: hovered ? 'focusedMenuItem' : null,
+                ref: (hovered || focused) ? 'focusedMenuItem' : null,
                 key,
                 index,
                 ...props,
@@ -348,7 +372,7 @@ class Menu extends Component {
         if (!this._mousePressed) {
             let hoveredIndex = this._hoveredItemIndex;
             if (hoveredIndex === null) {
-                hoveredIndex = this._getFirstEnabledChildIndex()
+                hoveredIndex = this._getFirstSelectedChildIndex();
             }
             if (hoveredIndex !== this.state.hoveredIndex) {
                 this._hoveredItemIndex = hoveredIndex;
