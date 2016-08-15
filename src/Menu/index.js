@@ -5,6 +5,9 @@ import Item from '../Item';
 import Group from '../Group';
 import MenuItem from './MenuItem';
 
+const TIMEOUT_KEYBOARD_SEARCH = 1500;
+const KEY_CODE_SPACE = 32;
+
 function appendItemToCache(item, cache) {
     if (Component.is(item, Item)) {
         cache.push(item);
@@ -27,12 +30,19 @@ class Menu extends Component {
         this._cachedChildren = null;
         this._hoveredItemIndex = null;
         this._shouldScrollToItem = false;
+        this._lastTyping = {
+            char: '',
+            text: '',
+            index: 0,
+            time: 0,
+        };
 
         this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onFocus = this.onFocus.bind(this);
         this.onBlur = this.onBlur.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
+        this.onKeyPress = this.onKeyPress.bind(this);
         this.onItemClick = this.onItemClick.bind(this);
         this.onItemHover = this.onItemHover.bind(this);
     }
@@ -231,6 +241,7 @@ class Menu extends Component {
                 style={style}
                 tabIndex={tabIndex}
                 onKeyDown={this.onKeyDown}
+                onKeyPress={this.onKeyPress}
                 onMouseDown={this.onMouseDown}
                 onMouseUp={this.onMouseUp}
                 onFocus={this.onFocus}
@@ -341,6 +352,58 @@ class Menu extends Component {
         this.props.onItemClick(e, itemProps);
     }
 
+    searchIndexByKeyboardEvent(e) {
+        const timeNow = Date.now();
+        const lastTyping = this._lastTyping;
+
+        if (e.charCode <= KEY_CODE_SPACE || e.ctrlKey || e.altKey || e.metaKey) {
+            lastTyping.time = timeNow;
+            return null;
+        }
+
+        const char = String.fromCharCode(e.charCode).toLowerCase();
+        const isSameChar = char === lastTyping.char && lastTyping.text.length === 1;
+        const children = this._getChildren();
+
+        if (timeNow - lastTyping.time > TIMEOUT_KEYBOARD_SEARCH || isSameChar) {
+            lastTyping.text = char;
+        } else {
+            lastTyping.text += char;
+        }
+
+        lastTyping.char = char;
+        lastTyping.time = timeNow;
+
+        let nextIndex = lastTyping.index;
+
+        // If key is pressed again, then continue to search to next menu item
+        if (isSameChar && Component.textValue(children[nextIndex]).search(lastTyping.char) === 0) {
+            nextIndex = nextIndex >= children.length - 1 ? 0 : nextIndex + 1;
+        }
+
+        // 2 passes: from index to children.length and from 0 to index.
+        let i = nextIndex;
+        let len = children.length;
+        while (i < len) {
+            if (!children[i].props.disabled &&
+                Component.textValue(children[i])
+                    .toLowerCase()
+                    .search(lastTyping.text) === 0) {
+                lastTyping.index = i;
+                return i;
+            }
+
+            i++;
+
+            if (i === children.length) {
+                i = 0;
+                len = nextIndex;
+            }
+        }
+
+        return null;
+    }
+
     selectNextItem(dir) {
         const children = this._getChildren();
         const len = children.length;
@@ -357,10 +420,14 @@ class Menu extends Component {
         } while (children[nextIndex].props.disabled);
 
         if (nextIndex !== null) {
-            this._hoveredItemIndex = nextIndex;
-            this._shouldScrollToItem = true;
-            this.setState({ hoveredIndex: nextIndex });
+            this.selectItemByIndex(nextIndex);
         }
+    }
+
+    selectItemByIndex(index) {
+        this._hoveredItemIndex = index;
+        this._shouldScrollToItem = true;
+        this.setState({ hoveredIndex: index });
     }
 
     onItemHover(hovered, itemProps) {
@@ -433,6 +500,18 @@ class Menu extends Component {
 
         if (this.props.onKeyDown) {
             this.props.onKeyDown(e, this.props);
+        }
+    }
+
+    onKeyPress(e) {
+        if (this.props.disabled || !this.state.focused) {
+            return;
+        }
+
+        const hoveredIndex = this.searchIndexByKeyboardEvent(e);
+
+        if (hoveredIndex !== null) {
+            this.selectItemByIndex(hoveredIndex);
         }
     }
 
