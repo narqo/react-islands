@@ -17,6 +17,7 @@ class ComboBoxExample extends React.Component {
             <ComboBox
                 theme="islands"
                 size="l"
+                name="year"
                 value={this.state.value}
                 onChange={value => this.setState({ value })}
             >

@@ -8,7 +8,7 @@ class SelectExample extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            value: ['1'],
+            value: ['10'],
             clicks: 0,
         };
         this.onSelectChange = this.onSelectChange.bind(this);

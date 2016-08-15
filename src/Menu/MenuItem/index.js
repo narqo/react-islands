@@ -90,6 +90,7 @@ MenuItem.propTypes = {
     type: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     checked: React.PropTypes.bool,
+    hovered: React.PropTypes.bool,
     onClick: React.PropTypes.func,
     onHover: React.PropTypes.func,
 };

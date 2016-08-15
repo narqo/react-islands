@@ -385,10 +385,7 @@ class Menu extends Component {
         let i = nextIndex;
         let len = children.length;
         while (i < len) {
-            if (!children[i].props.disabled &&
-                Component.textValue(children[i])
-                    .toLowerCase()
-                    .search(lastTyping.text) === 0) {
+            if (this._checkItemMatchText(children[i], lastTyping.text)) {
                 lastTyping.index = i;
                 return i;
             }
@@ -404,7 +401,7 @@ class Menu extends Component {
         return null;
     }
 
-    selectNextItem(dir) {
+    hoverNextItem(dir) {
         const children = this._getChildren();
         const len = children.length;
         if (!len) {
@@ -420,14 +417,34 @@ class Menu extends Component {
         } while (children[nextIndex].props.disabled);
 
         if (nextIndex !== null) {
-            this.selectItemByIndex(nextIndex);
+            this.hoverItemByIndex(nextIndex);
         }
     }
 
-    selectItemByIndex(index) {
+    hoverItemByText(text) {
+        const children = this._getChildren();
+        let i = 0;
+        while (i < children.length) {
+            if (this._checkItemMatchText(children[i], text)) {
+                this.hoverItemByIndex(i);
+                return;
+            }
+            i++;
+        }
+        this.hoverItemByIndex(0);
+    }
+
+    hoverItemByIndex(index) {
         this._hoveredItemIndex = index;
         this._shouldScrollToItem = true;
         this.setState({ hoveredIndex: index });
+    }
+
+    _checkItemMatchText(item, text) {
+        return !item.props.disabled &&
+            Component.textValue(item)
+                .toLowerCase()
+                .search(text) === 0;
     }
 
     onItemHover(hovered, itemProps) {
@@ -489,7 +506,7 @@ class Menu extends Component {
         if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
             e.preventDefault();
 
-            this.selectNextItem(e.key === 'ArrowDown' ? 1 : -1);
+            this.hoverNextItem(e.key === 'ArrowDown' ? 1 : -1);
         } else if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
 
@@ -511,7 +528,7 @@ class Menu extends Component {
         const hoveredIndex = this.searchIndexByKeyboardEvent(e);
 
         if (hoveredIndex !== null) {
-            this.selectItemByIndex(hoveredIndex);
+            this.hoverItemByIndex(hoveredIndex);
         }
     }
 
