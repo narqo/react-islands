@@ -318,7 +318,7 @@ class Menu extends Component {
         if (this.props.disabled) {
             className += ' menu_disabled';
         }
-        if (this.state.focused) {
+        if (this.props.focused) {
             className += ' menu_focused';
         }
 
@@ -330,7 +330,7 @@ class Menu extends Component {
     }
 
     dispatchFocusChange(focused) {
-        this.props.onFocusChange(focused);
+        return this.props.onFocusChange(focused);
     }
 
     dispatchItemClick(e, itemProps) {
@@ -339,6 +339,28 @@ class Menu extends Component {
             item.props.onClick(e, item.props, this.props);
         }
         this.props.onItemClick(e, itemProps);
+    }
+
+    selectNextItem(dir) {
+        const children = this._getChildren();
+        const len = children.length;
+        if (!len) {
+            return;
+        }
+
+        let nextIndex = this.state.hoveredIndex;
+        do {
+            nextIndex = (nextIndex + len + dir) % len;
+            if (nextIndex === this.state.hoveredIndex) {
+                return;
+            }
+        } while (children[nextIndex].props.disabled);
+
+        if (nextIndex !== null) {
+            this._hoveredItemIndex = nextIndex;
+            this._shouldScrollToItem = true;
+            this.setState({ hoveredIndex: nextIndex });
+        }
     }
 
     onItemHover(hovered, itemProps) {
@@ -388,38 +410,19 @@ class Menu extends Component {
             focused: false,
             hoveredIndex: null,
         });
-
-        this.dispatchFocusChange(false);
+        this._hoveredItemIndex = null;
+        this.dispatchFocusChange();
     }
 
     onKeyDown(e) {
-        if (this.props.disabled || !this.state.focused) {
+        if (this.props.disabled) {
             return;
         }
 
         if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
             e.preventDefault();
 
-            const children = this._getChildren();
-            const len = children.length;
-            if (!len) {
-                return;
-            }
-
-            const dir = (e.key === 'ArrowDown' ? 1 : -1);
-            let nextIndex = this.state.hoveredIndex;
-            do {
-                nextIndex = (nextIndex + len + dir) % len;
-                if (nextIndex === this.state.hoveredIndex) {
-                    return;
-                }
-            } while (children[nextIndex].props.disabled);
-
-            if (nextIndex !== null) {
-                this._hoveredItemIndex = nextIndex;
-                this._shouldScrollToItem = true;
-                this.setState({ hoveredIndex: nextIndex });
-            }
+            this.selectNextItem(e.key === 'ArrowDown' ? 1 : -1);
         } else if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
 
