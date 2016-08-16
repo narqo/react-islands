@@ -5,7 +5,7 @@ MAIN=$SRCDIR/index.js
 
 COMPONENTS=$(find ${SRCDIR}/* -mindepth 1 -maxdepth 1 -type f -name index.js | cut -f2 -d '/')
 
-echo "/* eslint-disable */\n" > $MAIN
+echo "/* eslint-disable */" > $MAIN
 
 for component in ${COMPONENTS}; do
     echo "add $component to $MAIN"
