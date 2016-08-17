@@ -53,7 +53,8 @@ class Checkbox extends Control {
     }
 
     className() {
-        let className = 'checkbox';
+        // NOTE: see narqo/react-islands#98 for notes about `_js_inited`
+        let className = 'checkbox checkbox_js_inited';
 
         const theme = this.props.theme || this.context.theme;
         if (theme) {

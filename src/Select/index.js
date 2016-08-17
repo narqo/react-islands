@@ -162,7 +162,8 @@ class Select extends Component {
     }
 
     className() {
-        let className = 'select';
+        // NOTE: see narqo/react-islands#98 for notes about `_js_inited`
+        let className = 'select select_js_inited';
 
         const theme = this.props.theme || this.context.theme;
         if (theme) {

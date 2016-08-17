@@ -278,7 +278,8 @@ class Menu extends Component {
     }
 
     className() {
-        let className = 'menu';
+        // NOTE: see narqo/react-islands#98 for notes about `_js_inited`
+        let className = 'menu menu_js_inited';
 
         const theme = this.props.theme || this.context.theme;
         if (theme) {

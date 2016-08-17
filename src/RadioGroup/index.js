@@ -34,7 +34,8 @@ class RadioGroup extends Component {
     }
 
     className() {
-        let className = 'radio-group control-group';
+        // NOTE: see narqo/react-islands#98 for notes about `_js_inited`
+        let className = 'radio-group radio-group_js_inited control-group';
 
         const theme = this.props.theme || this.context.theme;
         if (theme) {
