@@ -53,7 +53,8 @@ class Radio extends Control {
     }
 
     className() {
-        let className = 'radio';
+        // NOTE: see narqo/react-islands#98 for notes about `_js_inited`
+        let className = 'radio radio_js_inited';
 
         const theme = this.props.theme || this.context.theme;
         if (theme) {

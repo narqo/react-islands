@@ -27,7 +27,8 @@ class Link extends Control {
     }
 
     className() {
-        var className = 'link';
+        // NOTE: see narqo/react-islands#98 for notes about `_js_inited`
+        var className = 'link link_js_inited';
 
         const theme = this.props.theme || this.context.theme;
         if (theme) {
