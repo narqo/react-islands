@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 0.13.1 - 2016-08-17
+
+### Fixed
+
+- Add `_js_inited` suffix to class names ([#98](https://github.com/narqo/react-islands/pull/98)).
+- Fix scripts/generate-main.sh to work properly on Linux.
+
 ## 0.13.0 - 2016-08-04
 
 ### Added
