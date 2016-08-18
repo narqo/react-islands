@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.13.2 - 2016-08-18
+
+### Fixed
+
+- Menu: Fix internal cache flushing ([#100](https://github.com/narqo/react-islands/pull/100)).
+
 ## 0.13.1 - 2016-08-17
 
 ### Fixed
