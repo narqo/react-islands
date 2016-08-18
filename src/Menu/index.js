@@ -50,16 +50,16 @@ class Menu extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.children !== this.props.children) {
-            this._cachedChildren = null;
-        }
-
         if (nextProps.value !== this.props.value) {
             this.setState({ value: this._validateValue(nextProps.value) });
         }
     }
 
     componentDidUpdate(prevProps) {
+        if (this.props.children !== prevProps.children) {
+            this._cachedChildren = null;
+        }
+
         if (prevProps.focused && !this.props.focused) {
             this.componentWillLostFocus();
         } else if (!prevProps.focused && this.props.focused) {
