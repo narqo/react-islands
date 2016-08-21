@@ -122,7 +122,7 @@ class Popup extends Component {
                     return;
                 }
             }
-            this.props.onRequestHide(e, reason);
+            this.props.onRequestHide(e, reason, this.props);
         }
     }
 

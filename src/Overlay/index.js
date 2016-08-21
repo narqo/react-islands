@@ -104,7 +104,7 @@ class Overlay extends Component {
 
     requestHide(e, reason) {
         if (this.props.visible) {
-            this.props.onRequestHide(e, reason);
+            this.props.onRequestHide(e, reason, this.props);
         }
     }
 
@@ -132,7 +132,7 @@ class Overlay extends Component {
                 preventParentLayerClickOutside();
             }
         }
-        this.props.onClick(e);
+        this.props.onClick(e, this.props);
     }
 
     onDocumentClick(e) {
@@ -163,7 +163,7 @@ class Overlay extends Component {
         const prevZIndex = this.zIndex;
         this.zIndex = zIndexes[zIndexes.push(zIndexes[zIndexes.length - 1] + 1) - 1];
         if (this.zIndex !== prevZIndex) {
-            this.props.onOrderChange(this.zIndex);
+            this.props.onOrderChange(this.zIndex, this.props);
         }
     }
 

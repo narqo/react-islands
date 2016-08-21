@@ -77,7 +77,7 @@ class Modal extends Component {
     }
 
     requestHide(e, reason) {
-        this.props.onRequestHide(e, reason);
+        this.props.onRequestHide(e, reason, this.props);
     }
 
     onLayerClick(e) {
