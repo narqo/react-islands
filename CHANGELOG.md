@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.13.3 - 2016-08-21
+
+### Fixed
+
+- Layout, Popup: some handlers miss `this.props` argument ([#101](https://github.com/narqo/react-islands/issues/101)).
+
 ## 0.13.2 - 2016-08-18
 
 ### Fixed
