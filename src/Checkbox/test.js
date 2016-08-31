@@ -106,7 +106,7 @@ describe('Checkbox', () => {
         it('accepts focused prop', () => {
             const checkbox = mount(<Checkbox focused>checkbox</Checkbox>);
 
-            expect(checkbox.state('focused')).to.be.true;
+            expect(checkbox.state('focused')).to.be.ok;
             expect(checkbox.find('label').hasClass('checkbox_focused')).to.be.true;
 
             checkbox.setState({ focused: false });
@@ -274,7 +274,7 @@ describe('Checkbox', () => {
         it('accepts focused prop', () => {
             const checkbox = mount(<Checkbox type="button" focused>checkbox</Checkbox>);
 
-            expect(checkbox.state('focused')).to.be.true;
+            expect(checkbox.state('focused')).to.be.ok;
             expect(checkbox.find('label').hasClass('checkbox_focused')).to.be.true;
             expect(checkbox.find('button').hasClass('button_focused')).to.be.true;
 

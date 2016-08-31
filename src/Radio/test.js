@@ -106,7 +106,7 @@ describe('Radio', () => {
         it('accepts focused prop', () => {
             const radio = mount(<Radio focused>radio</Radio>);
 
-            expect(radio.state('focused')).to.be.true;
+            expect(radio.state('focused')).to.be.ok;
             expect(radio.find('label').hasClass('radio_focused')).to.be.true;
 
             radio.setState({ focused: false });
@@ -268,7 +268,7 @@ describe('Radio', () => {
         it('accepts focused prop', () => {
             const radio = mount(<Radio type="button" focused>radio</Radio>);
 
-            expect(radio.state('focused')).to.be.true;
+            expect(radio.state('focused')).to.be.ok;
             expect(radio.find('label').hasClass('radio_focused')).to.be.true;
             expect(radio.find('button').hasClass('button_focused')).to.be.true;
 

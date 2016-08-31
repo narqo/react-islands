@@ -67,7 +67,6 @@
       "error",
       "never"
     ],
-    "consistent-return": "error",
     "consistent-this": "error",
     "curly": "off",
     "default-case": "error",
