@@ -27,7 +27,7 @@ class Popup extends Component {
         };
 
         this.shouldRenderToOverlay = false;
-        this.isAnchorVisible = true;
+        this.isAnchorVisible = undefined;
         this.scrollParents = null;
 
         this.onLayerOrderChange = this.onLayerOrderChange.bind(this);
@@ -39,6 +39,9 @@ class Popup extends Component {
     componentWillUpdate(nextProps) {
         if (!this.shouldRenderToOverlay && nextProps.visible) {
             this.shouldRenderToOverlay = true;
+        }
+        if (this.props.visible && this.isAnchorVisible === undefined) {
+            this.isAnchorVisible = true;
         }
     }
 
@@ -109,13 +112,13 @@ class Popup extends Component {
     handleVisibleChange(visible) {
         this.scrollParents = getScrollParents(this.getAnchor());
 
-        // NOTE(@narqo): subscribe to resize/scroll only if popup can be repositioned within `directions`
-        if (visible && this.props.directions.length > 1) {
+        if (visible) {
             this.scrollParents.forEach(parent => {
                 parent.addEventListener('scroll', this.onAnchorParentsScroll);
             });
             window.addEventListener('resize', this.onViewportResize);
         } else {
+            this.isAnchorVisible = undefined;
             this.scrollParents.forEach(parent => {
                 parent.removeEventListener('scroll', this.onAnchorParentsScroll);
             });
@@ -163,7 +166,6 @@ class Popup extends Component {
             }
 
             const { direction, left, top } = layout;
-
             this.setState({ direction, left, top });
         }
     }
@@ -331,7 +333,7 @@ class Popup extends Component {
 
     calcIsAnchorVisible() {
         const anchor = this.calcAnchorDimensions();
-        const direction = this.state.direction;
+        const { direction } = this.state;
         const vertBorder = Math.floor(
             checkMainDirection(direction, 'top') || checkSecondaryDirection(direction, 'top') ? anchor.top : anchor.top + anchor.height
         );
@@ -344,10 +346,8 @@ class Popup extends Component {
                 return false;
             }
 
-            const style = getComputedStyle(parent);
-            const overflowY = style.overflowY;
+            const { overflowX, overflowY } = window.getComputedStyle(parent);
             const checkOverflowY = overflowY === 'scroll' || overflowY === 'hidden' || overflowY === 'auto';
-            const overflowX = style.overflowX;
             const checkOverflowX = overflowX === 'scroll' || overflowX === 'hidden' || overflowX === 'auto';
 
             if (checkOverflowY || checkOverflowX) {
@@ -355,8 +355,7 @@ class Popup extends Component {
                 const viewportRect = document.documentElement.getBoundingClientRect();
                 const left = Math.floor(parentRect.left - viewportRect.left);
                 const top = Math.floor(parentRect.top - viewportRect.top);
-                const width = parentRect.width;
-                const height = parentRect.height;
+                const { width, height } = parentRect;
 
                 if (checkOverflowY) {
                     return vertBorder < top || top + height < vertBorder;
@@ -385,8 +384,7 @@ function getScrollParents(el) {
         return [window];
     }
 
-    const computedStyle = getComputedStyle(el) || {};
-    const position = computedStyle.position;
+    const { position } = window.getComputedStyle(el) || {};
     const parents = [];
 
     if (position === 'fixed') {
@@ -394,8 +392,8 @@ function getScrollParents(el) {
     }
 
     let parent = el;
-    while ((parent = parent.parentNode) && parent && parent.nodeType === 1) {
-        const style = getComputedStyle(parent);
+    while ((parent = parent.parentNode) && parent.nodeType === 1) {
+        const style = window.getComputedStyle(parent);
 
         if (typeof style === 'undefined' || style === null) {
             parents.push(parent);
