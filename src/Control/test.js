@@ -17,14 +17,14 @@ describe('Control', () => {
     it('sets DOM focus if mounted with focused prop', () => {
         const control = mount(<TestControl focused />);
 
-        expect(control.state('focused')).to.be.true;
+        expect(control.state('focused')).to.equal('hard');
         expect(ReactDOM.findDOMNode(control.instance()).contains(document.activeElement)).to.be.true;
     });
 
     it('doesn\'t set DOM focus if mounted with focused and disabled props', () => {
         const control = mount(<TestControl disabled focused />);
 
-        expect(control.state('focused')).to.not.be.true;
+        expect(control.state('focused')).to.be.false;
         expect(ReactDOM.findDOMNode(control.instance()).contains(document.activeElement)).to.be.false;
     });
 
@@ -34,7 +34,7 @@ describe('Control', () => {
         expect(control.state('focused')).to.not.be.true;
 
         control.setProps({ focused: true });
-        expect(control.state('focused')).to.be.true;
+        expect(control.state('focused')).to.equal('hard');
     });
 
     it('sets DOM focus if receives focused', () => {

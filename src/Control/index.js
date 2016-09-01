@@ -9,7 +9,8 @@ class Control extends Component {
         super(props);
 
         this.state = {
-            focused: !props.disabled && props.focused,
+            hovered: false,
+            focused: !props.disabled && props.focused ? 'hard' : false,
         };
 
         this._mousePressed = false;
@@ -41,17 +42,22 @@ class Control extends Component {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.disabled === true) {
-            this.setState({ focused: false });
-        } else if (nextProps.focused !== this.state.focused && nextProps.focused === true) {
-            this.setState({ focused: nextProps.focused });
+    componentWillReceiveProps({ disabled, focused }) {
+        if (disabled === true) {
+            this.setState({
+                hovered: false,
+                focused: false,
+            });
+        } else if (typeof focused !== 'undefined') {
+            this.setState({ focused: focused ? this.state.focused || 'hard' : false });
         }
     }
 
     componentDidUpdate() {
         if (this.state.focused) {
             this.componentWillGainFocus();
+        } else {
+            this.componentWillLoseFocus();
         }
     }
 
@@ -61,34 +67,40 @@ class Control extends Component {
         }
     }
 
+    componentWillLoseFocus() {
+        if (this.refs.control && document.activeElement === this.refs.control) {
+            this.refs.control.blur();
+        }
+    }
+
     getControlHandlers() {
-        return {
-            onMouseDown: this.onMouseDown,
-            onMouseUp: this.onMouseUp,
-            onFocus: this.onFocus,
-            onBlur: this.onBlur,
-            onMouseEnter: this.onMouseEnter,
-            onMouseLeave: this.onMouseLeave,
-        };
+        if (!this.props.disabled) {
+            return {
+                onMouseDown: this.onMouseDown,
+                onMouseUp: this.onMouseUp,
+                onFocus: this.onFocus,
+                onBlur: this.onBlur,
+                onMouseEnter: this.onMouseEnter,
+                onMouseLeave: this.onMouseLeave,
+            };
+        }
     }
 
     dispatchFocusChange(focused) {
-        if (typeof this.props.onFocusChange === 'function') {
+        if (this.props.onFocusChange) {
             this.props.onFocusChange(focused, this.props);
         }
     }
 
     dispatchHoverChange(hovered) {
-        if (typeof this.props.onHoverChange === 'function') {
+        if (this.props.onHoverChange) {
             this.props.onHoverChange(hovered, this.props);
         }
     }
 
     onMouseEnter() {
-        if (!this.props.disabled) {
-            this.setState({ hovered: true });
-            this.dispatchHoverChange(true);
-        }
+        this.setState({ hovered: true });
+        this.dispatchHoverChange(true);
     }
 
     onMouseLeave() {
@@ -105,22 +117,18 @@ class Control extends Component {
     }
 
     onFocus() {
-        if (!this.props.disabled) {
-            let focused;
-            // if focus wasn't set by mouse set focused state to "hard"
-            if (!this._mousePressed) {
-                focused = 'hard';
-            } else {
-                focused = true;
-            }
-            this.setState({ focused });
-            this.dispatchFocusChange(focused);
+        let focused;
+        // if focus wasn't set by mouse set `focused` state to "hard"
+        if (!this._mousePressed) {
+            focused = 'hard';
+        } else {
+            focused = true;
         }
+        this.setState({ focused }, () => this.dispatchFocusChange(focused));
     }
 
     onBlur() {
-        this.setState({ focused: false });
-        this.dispatchFocusChange(false);
+        this.setState({ focused: false }, () => this.dispatchFocusChange(false));
     }
 }
 
