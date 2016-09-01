@@ -277,7 +277,6 @@ class Select extends Component {
         }
 
         const menuHeight = layout.bottom - layout.top;
-
         this.setState({ menuHeight });
     }
 
