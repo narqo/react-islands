@@ -27,16 +27,21 @@ class Popup extends Component {
         };
 
         this.shouldRenderToOverlay = false;
+        this.isAnchorVisible = undefined;
+        this.scrollParents = null;
 
         this.onLayerOrderChange = this.onLayerOrderChange.bind(this);
         this.onLayerRequestHide = this.onLayerRequestHide.bind(this);
         this.onViewportResize = this.onViewportResize.bind(this);
-        this.onViewportScroll = this.onViewportScroll.bind(this);
+        this.onAnchorParentsScroll = this.onAnchorParentsScroll.bind(this);
     }
 
     componentWillUpdate(nextProps) {
         if (!this.shouldRenderToOverlay && nextProps.visible) {
             this.shouldRenderToOverlay = true;
+        }
+        if (this.props.visible && this.isAnchorVisible === undefined) {
+            this.isAnchorVisible = true;
         }
     }
 
@@ -57,6 +62,7 @@ class Popup extends Component {
                 left: this.state.left,
                 top: this.state.top,
                 zIndex: this.state.zIndex,
+                display: this.isAnchorVisible ? '' : 'none',
             };
 
             return (
@@ -104,13 +110,19 @@ class Popup extends Component {
     }
 
     handleVisibleChange(visible) {
-        // NOTE(@narqo): subscribe to resize/scroll only if popup can be repositioned within `directions`
-        if (visible && this.props.directions.length > 1) {
+        this.scrollParents = getScrollParents(this.getAnchor());
+
+        if (visible) {
+            this.scrollParents.forEach(parent => {
+                parent.addEventListener('scroll', this.onAnchorParentsScroll);
+            });
             window.addEventListener('resize', this.onViewportResize);
-            window.addEventListener('scroll', this.onViewportScroll);
         } else {
+            this.isAnchorVisible = undefined;
+            this.scrollParents.forEach(parent => {
+                parent.removeEventListener('scroll', this.onAnchorParentsScroll);
+            });
             window.removeEventListener('resize', this.onViewportResize);
-            window.removeEventListener('scroll', this.onViewportScroll);
         }
     }
 
@@ -134,7 +146,13 @@ class Popup extends Component {
         this.reposition();
     }
 
-    onViewportScroll() {
+    onAnchorParentsScroll() {
+        const isAnchorVisible = this.calcIsAnchorVisible();
+
+        if (isAnchorVisible !== this.isAnchorVisible) {
+            this.isAnchorVisible = isAnchorVisible;
+        }
+
         this.reposition();
     }
 
@@ -148,7 +166,6 @@ class Popup extends Component {
             }
 
             const { direction, left, top } = layout;
-
             this.setState({ direction, left, top });
         }
     }
@@ -313,6 +330,45 @@ class Popup extends Component {
 
         return { top, left, bottom, right };
     }
+
+    calcIsAnchorVisible() {
+        const anchor = this.calcAnchorDimensions();
+        const { direction } = this.state;
+        const vertBorder = Math.floor(
+            checkMainDirection(direction, 'top') || checkSecondaryDirection(direction, 'top') ? anchor.top : anchor.top + anchor.height
+        );
+        const horizBorder = Math.floor(
+            checkMainDirection(direction, 'left') || checkSecondaryDirection(direction, 'left') ? anchor.left : anchor.left + anchor.width
+        );
+
+        return !this.scrollParents.some(parent => {
+            if (parent === window) {
+                return false;
+            }
+
+            const { overflowX, overflowY } = window.getComputedStyle(parent);
+            const checkOverflowY = overflowY === 'scroll' || overflowY === 'hidden' || overflowY === 'auto';
+            const checkOverflowX = overflowX === 'scroll' || overflowX === 'hidden' || overflowX === 'auto';
+
+            if (checkOverflowY || checkOverflowX) {
+                const parentRect = parent.getBoundingClientRect();
+                const viewportRect = document.documentElement.getBoundingClientRect();
+                const left = Math.floor(parentRect.left - viewportRect.left);
+                const top = Math.floor(parentRect.top - viewportRect.top);
+                const { width, height } = parentRect;
+
+                if (checkOverflowY) {
+                    return vertBorder < top || top + height < vertBorder;
+                }
+
+                if (checkOverflowX) {
+                    return horizBorder < left || left + width < horizBorder;
+                }
+            }
+
+            return false;
+        });
+    }
 }
 
 function checkMainDirection(direction, mainDirection1, mainDirection2) {
@@ -321,6 +377,39 @@ function checkMainDirection(direction, mainDirection1, mainDirection2) {
 
 function checkSecondaryDirection(direction, secondaryDirection) {
     return ~direction.indexOf('-' + secondaryDirection);
+}
+
+function getScrollParents(el) {
+    if (!(el instanceof Element)) {
+        return [window];
+    }
+
+    const { position } = window.getComputedStyle(el) || {};
+    const parents = [];
+
+    if (position === 'fixed') {
+        return [el];
+    }
+
+    let parent = el;
+    while ((parent = parent.parentNode) && parent.nodeType === 1) {
+        const style = window.getComputedStyle(parent);
+
+        if (typeof style === 'undefined' || style === null) {
+            parents.push(parent);
+            return parents;
+        }
+
+        if (/(auto|scroll)/.test(style.overflow + style.overflowY + style.overflowX)) {
+            if (position !== 'absolute' || ['relative', 'absolute', 'fixed'].indexOf(style.position) >= 0) {
+                parents.push(parent)
+            }
+        }
+    }
+
+    parents.push(window);
+
+    return parents;
 }
 
 Popup.propsTypes = {
