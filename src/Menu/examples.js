@@ -87,8 +87,8 @@ function Example() {
                 </div>
 
                 <div className="example">
-                    <h3>menu with maxHeight</h3>
-                    <Menu size="l" mode="radio" value={['50']} maxHeight={120}>
+                    <h3>menu with maxHeight and minWidth</h3>
+                    <Menu size="l" mode="radio" value={['50']} maxHeight={120} minWidth={100}>
                         <Item value="10">10</Item>
                         <Item value="20">20</Item>
                         <Item value="30">30</Item>

@@ -17,6 +17,7 @@ class Menu extends Component {
 
         this.state = {
             ...this.state,
+            focused: this.props.focused,
             value: this._validateValue(this.props.value),
             hoveredIndex: null,
         };
@@ -43,15 +44,20 @@ class Menu extends Component {
     }
 
     componentDidMount() {
-        if (this.props.focused) {
+        if (this.state.focused) {
             this.componentWillGainFocus();
         }
         this._scrollToMenuItem();
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.value !== this.props.value) {
-            this.setState({ value: this._validateValue(nextProps.value) });
+    componentWillReceiveProps({ disabled, focused, value }) {
+        if (disabled === true) {
+            this.setState({ focused: false });
+        } else if (typeof focused !== 'undefined') {
+            this.setState({ focused });
+        }
+        if (this.props.value !== value) {
+            this.setState({ value: this._validateValue(value) });
         }
     }
 
@@ -60,10 +66,10 @@ class Menu extends Component {
             this._cachedChildren = null;
         }
 
-        if (prevProps.focused && !this.props.focused) {
-            this.componentWillLostFocus();
-        } else if (!prevProps.focused && this.props.focused) {
+        if (this.state.focused) {
             this.componentWillGainFocus();
+        } else {
+            this.componentWillLostFocus();
         }
 
         if (this._shouldScrollToItem) {
@@ -83,7 +89,7 @@ class Menu extends Component {
     }
 
     componentWillLostFocus() {
-        if (this.refs.control) {
+        if (this.refs.control && document.activeElement === this.refs.control) {
             this.refs.control.blur();
         }
     }
@@ -192,16 +198,16 @@ class Menu extends Component {
     }
 
     render() {
-        const { disabled, maxHeight } = this.props;
+        const { disabled, minHeight, maxHeight, minWidth, maxWidth } = this.props;
         const tabIndex = disabled ? -1 : this.props.tabIndex;
         const menu = this._renderMenu();
 
-        let style;
-        if (maxHeight) {
-            style = {
-                maxHeight,
-            }
-        }
+        const style = {
+            minWidth,
+            maxWidth,
+            minHeight,
+            maxHeight,
+        };
 
         return (
             <div ref="control" className={this.className()}
@@ -343,7 +349,7 @@ class Menu extends Component {
             return;
         }
 
-        this.setState({ focused: true });
+        this.setState({ focused: true }, () => this.dispatchFocusChange(true));
 
         if (!this._mousePressed) {
             let hoveredIndex = this._hoveredItemIndex;
@@ -355,17 +361,13 @@ class Menu extends Component {
                 this.setState({ hoveredIndex });
             }
         }
-
-        this.dispatchFocusChange(true);
     }
 
     onBlur() {
         this.setState({
             focused: false,
             hoveredIndex: null,
-        });
-
-        this.dispatchFocusChange(false);
+        }, () => this.dispatchFocusChange(false));
     }
 
     onKeyDown(e) {
@@ -450,7 +452,10 @@ Menu.propTypes = {
     mode: React.PropTypes.string,
     focused: React.PropTypes.bool,
     disabled: React.PropTypes.bool,
+    minHeight: React.PropTypes.number,
     maxHeight: React.PropTypes.number,
+    minWidth: React.PropTypes.number,
+    maxWidth: React.PropTypes.number,
     onChange: React.PropTypes.func,
     onFocusChange: React.PropTypes.func,
 };
