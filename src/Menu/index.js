@@ -57,10 +57,12 @@ class Menu extends Component {
         if (this.state.focused) {
             this.componentWillGainFocus();
         }
-        const selectedIdx = this._getFirstSelectedChildIndex();
-        if (selectedIdx) {
-            this.setState({ focusedIndex: selectedIdx }, () => this._scrollToMenuItem());
-        }
+        process.nextTick(() => {
+            const selectedIdx = this._getFirstSelectedChildIndex();
+            if (selectedIdx) {
+                this.setState({ focusedIndex: selectedIdx }, () => this._scrollToMenuItem());
+            }
+        });
     }
 
     componentWillReceiveProps({ disabled, focused, value }) {
@@ -217,11 +219,8 @@ class Menu extends Component {
             const menuRect = menuDOMNode.getBoundingClientRect();
             const focusedItemRect = focusedItemDOMNode.getBoundingClientRect();
 
-            console.log(focusedItemDOMNode)
-            console.log(focusedItemRect.top, menuRect.top, focusedItemRect.bottom, menuRect.bottom)
             if (focusedItemRect.top < menuRect.top) {
-                menuDOMNode.scrollTop = focusedItemDOMNode.offsetTop;
-                console.log(menuDOMNode.scrollTop)
+                menuDOMNode.scrollTop = focusedItemDOMNode.offsetTop - menuDOMNode.offsetTop;
             } else if (focusedItemRect.bottom > menuRect.bottom) {
                 menuDOMNode.scrollTop = focusedItemDOMNode.offsetTop + focusedItemDOMNode.clientHeight -
                     menuDOMNode.offsetTop - menuDOMNode.offsetHeight;
