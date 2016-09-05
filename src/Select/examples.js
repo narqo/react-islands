@@ -97,12 +97,12 @@ function Example() {
     return (
         <App theme="islands">
             <div className="examples">
-                <SelectExample mode="radio" maxHeight={400} />
-                <SelectExample mode="check" />
-                <SelectExample mode="radio-check" />
+                <SelectExample mode="radio" id="s1" maxHeight={400} />
+                <SelectExample mode="check" id="s2" />
+                <SelectExample mode="radio-check" if="s3" />
 
                 <b>with "width_available"</b>
-                <SelectWidthAvailableExample />
+                <SelectWidthAvailableExample id="s4" />
             </div>
         </App>
     );

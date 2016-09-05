@@ -14,17 +14,18 @@ class Select extends Component {
         super(props);
 
         this.state = {
-            menuHeight: null,
+            buttonFocused: false,
             menuFocused: false,
+            menuHeight: null,
             popupVisible: false,
         };
 
         this._wasPopupVisible = false;
-        this._shouldRestoreButtonFocus = false;
         this._preventTrapMenuFocus = false;
         this._cachedChildren = null;
 
         this.onButtonClick = this.onButtonClick.bind(this);
+        this.onButtonFocusChange = this.onButtonFocusChange.bind(this);
         this.onButtonKeyDown = this.onButtonKeyDown.bind(this);
         this.onMenuChange = this.onMenuChange.bind(this);
         this.onMenuFocusChange = this.onMenuFocusChange.bind(this);
@@ -48,7 +49,6 @@ class Select extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        this._shouldRestoreButtonFocus = false;
         this._preventTrapMenuFocus = false;
 
         // FIXME(narqo@): an ugly trick to prevent DOM-focus from jumping to the bottom of the page on first open
@@ -106,20 +106,25 @@ class Select extends Component {
 
     renderButton() {
         const { theme, size, disabled, mode, value } = this.props;
-        const focused = (!disabled && this._shouldRestoreButtonFocus) ? true : undefined;
+        const { buttonFocused } = this.state;
         const checked = (
             (mode === 'check' || mode === 'radio-check') &&
             Array.isArray(value) && value.length > 0
         );
 
         return (
-            <Button ref="button" theme={theme} size={size} className="select__button"
+            <Button
+                ref="button"
+                theme={theme}
+                size={size}
+                className="select__button"
                 type="button"
                 disabled={disabled}
                 checked={checked}
-                focused={focused}
+                focused={buttonFocused}
                 onClick={this.onButtonClick}
                 onKeyDown={this.onButtonKeyDown}
+                onFocusChange={this.onButtonFocusChange}
             >
                 {this.renderButtonText() || this.props.placeholder}
                 <Icon className="select__tick"/>
@@ -230,6 +235,10 @@ class Select extends Component {
         this.setState({ popupVisible: !this.state.popupVisible });
     }
 
+    onButtonFocusChange(buttonFocused) {
+        this.setState({ buttonFocused });
+    }
+
     onButtonKeyDown(e) {
         if (!this.state.popupVisible &&
             ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && !e.shiftKey)) {
@@ -239,9 +248,11 @@ class Select extends Component {
 
     onMenuItemClick() {
         if (this.props.mode === 'radio' || this.props.mode === 'radio-check') {
-            this._shouldRestoreButtonFocus = true;
             // NOTE(narqo@): select with mode radio* must be closed on click within <Menu>
-            this.setState({ popupVisible: false });
+            this.setState(
+                { popupVisible: false },
+                () => this.setState({ buttonFocused: true })
+            );
         }
     }
 
@@ -250,8 +261,10 @@ class Select extends Component {
         // @see https://www.w3.org/TR/wai-aria-practices-1.1/#menu
         if (this.state.popupVisible && e.key === 'Tab') {
             this._preventTrapMenuFocus = true;
-            this._shouldRestoreButtonFocus = true;
-            this.setState({ popupVisible: false });
+            this.setState(
+                { popupVisible: false },
+                () => this.setState({ buttonFocused: true })
+            );
         }
     }
 
@@ -285,8 +298,10 @@ class Select extends Component {
     }
 
     onPopupRequestHide(_, reason) {
-        this._shouldRestoreButtonFocus = reason === 'escapeKeyPress';
-        this.setState({ popupVisible: false });
+        this.setState(
+            { popupVisible: false },
+            () => reason === 'escapeKeyPress' && this.setState({ buttonFocused: true })
+        );
     }
 }
 
