@@ -20,7 +20,6 @@ class Select extends Component {
             popupVisible: false,
         };
 
-        this._wasPopupVisible = false;
         this._cachedChildren = null;
 
         this.onButtonClick = this.onButtonClick.bind(this);
@@ -40,17 +39,8 @@ class Select extends Component {
         }
     }
 
-    componentWillUpdate(_, nextState) {
-        if (nextState.popupVisible !== this.state.popupVisible && !nextState.popupVisible) {
-            this._wasPopupVisible = false;
-        }
-    }
-
     componentDidUpdate(prevProps) {
-        if (!this._wasPopupVisible && this.state.popupVisible) {
-            this._wasPopupVisible = true;
-            this.updateMenuWidth();
-        } else if (this.props.value !== prevProps.value) {
+        if (this.state.popupVisible && this.props.value !== prevProps.value) {
             this.updateMenuWidth();
         }
     }
