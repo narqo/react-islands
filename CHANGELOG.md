@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## 0.14.0 - 2016-09-06
+
+### Added
+
+- Menu: Implement type-ahead search ([#39](https://github.com/narqo/react-islands/issues/39)).
+- Popup: Reposition when parents is scrolled ([#43](https://github.com/narqo/react-islands/issues/43)).
+
+### Fixed
+
+- Control: Fix `focused` props handling ([#107](https://github.com/narqo/react-islands/issues/107)).
+- Menu, Select: Fix `focused` state management; Menu: Fix scroll to selected item ([#111](https://github.com/narqo/react-islands/issues/111)).
+
 ## 0.13.3 - 2016-08-21
 
 ### Fixed
