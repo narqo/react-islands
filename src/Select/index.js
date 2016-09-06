@@ -39,8 +39,9 @@ class Select extends Component {
         }
     }
 
-    componentDidUpdate(prevProps) {
-        if (this.state.popupVisible && this.props.value !== prevProps.value) {
+    componentDidUpdate(prevProps, prevState) {
+        if (this.state.popupVisible &&
+            (this.state.popupVisible !== prevState.popupVisible || this.props.value !== prevProps.value)) {
             this.updateMenuWidth();
         }
     }
