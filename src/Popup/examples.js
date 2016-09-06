@@ -110,12 +110,83 @@ class PopupExampleNested extends React.Component {
     }
 }
 
+class PopupExampleScroll extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            popup1Visible: false,
+            popup2Visible: false,
+        };
+    }
+
+    render() {
+        return (
+            <div className="example">
+                <Button
+                    ref="popup1Anchor"
+                    theme="islands"
+                    size="s"
+                    onClick={() => this.onPopup1AnchorClick()}
+                >
+                    Toggle popup 3
+                </Button>
+                <Popup
+                    theme="islands"
+                    anchor={this.refs.popup1Anchor}
+                    visible={this.state.popup1Visible}
+                    onRequestHide={() => this.onPopup1RequestHide()}
+                >
+                    <div style={{ maxHeight: 200, width: 300, overflow: 'auto' }}>
+                        <div style={{ height: 400 }}>
+                            <p>Blah-blah-blah</p>
+                            <Button
+                                ref="popup2Anchor"
+                                theme="islands"
+                                size="s"
+                                onClick={() => this.onPopup2AnchorClick()}
+                            >
+                                Toggle popup
+                            </Button>
+                            <Popup
+                                theme="islands"
+                                anchor={this.refs.popup2Anchor}
+                                visible={this.state.popup2Visible}
+                                onRequestHide={() => this.onPopup2RequestHide()}
+                            >
+                                <p>Blah-blah-blah</p>
+                            </Popup>
+                        </div>
+                    </div>
+                </Popup>
+            </div>
+        );
+    }
+
+    onPopup1AnchorClick() {
+        this.setState({ popup1Visible: !this.state.popup1Visible });
+    }
+
+    onPopup1RequestHide() {
+        this.setState({ popup1Visible: false });
+    }
+
+    onPopup2AnchorClick() {
+        this.setState({ popup2Visible: !this.state.popup2Visible });
+    }
+
+    onPopup2RequestHide() {
+        this.setState({ popup2Visible: false });
+    }
+}
+
 function Example() {
     return (
         <div className="examples">
             <PopupExampleSimple />
 
             <PopupExampleNested />
+
+            <PopupExampleScroll />
         </div>
     );
 }
