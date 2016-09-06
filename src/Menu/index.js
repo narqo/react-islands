@@ -251,8 +251,6 @@ class Menu extends Component {
                 onBlur: this.onBlur,
                 onMouseDown: this.onMouseDown,
                 onMouseUp: this.onMouseUp,
-                onKeyDown: this.onKeyDown,
-                onKeyPress: this.onKeyPress,
             };
 
             if (focused) {
