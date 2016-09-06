@@ -5,6 +5,9 @@ import Item from '../Item';
 import Group from '../Group';
 import MenuItem from './MenuItem';
 
+const TIMEOUT_KEYBOARD_SEARCH = 1500;
+const KEY_CODE_SPACE = 32;
+
 function appendItemToCache(item, cache) {
     if (Component.is(item, Item)) {
         cache.push(item);
@@ -18,18 +21,26 @@ class Menu extends Component {
         this.state = {
             ...this.state,
             value: this._validateValue(this.props.value),
+            focused: this.props.focused,
+            focusedIndex: null,
             hoveredIndex: null,
         };
 
         this._cachedChildren = null;
-        this._hoveredItemIndex = null;
         this._shouldScrollToItem = false;
+        this._lastTyping = {
+            char: '',
+            text: '',
+            index: 0,
+            time: 0,
+        };
 
         this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onFocus = this.onFocus.bind(this);
         this.onBlur = this.onBlur.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
+        this.onKeyPress = this.onKeyPress.bind(this);
         this.onItemClick = this.onItemClick.bind(this);
         this.onItemHover = this.onItemHover.bind(this);
     }
@@ -43,15 +54,25 @@ class Menu extends Component {
     }
 
     componentDidMount() {
-        if (this.props.focused) {
+        if (this.state.focused) {
             this.componentWillGainFocus();
         }
-        this._scrollToMenuItem();
+        process.nextTick(() => {
+            const selectedIdx = this._getFirstSelectedChildIndex();
+            if (selectedIdx) {
+                this.setState({ focusedIndex: selectedIdx }, () => this._scrollToMenuItem());
+            }
+        });
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.value !== this.props.value) {
-            this.setState({ value: this._validateValue(nextProps.value) });
+    componentWillReceiveProps({ disabled, focused, value }) {
+        if (disabled === true) {
+            this.setState({ focused: false });
+        } else if (typeof focused !== 'undefined') {
+            this.setState({ focused });
+        }
+        if (this.props.value !== value) {
+            this.setState({ value: this._validateValue(value) });
         }
     }
 
@@ -60,10 +81,10 @@ class Menu extends Component {
             this._cachedChildren = null;
         }
 
-        if (prevProps.focused && !this.props.focused) {
-            this.componentWillLostFocus();
-        } else if (!prevProps.focused && this.props.focused) {
+        if (this.state.focused) {
             this.componentWillGainFocus();
+        } else {
+            this.componentWillLostFocus();
         }
 
         if (this._shouldScrollToItem) {
@@ -83,7 +104,7 @@ class Menu extends Component {
     }
 
     componentWillLostFocus() {
-        if (this.refs.control) {
+        if (this.refs.control && document.activeElement === this.refs.control) {
             this.refs.control.blur();
         }
     }
@@ -117,6 +138,20 @@ class Menu extends Component {
         }
 
         return null;
+    }
+
+    _getFirstSelectedChildIndex() {
+        const { value } = this.state;
+        const children = this._getChildren();
+
+        for (let i = 0; i < children.length; i++) {
+            const item = children[i];
+            if (!item.props.disabled && value.indexOf(item.props.value) !== -1) {
+                return i;
+            }
+        }
+
+        return this._getFirstEnabledChildIndex();
     }
 
     _getFirstEnabledChildIndex() {
@@ -182,9 +217,11 @@ class Menu extends Component {
             const menuDOMNode = ReactDOM.findDOMNode(this.refs.control);
             const focusedItemDOMNode = ReactDOM.findDOMNode(this.refs.focusedMenuItem);
             const menuRect = menuDOMNode.getBoundingClientRect();
-            const focusedRect = focusedItemDOMNode.getBoundingClientRect();
+            const focusedItemRect = focusedItemDOMNode.getBoundingClientRect();
 
-            if (focusedRect.bottom > menuRect.bottom || focusedRect.top < menuRect.top) {
+            if (focusedItemRect.top < menuRect.top) {
+                menuDOMNode.scrollTop = focusedItemDOMNode.offsetTop - menuDOMNode.offsetTop;
+            } else if (focusedItemRect.bottom > menuRect.bottom) {
                 menuDOMNode.scrollTop = focusedItemDOMNode.offsetTop + focusedItemDOMNode.clientHeight -
                     menuDOMNode.offsetTop - menuDOMNode.offsetHeight;
             }
@@ -192,30 +229,39 @@ class Menu extends Component {
     }
 
     render() {
-        const { disabled, maxHeight } = this.props;
+        const { disabled, focused, minHeight, maxHeight, minWidth, maxWidth } = this.props;
         const tabIndex = disabled ? -1 : this.props.tabIndex;
-        const menu = this._renderMenu();
 
-        let style;
-        if (maxHeight) {
-            style = {
+        let props = {
+            ref: 'control',
+            className: this.className(),
+            style: {
+                minWidth,
+                maxWidth,
+                minHeight,
                 maxHeight,
+            },
+            tabIndex,
+        };
+
+        if (!disabled) {
+            props = {
+                ...props,
+                onFocus: this.onFocus,
+                onBlur: this.onBlur,
+                onMouseDown: this.onMouseDown,
+                onMouseUp: this.onMouseUp,
+                onKeyDown: this.onKeyDown,
+                onKeyPress: this.onKeyPress,
+            };
+
+            if (focused) {
+                props.onKeyDown = this.onKeyDown;
+                props.onKeyPress = this.onKeyPress;
             }
         }
 
-        return (
-            <div ref="control" className={this.className()}
-                style={style}
-                tabIndex={tabIndex}
-                onKeyDown={this.onKeyDown}
-                onMouseDown={this.onMouseDown}
-                onMouseUp={this.onMouseUp}
-                onFocus={this.onFocus}
-                onBlur={this.onBlur}
-            >
-                {menu}
-            </div>
-        );
+        return <div {...props}>{this._renderMenu()}</div>;
     }
 
     _renderMenu() {
@@ -240,9 +286,10 @@ class Menu extends Component {
 
     _renderMenuItem(props, index) {
         const { theme, size, disabled, mode } = this.props;
-        const { value, hoveredIndex } = this.state;
+        const { value, hoveredIndex, focusedIndex } = this.state;
         const checkable = Boolean(mode);
         const hovered = index === hoveredIndex;
+        const focused = index === focusedIndex;
         const key = `menuitem${props.id || index}`;
 
         return React.createElement(
@@ -253,7 +300,7 @@ class Menu extends Component {
                 disabled,
                 hovered,
                 checked: checkable && (value.indexOf(props.value) !== -1),
-                ref: hovered ? 'focusedMenuItem' : null,
+                ref: (hovered || focused) ? 'focusedMenuItem' : null,
                 key,
                 index,
                 ...props,
@@ -317,15 +364,93 @@ class Menu extends Component {
         this.props.onItemClick(e, itemProps);
     }
 
+    searchIndexByKeyboardEvent(e) {
+        const timeNow = Date.now();
+        const lastTyping = this._lastTyping;
+
+        if (e.charCode <= KEY_CODE_SPACE || e.ctrlKey || e.altKey || e.metaKey) {
+            lastTyping.time = timeNow;
+            return null;
+        }
+
+        const char = String.fromCharCode(e.charCode).toLowerCase();
+        const isSameChar = char === lastTyping.char && lastTyping.text.length === 1;
+        const children = this._getChildren();
+
+        if (timeNow - lastTyping.time > TIMEOUT_KEYBOARD_SEARCH || isSameChar) {
+            lastTyping.text = char;
+        } else {
+            lastTyping.text += char;
+        }
+
+        lastTyping.char = char;
+        lastTyping.time = timeNow;
+
+        let nextIndex = lastTyping.index;
+
+        // If key is pressed again, then continue to search to next menu item
+        if (isSameChar && Component.textValue(children[nextIndex]).search(lastTyping.char) === 0) {
+            nextIndex = nextIndex >= children.length - 1 ? 0 : nextIndex + 1;
+        }
+
+        // 2 passes: from index to children.length and from 0 to index.
+        let i = nextIndex;
+        let len = children.length;
+        while (i < len) {
+            if (this.isItemMatchText(children[i], lastTyping.text)) {
+                lastTyping.index = i;
+                return i;
+            }
+
+            i++;
+
+            if (i === children.length) {
+                i = 0;
+                len = nextIndex;
+            }
+        }
+
+        return null;
+    }
+
+    hoverNextItem(dir) {
+        const children = this._getChildren();
+        const len = children.length;
+        if (!len) {
+            return;
+        }
+
+        let nextIndex = this.state.hoveredIndex;
+        do {
+            nextIndex = (nextIndex + len + dir) % len;
+            if (nextIndex === this.state.hoveredIndex) {
+                return;
+            }
+        } while (children[nextIndex].props.disabled);
+
+        if (nextIndex !== null) {
+            this.hoverItemByIndex(nextIndex);
+        }
+    }
+
+    hoverItemByIndex(index) {
+        this._shouldScrollToItem = true;
+        this.setState({ hoveredIndex: index });
+    }
+
+    isItemMatchText(item, text) {
+        return !item.props.disabled &&
+            Component.textValue(item)
+                .toLowerCase()
+                .search(text) === 0;
+    }
+
     onItemHover(hovered, itemProps) {
-        this.setState({
-            hoveredIndex: hovered ? itemProps.index : null,
-        });
+        this.setState({ hoveredIndex: hovered ? itemProps.index : null });
     }
 
     onItemClick(e, itemProps) {
         const { index } = itemProps;
-        this._hoveredItemIndex = index;
         this.dispatchItemClick(e, itemProps);
         this.onItemCheck(index);
     }
@@ -339,63 +464,29 @@ class Menu extends Component {
     }
 
     onFocus() {
-        if (this.props.disabled) {
-            return;
+        if (!(this._mousePressed && this.state.hoveredIndex)) {
+            this.setState({ hoveredIndex: this._getFirstSelectedChildIndex() });
         }
-
-        this.setState({ focused: true });
-
-        if (!this._mousePressed) {
-            let hoveredIndex = this._hoveredItemIndex;
-            if (hoveredIndex === null) {
-                hoveredIndex = this._getFirstEnabledChildIndex()
-            }
-            if (hoveredIndex !== this.state.hoveredIndex) {
-                this._hoveredItemIndex = hoveredIndex;
-                this.setState({ hoveredIndex });
-            }
-        }
-
-        this.dispatchFocusChange(true);
+        this._shouldScrollToItem = true;
+        this.setState({ focused: true }, () => this.dispatchFocusChange(true));
     }
 
     onBlur() {
         this.setState({
             focused: false,
             hoveredIndex: null,
-        });
-
-        this.dispatchFocusChange(false);
+        }, () => this.dispatchFocusChange(false));
     }
 
     onKeyDown(e) {
-        if (this.props.disabled || !this.state.focused) {
+        if (this.props.disabled) {
             return;
         }
 
         if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
             e.preventDefault();
 
-            const children = this._getChildren();
-            const len = children.length;
-            if (!len) {
-                return;
-            }
-
-            const dir = (e.key === 'ArrowDown' ? 1 : -1);
-            let nextIndex = this.state.hoveredIndex;
-            do {
-                nextIndex = (nextIndex + len + dir) % len;
-                if (nextIndex === this.state.hoveredIndex) {
-                    return;
-                }
-            } while (children[nextIndex].props.disabled);
-
-            if (nextIndex !== null) {
-                this._hoveredItemIndex = nextIndex;
-                this._shouldScrollToItem = true;
-                this.setState({ hoveredIndex: nextIndex });
-            }
+            this.hoverNextItem(e.key === 'ArrowDown' ? 1 : -1);
         } else if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
 
@@ -406,6 +497,18 @@ class Menu extends Component {
 
         if (this.props.onKeyDown) {
             this.props.onKeyDown(e, this.props);
+        }
+    }
+
+    onKeyPress(e) {
+        if (this.props.disabled) {
+            return;
+        }
+
+        const hoveredIndex = this.searchIndexByKeyboardEvent(e);
+
+        if (hoveredIndex !== null) {
+            this.hoverItemByIndex(hoveredIndex);
         }
     }
 
@@ -450,7 +553,10 @@ Menu.propTypes = {
     mode: React.PropTypes.string,
     focused: React.PropTypes.bool,
     disabled: React.PropTypes.bool,
+    minHeight: React.PropTypes.number,
     maxHeight: React.PropTypes.number,
+    minWidth: React.PropTypes.number,
+    maxWidth: React.PropTypes.number,
     onChange: React.PropTypes.func,
     onFocusChange: React.PropTypes.func,
 };

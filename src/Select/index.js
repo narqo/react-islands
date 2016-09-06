@@ -14,17 +14,16 @@ class Select extends Component {
         super(props);
 
         this.state = {
-            menuHeight: null,
+            buttonFocused: false,
             menuFocused: false,
+            menuHeight: null,
             popupVisible: false,
         };
 
-        this._wasPopupVisible = false;
-        this._shouldRestoreButtonFocus = false;
-        this._preventTrapMenuFocus = false;
         this._cachedChildren = null;
 
         this.onButtonClick = this.onButtonClick.bind(this);
+        this.onButtonFocusChange = this.onButtonFocusChange.bind(this);
         this.onButtonKeyDown = this.onButtonKeyDown.bind(this);
         this.onMenuChange = this.onMenuChange.bind(this);
         this.onMenuFocusChange = this.onMenuFocusChange.bind(this);
@@ -40,27 +39,8 @@ class Select extends Component {
         }
     }
 
-    componentWillUpdate(_, nextState) {
-        if (nextState.popupVisible !== this.state.popupVisible && !nextState.popupVisible) {
-            this._wasPopupVisible = false;
-            this.setState({ menuFocused: false });
-        }
-    }
-
     componentDidUpdate(prevProps) {
-        this._shouldRestoreButtonFocus = false;
-        this._preventTrapMenuFocus = false;
-
-        // FIXME(narqo@): an ugly trick to prevent DOM-focus from jumping to the bottom of the page on first open
-        // @see https://github.com/narqo/react-islands/issues/41
-        if (!this._wasPopupVisible && this.state.popupVisible) {
-            this._wasPopupVisible = true;
-            this.updateMenuWidth();
-            process.nextTick(() => {
-                this.setState({ menuFocused: true });
-                this.trapMenuFocus()
-            });
-        } else if (this.props.value !== prevProps.value) {
+        if (this.state.popupVisible && this.props.value !== prevProps.value) {
             this.updateMenuWidth();
         }
     }
@@ -75,7 +55,9 @@ class Select extends Component {
             <div className={this.className()}>
                 {this.renderInputs()}
                 {this.renderButton()}
-                <Popup theme={this.props.theme} size={this.props.size}
+                <Popup
+                    theme={this.props.theme}
+                    size={this.props.size}
                     anchor={this.refs.button}
                     directions={['bottom-left', 'bottom-right', 'top-left', 'top-right']}
                     visible={this.state.popupVisible}
@@ -106,20 +88,25 @@ class Select extends Component {
 
     renderButton() {
         const { theme, size, disabled, mode, value } = this.props;
-        const focused = (!disabled && this._shouldRestoreButtonFocus) ? true : undefined;
+        const { buttonFocused } = this.state;
         const checked = (
             (mode === 'check' || mode === 'radio-check') &&
             Array.isArray(value) && value.length > 0
         );
 
         return (
-            <Button ref="button" theme={theme} size={size} className="select__button"
+            <Button
+                ref="button"
+                theme={theme}
+                size={size}
+                className="select__button"
                 type="button"
                 disabled={disabled}
                 checked={checked}
-                focused={focused}
+                focused={buttonFocused}
                 onClick={this.onButtonClick}
                 onKeyDown={this.onButtonKeyDown}
+                onFocusChange={this.onButtonFocusChange}
             >
                 {this.renderButtonText() || this.props.placeholder}
                 <Icon className="select__tick"/>
@@ -134,17 +121,21 @@ class Select extends Component {
         const tabIndex = -1;
 
         return (
-            <Menu ref="menu" theme={theme} size={size} className="select__menu"
+            <Menu
+                ref="menu"
+                theme={theme}
+                size={size}
+                className="select__menu"
                 mode={mode}
                 value={value}
-                tabIndex={tabIndex}
-                disabled={disabled}
                 focused={focused}
+                disabled={disabled}
+                tabIndex={tabIndex}
                 maxHeight={menuHeight}
                 onItemClick={this.onMenuItemClick}
+                onFocusChange={this.onMenuFocusChange}
                 onKeyDown={this.onMenuKeyDown}
                 onChange={this.onMenuChange}
-                onFocusChange={this.onMenuFocusChange}
             >
                 {this.props.children}
             </Menu>
@@ -215,33 +206,40 @@ class Select extends Component {
         return this.refs.menu;
     }
 
-    trapMenuFocus() {
-        if (!this._preventTrapMenuFocus) {
-            this.getMenu().componentWillGainFocus();
-        }
-    }
-
     updateMenuWidth() {
         const buttonWidth = ReactDOM.findDOMNode(this.getButton()).offsetWidth;
         ReactDOM.findDOMNode(this.getMenu()).style['min-width'] = `${buttonWidth}px`;
     }
 
     onButtonClick() {
-        this.setState({ popupVisible: !this.state.popupVisible });
+        const popupVisible = !this.state.popupVisible;
+        this.setState(
+            { popupVisible },
+            () => popupVisible && this.setState({ menuFocused: true })
+        );
+    }
+
+    onButtonFocusChange(buttonFocused) {
+        this.setState({ buttonFocused });
     }
 
     onButtonKeyDown(e) {
         if (!this.state.popupVisible &&
             ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && !e.shiftKey)) {
-            this.setState({ popupVisible: true });
+            this.setState(
+                { popupVisible: true },
+                () => this.setState({ menuFocused: true })
+            );
         }
     }
 
     onMenuItemClick() {
         if (this.props.mode === 'radio' || this.props.mode === 'radio-check') {
-            this._shouldRestoreButtonFocus = true;
             // NOTE(narqo@): select with mode radio* must be closed on click within <Menu>
-            this.setState({ popupVisible: false });
+            this.setState(
+                { popupVisible: false },
+                () => this.setState({ buttonFocused: true })
+            );
         }
     }
 
@@ -249,9 +247,10 @@ class Select extends Component {
         // NOTE(narqo@): allow to move focus to another focusable using <Tab>
         // @see https://www.w3.org/TR/wai-aria-practices-1.1/#menu
         if (this.state.popupVisible && e.key === 'Tab') {
-            this._preventTrapMenuFocus = true;
-            this._shouldRestoreButtonFocus = true;
-            this.setState({ popupVisible: false });
+            this.setState(
+                { popupVisible: false },
+                () => this.setState({ buttonFocused: true })
+            );
         }
     }
 
@@ -259,11 +258,8 @@ class Select extends Component {
         this.props.onChange(value, this.props);
     }
 
-    onMenuFocusChange(focused) {
-        if (!focused && this.state.popupVisible) {
-            // NOTE(narqo@): restore DOM focus to the Menu if still opened
-            this.trapMenuFocus();
-        }
+    onMenuFocusChange(menuFocused) {
+        this.setState({ menuFocused });
     }
 
     onPopupLayout({ layout }, popupProps) {
@@ -285,8 +281,10 @@ class Select extends Component {
     }
 
     onPopupRequestHide(_, reason) {
-        this._shouldRestoreButtonFocus = reason === 'escapeKeyPress';
-        this.setState({ popupVisible: false });
+        this.setState(
+            { popupVisible: false },
+            () => reason === 'escapeKeyPress' && this.setState({ buttonFocused: true })
+        );
     }
 }
 
