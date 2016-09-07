@@ -62,7 +62,7 @@ class Control extends Component {
     }
 
     componentWillGainFocus() {
-        if (this.refs.control) {
+        if (this.refs.control && document.activeElement !== this.refs.control) {
             this.refs.control.focus();
         }
     }

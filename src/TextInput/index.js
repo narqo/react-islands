@@ -28,7 +28,10 @@ class TextInput extends Control {
         return (
             <span className={this.className()}>
                 <span className="input__box">
-                    <input {...this.getControlHandlers()} ref="control" className="input__control"
+                    <input
+                        {...this.getControlHandlers()}
+                        ref="control"
+                        className="input__control"
                         name={this.props.name}
                         type={this.props.type}
                         disabled={this.props.disabled}
@@ -36,6 +39,9 @@ class TextInput extends Control {
                         autoComplete={this.props.autocomplete}
                         value={value}
                         onChange={this.onInputChange}
+                        onKeyDown={this.props.onKeyDown}
+                        onKeyUp={this.props.onKeyUp}
+                        onKeyPress={this.props.onKeyPress}
                     />
                     {hasClear}
                 </span>
@@ -82,7 +88,7 @@ class TextInput extends Control {
     }
 
     onClearClick(e) {
-        this.setState({ focused: true });
+        this.onFocus();
 
         if (this.props.onClearClick) {
             this.props.onClearClick(e);

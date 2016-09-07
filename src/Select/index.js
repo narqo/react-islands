@@ -22,6 +22,7 @@ class Select extends Component {
 
         this._cachedChildren = null;
 
+        this.getControl = this.getControl.bind(this);
         this.onButtonClick = this.onButtonClick.bind(this);
         this.onButtonFocusChange = this.onButtonFocusChange.bind(this);
         this.onButtonKeyDown = this.onButtonKeyDown.bind(this);
@@ -59,7 +60,7 @@ class Select extends Component {
                 <Popup
                     theme={this.props.theme}
                     size={this.props.size}
-                    anchor={this.refs.button}
+                    anchor={this.getControl}
                     directions={['bottom-left', 'bottom-right', 'top-left', 'top-right']}
                     visible={this.state.popupVisible}
                     onLayout={this.onPopupLayout}
@@ -97,7 +98,7 @@ class Select extends Component {
 
         return (
             <Button
-                ref="button"
+                ref="control"
                 theme={theme}
                 size={size}
                 className="select__button"
@@ -199,8 +200,8 @@ class Select extends Component {
         return this._cachedChildren;
     }
 
-    getButton() {
-        return this.refs.button;
+    getControl() {
+        return this.refs.control;
     }
 
     getMenu() {
@@ -208,7 +209,7 @@ class Select extends Component {
     }
 
     updateMenuWidth() {
-        const buttonWidth = ReactDOM.findDOMNode(this.getButton()).offsetWidth;
+        const buttonWidth = ReactDOM.findDOMNode(this.getControl()).offsetWidth;
         ReactDOM.findDOMNode(this.getMenu()).style['min-width'] = `${buttonWidth}px`;
     }
 
