@@ -57,7 +57,6 @@ class ComboBox extends Select {
         const { popupVisible, textInputFocused, textInputValue } = this.state;
         // NOTE: костыль для того, чтобы фокус оставался в инпуте по клику внутри попапа и по крестику
         const focused = textInputFocused || popupVisible;
-        const placeholder = this.props.value[0];
 
         return (
             <TextInput
@@ -68,7 +67,6 @@ class ComboBox extends Select {
                 hasClear={true}
                 focused={focused}
                 value={textInputValue}
-                placeholder={placeholder}
                 onKeyDown={this.onTextInputKeyDown}
                 onChange={this.onTextInputChange}
                 onFocusChange={this.onTextInputFocusChange}
@@ -102,8 +100,9 @@ class ComboBox extends Select {
         if (this.props.onTextInputChange) {
             this.props.onTextInputChange(value, this.props);
         }
-        this.hoverItemByText(value);
-        this.setState({ textInputValue: value });
+        this.setState({ textInputValue: value }, () => {
+            this.hoverItemByText(value);
+        });
     }
 
     onTextInputFocusChange(textInputFocused) {
