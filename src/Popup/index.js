@@ -1,6 +1,6 @@
+import throttle from 'lodash/throttle';
 import React from 'react';
 import ReactDOM from 'react-dom';
-
 import Component from '../Component';
 import Overlay from '../Overlay';
 
@@ -29,15 +29,15 @@ class Popup extends Component {
         this.shouldRenderToOverlay = false;
         this.scrollParents = null;
 
+        this.calcIsAnchorVisible = throttle(this.calcIsAnchorVisible.bind(this), 50);
         this.onLayerOrderChange = this.onLayerOrderChange.bind(this);
         this.onLayerRequestHide = this.onLayerRequestHide.bind(this);
-        this.onViewportResize = this.onViewportResize.bind(this);
-        // FIXME(narqo@): throttle `this.onAnchorParentsScroll`
+        this.onViewportResize = throttle(this.onViewportResize.bind(this), 100);
         this.onAnchorParentsScroll = this.onAnchorParentsScroll.bind(this);
     }
 
     componentWillUpdate(nextProps) {
-        if (!this.shouldRenderToOverlay && nextProps.visible) {
+        if (nextProps.visible) {
             this.shouldRenderToOverlay = true;
         }
     }
@@ -106,14 +106,17 @@ class Popup extends Component {
     }
 
     handleVisibleChange(visible) {
-        this.scrollParents = getScrollParents(this.getAnchor());
+        if (!this.shouldRenderToOverlay) {
+            return;
+        }
 
         if (visible) {
+            this.scrollParents = getScrollParents(this.getAnchor());
             this.scrollParents.forEach(parent => {
                 parent.addEventListener('scroll', this.onAnchorParentsScroll);
             });
             window.addEventListener('resize', this.onViewportResize);
-        } else {
+        } else if (this.scrollParents) {
             this.scrollParents.forEach(parent => {
                 parent.removeEventListener('scroll', this.onAnchorParentsScroll);
             });
@@ -150,15 +153,19 @@ class Popup extends Component {
     }
 
     reposition() {
-        if (this.props.visible) {
-            // TODO(@narqo): don't call DOMNode measurements in case nothing has changed
-            const layout = this.calcBestLayoutParams();
+        if (!this.props.visible) {
+            return;
+        }
 
-            if (this.props.onLayout) {
-                this.props.onLayout({ layout }, this.props);
-            }
+        // TODO(@narqo): don't call DOMNode measurements in case nothing has changed
+        const layout = this.calcBestLayoutParams();
 
-            const { direction, left, top } = layout;
+        if (this.props.onLayout) {
+            this.props.onLayout({ layout }, this.props);
+        }
+
+        const { direction, left, top } = layout;
+        if (this.state.direction !== direction || this.state.left !== left || this.state.top !== top) {
             this.setState({ direction, left, top });
         }
     }

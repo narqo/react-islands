@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "babel-runtime": "^6.6.1",
+    "lodash": "^4.15.0",
     "warning": "^3.0.0"
   },
   "devDependencies": {
