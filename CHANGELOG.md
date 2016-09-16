@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.14.1 - 2016-09-16
+
+### Fixed
+
+- Popup: fix `findDOMNode()` call inside `componentWillUnmount` hook ([#114](https://github.com/narqo/react-islands/issues/114)).
+
 ## 0.14.0 - 2016-09-06
 
 ### Added
