@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.15.0 - 2016-09-20
+
 ### Added
 
 - TextArea, TextInput: add onClick to props ([#118](https://github.com/narqo/react-islands/pull/118)).
