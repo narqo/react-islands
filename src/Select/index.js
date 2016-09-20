@@ -98,7 +98,7 @@ class Select extends Component {
 
         return (
             <Button
-                ref="control"
+                ref="button"
                 theme={theme}
                 size={size}
                 className="select__button"
@@ -201,7 +201,7 @@ class Select extends Component {
     }
 
     getControl() {
-        return this.refs.control;
+        return this.refs.button;
     }
 
     getMenu() {
