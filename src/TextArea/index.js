@@ -65,6 +65,7 @@ TextArea.contextTypes = {
 TextArea.propTypes = {
     theme: React.PropTypes.string,
     size: React.PropTypes.oneOf(['s', 'm', 'l', 'xl']),
+    className: React.PropTypes.string,
     name: React.PropTypes.string,
     value: React.PropTypes.string,
     placeholder: React.PropTypes.string,
