@@ -5,6 +5,7 @@
 ### Added
 
 - TextArea, TextInput: add onClick to props ([#118](https://github.com/narqo/react-islands/pull/118)).
+- TextArea, TextInput: add missing propTypes ([#119](https://github.com/narqo/react-islands/pull/119)).
 
 ### Fixed
 
