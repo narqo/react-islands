@@ -108,6 +108,7 @@ TextInput.contextTypes = {
 TextInput.propTypes = {
     theme: React.PropTypes.string,
     size: React.PropTypes.oneOf(['s', 'm', 'l', 'xl']),
+    className: React.PropTypes.string,
     type: React.PropTypes.string,
     name: React.PropTypes.string,
     value: React.PropTypes.string,
@@ -117,6 +118,10 @@ TextInput.propTypes = {
     hasClear: React.PropTypes.bool,
     onChange: React.PropTypes.func,
     onClick: React.PropTypes.func,
+    onClearClick: React.PropTypes.func,
+    onKeyDown: React.PropTypes.func,
+    onKeyUp: React.PropTypes.func,
+    onKeyPress: React.PropTypes.func,
 };
 
 TextInput.defaultProps = {
