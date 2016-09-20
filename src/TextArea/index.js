@@ -11,6 +11,7 @@ class TextArea extends Control {
     render() {
         return (
             <textarea {...this.getControlHandlers()} ref="control" className={this.className()}
+                id={this.props.id}
                 name={this.props.name}
                 disabled={this.props.disabled}
                 placeholder={this.props.placeholder}
@@ -64,6 +65,7 @@ TextArea.contextTypes = {
 
 TextArea.propTypes = {
     theme: React.PropTypes.string,
+    id: React.PropTypes.string,
     size: React.PropTypes.oneOf(['s', 'm', 'l', 'xl']),
     className: React.PropTypes.string,
     name: React.PropTypes.string,

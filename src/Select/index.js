@@ -89,7 +89,7 @@ class Select extends Component {
     }
 
     renderButton() {
-        const { theme, size, disabled, mode, value } = this.props;
+        const { theme, size, disabled, mode, value, id } = this.props;
         const { buttonFocused } = this.state;
         const checked = (
             (mode === 'check' || mode === 'radio-check') &&
@@ -101,6 +101,7 @@ class Select extends Component {
                 ref="button"
                 theme={theme}
                 size={size}
+                id={id}
                 className="select__button"
                 type="button"
                 disabled={disabled}
@@ -295,6 +296,7 @@ Select.contextTypes = {
 
 Select.propTypes = {
     theme: React.PropTypes.string,
+    id: React.PropTypes.string,
     size: React.PropTypes.string,
     mode: React.PropTypes.string,
     name: React.PropTypes.string,
