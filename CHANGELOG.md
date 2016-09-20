@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Added
+
+- TextArea, TextInput: add onClick to props ([#118](https://github.com/narqo/react-islands/pull/118)).
+
+### Fixed
+
+- Select: fix "ref" name of Button ([#117](https://github.com/narqo/react-islands/pull/117)).
+
 ## 0.14.1 - 2016-09-16
 
 ### Fixed
