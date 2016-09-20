@@ -16,6 +16,7 @@ class TextArea extends Control {
                 placeholder={this.props.placeholder}
                 value={this.props.value}
                 onChange={this.onInputChange}
+                onClick={this.props.onClick}
             >
             </textarea>
         );
@@ -69,6 +70,7 @@ TextArea.propTypes = {
     placeholder: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     onChange: React.PropTypes.func,
+    onClick: React.PropTypes.func,
 };
 
 TextArea.defaultProps = {

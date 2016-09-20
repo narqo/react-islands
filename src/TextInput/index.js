@@ -39,6 +39,7 @@ class TextInput extends Control {
                         autoComplete={this.props.autocomplete}
                         value={value}
                         onChange={this.onInputChange}
+                        onClick={this.props.onClick}
                         onKeyDown={this.props.onKeyDown}
                         onKeyUp={this.props.onKeyUp}
                         onKeyPress={this.props.onKeyPress}
@@ -115,6 +116,7 @@ TextInput.propTypes = {
     disabled: React.PropTypes.bool,
     hasClear: React.PropTypes.bool,
     onChange: React.PropTypes.func,
+    onClick: React.PropTypes.func,
 };
 
 TextInput.defaultProps = {
