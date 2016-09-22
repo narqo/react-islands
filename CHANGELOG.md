@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.16.0 - 2016-09-22
+
+### Added
+
+- Support for "id" prop in controls ([#120](https://github.com/narqo/react-islands/pull/120), [#121](https://github.com/narqo/react-islands/pull/121)).
+
 ## 0.15.0 - 2016-09-20
 
 ### Added
