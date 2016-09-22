@@ -13,14 +13,18 @@ class Checkbox extends Control {
     }
 
     render() {
-        const { name, theme, size, type, checked, disabled, value } = this.props;
+        const { id, name, theme, size, type, checked, disabled, value } = this.props;
         const { focused } = this.state;
 
         if (type === 'button') {
             return (
                 <label className={this.className()}>
                     {checked && <input type="hidden" name={name} value={value} disabled={disabled} />}
-                    <Button theme={theme} size={size} type={type}
+                    <Button
+                        theme={theme}
+                        size={size}
+                        type={type}
+                        id={id}
                         disabled={disabled}
                         checked={checked}
                         focused={focused}
@@ -37,6 +41,7 @@ class Checkbox extends Control {
                 <label className={this.className()} {...this.getControlHandlers()}>
                     <span className="checkbox__box">
                         <input ref="control" className="checkbox__control" type="checkbox" autoComplete="off"
+                            id={id}
                             name={name}
                             disabled={disabled}
                             value={value}
@@ -119,6 +124,8 @@ Checkbox.contextTypes = {
 Checkbox.propTypes = {
     theme: React.PropTypes.string,
     size: React.PropTypes.oneOf(['s', 'm', 'l', 'xl']),
+    id: React.PropTypes.string,
+    className: React.PropTypes.string,
     type: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     checked: React.PropTypes.bool,

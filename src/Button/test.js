@@ -35,6 +35,12 @@ describe('Button', () => {
         expect(button).to.have.className('button_view_action');
     });
 
+    it('accepts id prop', () => {
+        const button = shallow(<Button id="my-button">button</Button>);
+
+        expect(button).to.have.id('my-button');
+    });
+
     it('accepts className prop', () => {
         const button = shallow(<Button className="my-button">button</Button>);
 

@@ -74,6 +74,12 @@ describe('Radio', () => {
             expect(radio.find('label').hasClass('radio_size_foo')).to.be.true;
         });
 
+        it('accepts id prop', () => {
+            const radio = shallow(<Radio id="my-radio">checkbox</Radio>);
+
+            expect(radio.find('input')).to.have.id('my-radio');
+        });
+
         it('accepts className prop', () => {
             const radio = shallow(<Radio className="my-radio not-my-radio">radio</Radio>);
 

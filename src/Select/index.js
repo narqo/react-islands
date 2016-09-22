@@ -296,8 +296,9 @@ Select.contextTypes = {
 
 Select.propTypes = {
     theme: React.PropTypes.string,
-    id: React.PropTypes.string,
     size: React.PropTypes.string,
+    id: React.PropTypes.string,
+    className: React.PropTypes.string,
     mode: React.PropTypes.string,
     name: React.PropTypes.string,
     value: React.PropTypes.any,

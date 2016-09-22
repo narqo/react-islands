@@ -49,6 +49,12 @@ describe('TextArea', () => {
         expect(textarea.hasClass('textarea_size_l')).to.be.true;
     });
 
+    it('accepts id prop', () => {
+        const textarea = shallow(<TextArea id="my-textarea"/>);
+
+        expect(textarea).to.have.id('my-textarea');
+    });
+
     it('accepts className prop', () => {
         const textarea = shallow(<TextArea className="my-textarea not-my-textarea"/>);
 

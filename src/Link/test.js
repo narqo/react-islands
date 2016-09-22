@@ -34,6 +34,12 @@ describe('Link', () => {
         expect(link).to.have.className('link_type_pseudo');
     });
 
+    it('accepts id prop', () => {
+        const link = shallow(<Link id="my-link" url="http://yandex.ru">link</Link>);
+
+        expect(link).to.have.id('my-link');
+    });
+
     it('accepts className prop', () => {
         const link = shallow(<Link className="my-link" url="http://yandex.ru">link</Link>);
 

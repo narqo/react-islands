@@ -108,8 +108,8 @@ TextInput.contextTypes = {
 
 TextInput.propTypes = {
     theme: React.PropTypes.string,
-    id: React.PropTypes.string,
     size: React.PropTypes.oneOf(['s', 'm', 'l', 'xl']),
+    id: React.PropTypes.string,
     className: React.PropTypes.string,
     type: React.PropTypes.string,
     name: React.PropTypes.string,
