@@ -5,13 +5,13 @@ import pressable from '../pressable';
 
 class Link extends Control {
     render() {
-        const { disabled, title } = this.props;
+        const { id, disabled, title } = this.props;
 
         if (this.props.url) {
             const url = disabled ? null : this.props.url;
 
             return (
-                <a className={this.className()} {...this.getControlHandlers()} href={url} target={this.props.target} title={title}>
+                <a id={id} className={this.className()} {...this.getControlHandlers()} href={url} target={this.props.target} title={title}>
                     {this.props.children}
                 </a>
             );
@@ -19,7 +19,7 @@ class Link extends Control {
             const tabIndex = disabled ? -1 : 0;
 
             return (
-                <span className={this.className()} {...this.getControlHandlers()} role="button" tabIndex={tabIndex} title={title}>
+                <span id={id} className={this.className()} {...this.getControlHandlers()} role="button" tabIndex={tabIndex} title={title}>
                     {this.props.children}
                 </span>
             );
@@ -62,6 +62,7 @@ Link.propTypes = {
     theme: React.PropTypes.string,
     size: React.PropTypes.oneOf(['s', 'm', 'l', 'xl']),
     view: React.PropTypes.oneOf(['minor', 'external']),
+    id: React.PropTypes.string,
     className: React.PropTypes.string,
     type: React.PropTypes.string,
     disabled: React.PropTypes.bool,

@@ -60,6 +60,12 @@ describe('TextInput', () => {
         expect(input.hasClass('input_size_l')).to.be.true;
     });
 
+    it('accepts id prop', () => {
+        const input = shallow(<TextInput id="my-textinput"/>);
+
+        expect(input.find('input')).to.have.id('my-textinput');
+    });
+
     it('accepts className prop', () => {
         const input = shallow(<TextInput className="my-textinput not-my-textinput"/>);
 

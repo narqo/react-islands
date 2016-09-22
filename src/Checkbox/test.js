@@ -74,6 +74,12 @@ describe('Checkbox', () => {
             expect(checkbox.find('label').hasClass('checkbox_size_foo')).to.be.true;
         });
 
+        it('accepts id prop', () => {
+            const checkbox = shallow(<Checkbox id="my-checkbox">checkbox</Checkbox>);
+
+            expect(checkbox.find('input')).to.have.id('my-checkbox');
+        });
+
         it('accepts className prop', () => {
             const checkbox = shallow(<Checkbox className="my-checkbox not-my-checkbox">checkbox</Checkbox>);
 

@@ -35,7 +35,7 @@ class Button extends Control {
             const url = props.disabled ? null : props.url;
 
             return (
-                <a className={this.className()} {...this.getControlHandlers()} ref="control" role="link" href={url}>
+                <a id={props.id} className={this.className()} {...this.getControlHandlers()} ref="control" role="link" href={url}>
                     {this._wrappedChildren}
                 </a>
             );
@@ -46,6 +46,7 @@ class Button extends Control {
                     {...this.getControlHandlers()}
                     ref="control"
                     type={props.type}
+                    id={props.id}
                     name={props.name}
                     title={props.title}
                     disabled={props.disabled}
@@ -102,6 +103,8 @@ class Button extends Control {
 Button.propTypes = {
     theme: React.PropTypes.string,
     size: React.PropTypes.oneOf(['s', 'm', 'l', 'xl']),
+    id: React.PropTypes.string,
+    className: React.PropTypes.string,
     type: React.PropTypes.string,
     title: React.PropTypes.string,
     onClick: React.PropTypes.func,
