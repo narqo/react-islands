@@ -5,7 +5,6 @@ class Portal extends React.Component {
     constructor(props) {
         super(props);
         this.portalNode = null;
-        this.isAttachedToPortal = false;
     }
 
     componentDidMount() {
@@ -30,7 +29,6 @@ class Portal extends React.Component {
             this.mountPortal();
             // NOTE: `ReactDOM.unstable_renderSubtreeIntoContainer` to store intermediate contexts
             ReactDOM.unstable_renderSubtreeIntoContainer(this, child, this.portalNode);
-            this.isAttachedToPortal = true;
         } else {
             this.unmountPortal();
         }
@@ -44,11 +42,8 @@ class Portal extends React.Component {
     }
 
     unmountPortal() {
-        if (this.isAttachedToPortal) {
-            ReactDOM.unmountComponentAtNode(this.portalNode);
-            this.isAttachedToPortal = false;
-        }
         if (this.portalNode) {
+            ReactDOM.unmountComponentAtNode(this.portalNode);
             this.getPortalRootNode().removeChild(this.portalNode);
             this.portalNode = null;
         }

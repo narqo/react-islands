@@ -1,7 +1,8 @@
 import React from 'react';
-
 import Button from '../Button';
 import Modal from '../Modal';
+import Select from '../Select';
+import Item from '../Item';
 
 class ModalExampleControlled extends React.Component {
     constructor(props) {
@@ -15,8 +16,13 @@ class ModalExampleControlled extends React.Component {
         return (
             <div className="example">
                 <Button theme="islands" size="s" onClick={() => this.onModalAnchorClick()}>Open controlled modal</Button>
-                <Modal theme="islands" visible={this.state.visible}>
+                <Modal theme="islands" visible={this.state.visible} zIndexGroupLevel={40}>
                     <p>I can do this all day.</p>
+                    <Select theme="islands" size="l" placeholder="Select days" value={[12]}>
+                        <Item value="12" checkedText="Dec">December</Item>
+                        <Item value="1" checkedText="Jan">January</Item>
+                        <Item value="2" checkedText="Feb">February</Item>
+                    </Select>
                     <p>Because we can!</p>
                     <Button theme="islands" size="l" onClick={() => this.onModalCloseClick()}>Close modal</Button>
                 </Modal>

@@ -119,6 +119,12 @@ class PopupExampleScroll extends React.Component {
         };
     }
 
+    getChildContext() {
+        return {
+            zIndexGroupLevel: this.props.zIndexGroupLevel,
+        };
+    }
+
     render() {
         return (
             <div className="example">
@@ -179,6 +185,10 @@ class PopupExampleScroll extends React.Component {
     }
 }
 
+PopupExampleScroll.childContextTypes = {
+    zIndexGroupLevel: React.PropTypes.number,
+};
+
 function Example() {
     return (
         <div className="examples">
@@ -186,7 +196,7 @@ function Example() {
 
             <PopupExampleNested />
 
-            <PopupExampleScroll />
+            <PopupExampleScroll zIndexGroupLevel={20} />
         </div>
     );
 }
