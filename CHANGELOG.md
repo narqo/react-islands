@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.16.1 - 2016-10-29
+
+### Fixed
+
+- Overlay: Inherit zIndexGroupLevel from ancestors ([#125](https://github.com/narqo/react-islands/pull/125)).
+
 ## 0.16.0 - 2016-09-22
 
 ### Added
