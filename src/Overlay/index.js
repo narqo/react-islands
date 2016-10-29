@@ -28,38 +28,39 @@ class Overlay extends Component {
 
     getChildContext() {
         return {
+            zIndexGroupLevel: this.context.zIndexGroupLevel || this.props.zIndexGroupLevel,
             isParentLayerVisible: this.isVisible,
             preventParentLayerClickOutside: this.preventClickOutside,
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         if (this.props.visible) {
-            this.layerWillBecomeVisible();
+            this.layerBecomeVisible();
         }
     }
 
-    componentWillUpdate(nextProps) {
+    componentDidUpdate({ visible }) {
         this.handleParentLayerHide();
-        // NOTE(narqo@): do this only when visible is going to be changed
-        if (this.props.visible !== nextProps.visible) {
-            if (nextProps.visible) {
-                this.layerWillBecomeVisible();
+        // NOTE(narqo@): do this only when visible was changed
+        if (this.props.visible !== visible) {
+            if (this.props.visible) {
+                this.layerBecomeVisible();
             } else {
-                this.layerWillBecomeHidden();
+                this.layerBecomeHidden();
             }
         }
     }
 
     componentWillUnmount() {
         this.requestHide(null, false);
-        this.layerWillBecomeHidden();
+        this.layerBecomeHidden();
     }
 
-    layerWillBecomeVisible() {
+    layerBecomeVisible() {
         visibleLayersStack.unshift(this);
 
-        this.captureZIndex();
+        this.acquireZIndex();
 
         document.addEventListener('keydown', this.onDocumentKeyPress);
         // NOTE(narqo@): we have to use `nextTick` or nested layer will be closed immediately after being opened
@@ -71,7 +72,7 @@ class Overlay extends Component {
         });
     }
 
-    layerWillBecomeHidden() {
+    layerBecomeHidden() {
         const idx = visibleLayersStack.indexOf(this);
         if (idx > -1) {
             visibleLayersStack.splice(idx, 1);
@@ -151,8 +152,8 @@ class Overlay extends Component {
         }
     }
 
-    captureZIndex() {
-        const level = this.props.zIndexGroupLevel;
+    acquireZIndex() {
+        const level = this.context.zIndexGroupLevel || this.props.zIndexGroupLevel;
 
         let zIndexes = visibleLayersZIndexes[level];
         if (!zIndexes) {
@@ -168,7 +169,8 @@ class Overlay extends Component {
     }
 
     releaseZIndex() {
-        const zIndexes = visibleLayersZIndexes[this.props.zIndexGroupLevel];
+        const level = this.context.zIndexGroupLevel || this.props.zIndexGroupLevel;
+        const zIndexes = visibleLayersZIndexes[level];
         const idx = zIndexes.indexOf(this.zIndex);
         if (idx > -1) {
             zIndexes.splice(idx, 1);
@@ -177,12 +179,14 @@ class Overlay extends Component {
 }
 
 Overlay.childContextTypes = Overlay.contextTypes = {
+    zIndexGroupLevel: React.PropTypes.number,
     isParentLayerVisible: React.PropTypes.func,
     preventParentLayerClickOutside: React.PropTypes.func,
 };
 
 Overlay.propsTypes = {
     visible: React.PropTypes.bool.isRequired,
+    zIndexGroupLevel: React.PropTypes.number,
     onClick: React.PropTypes.func,
     onRequestHide: React.PropTypes.func,
     onOrderChange: React.PropTypes.func,

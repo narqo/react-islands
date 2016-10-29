@@ -125,13 +125,7 @@ class Popup extends Component {
     }
 
     onLayerRequestHide(e, reason) {
-        if (this.props.visible && this.props.onRequestHide) {
-            if (reason === 'clickOutside') {
-                const anchor = this.getAnchor();
-                if (anchor instanceof Element && anchor.contains(e.target)) {
-                    return;
-                }
-            }
+        if (this.props.visible) {
             this.props.onRequestHide(e, reason, this.props);
         }
     }
