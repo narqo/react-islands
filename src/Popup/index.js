@@ -36,9 +36,10 @@ class Popup extends Component {
         this.onAnchorParentsScroll = this.onAnchorParentsScroll.bind(this);
     }
 
-    componentWillUpdate(nextProps) {
-        if (nextProps.visible) {
-            this.shouldRenderToOverlay = true;
+    componentDidMount() {
+        if (this.props.visible) {
+            this.reposition();
+            this.handleVisibleChange(this.props.visible);
         }
     }
 
@@ -54,7 +55,9 @@ class Popup extends Component {
     }
 
     render() {
-        if (this.shouldRenderToOverlay) {
+        if (this.props.visible || this.shouldRenderToOverlay) {
+            this.shouldRenderToOverlay = true;
+
             const style = {
                 left: this.state.left,
                 top: this.state.top,

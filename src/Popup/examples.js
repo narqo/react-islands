@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
 import Button from '../Button';
 import Link from '../Link';
 import Popup from '../Popup';
@@ -189,6 +188,46 @@ PopupExampleScroll.childContextTypes = {
     zIndexGroupLevel: React.PropTypes.number,
 };
 
+class PopupExampleMountVisible extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            visible: true,
+        };
+    }
+
+    render() {
+        return (
+            <div className="example">
+                <Button
+                    ref="popup1Anchor"
+                    theme="islands"
+                    size="s"
+                    onClick={() => this.onPopupAnchorClick()}
+                >
+                    Toggle popup 4
+                </Button>
+                <Popup
+                    theme="islands"
+                    anchor={() => ReactDOM.findDOMNode(this.refs.popup1Anchor)}
+                    visible={this.state.visible}
+                    onRequestHide={() => this.onPopupRequestHide()}
+                >
+                    <Link theme="islands" size="s">Yandex</Link>
+                </Popup>
+            </div>
+        );
+    }
+
+    onPopupAnchorClick() {
+        this.setState({ visible: !this.state.visible });
+    }
+
+    onPopupRequestHide() {
+        this.setState({ visible: false });
+    }
+}
+
 function Example() {
     return (
         <div className="examples">
@@ -197,6 +236,8 @@ function Example() {
             <PopupExampleNested />
 
             <PopupExampleScroll zIndexGroupLevel={20} />
+
+            <PopupExampleMountVisible />
         </div>
     );
 }
