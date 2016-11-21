@@ -16,7 +16,6 @@ class Example extends React.Component {
     render() {
         return (
             <div className="examples">
-
                 <div className="example">
                     <TextInput theme="islands" size="s" value={this.state.value} placeholder="Fill me!" hasClear onChange={this.onInputChange}/>
                 </div>
@@ -33,6 +32,9 @@ class Example extends React.Component {
                     <TextInput theme="islands" size="m" value={this.state.value} disabled placeholder="Fill me!" hasClear/>
                 </div>
 
+                <div className="example">
+                    <TextInput theme="islands" size="m" value={this.state.value} onChange={this.onInputChange} maxLength={14}/>
+                </div>
             </div>
         );
     }

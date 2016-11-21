@@ -74,6 +74,18 @@ describe('TextArea', () => {
         expect(textarea.find('textarea')).to.not.have.attr('disabled');
     });
 
+    it('accepts minLength prop', () => {
+        const textarea = shallow(<TextArea minLength={3}/>);
+
+        expect(textarea.find('textarea')).to.have.attr('minlength', '3');
+    });
+
+    it('accepts maxLength prop', () => {
+        const textarea = shallow(<TextArea maxLength={3}/>);
+
+        expect(textarea.find('textarea')).to.have.attr('maxlength', '3');
+    });
+
     it('accepts focused prop', () => {
         const textarea = shallow(<TextArea focused/>);
 

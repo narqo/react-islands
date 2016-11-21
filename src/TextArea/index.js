@@ -10,12 +10,14 @@ class TextArea extends Control {
 
     render() {
         return (
-            <textarea {...this.getControlHandlers()} ref="control" className={this.className()}
+            <textarea ref="control" {...this.getControlHandlers()} className={this.className()}
                 id={this.props.id}
                 name={this.props.name}
                 disabled={this.props.disabled}
                 placeholder={this.props.placeholder}
                 value={this.props.value}
+                minLength={this.props.minLength}
+                maxLength={this.props.maxLength}
                 onChange={this.onInputChange}
                 onClick={this.props.onClick}
             >
@@ -71,6 +73,8 @@ TextArea.propTypes = {
     name: React.PropTypes.string,
     value: React.PropTypes.string,
     placeholder: React.PropTypes.string,
+    minLength: React.PropTypes.number,
+    maxLength: React.PropTypes.number,
     disabled: React.PropTypes.bool,
     onChange: React.PropTypes.func,
     onClick: React.PropTypes.func,
