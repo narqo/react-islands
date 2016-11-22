@@ -29,8 +29,8 @@ class TextInput extends Control {
             <span className={this.className()}>
                 <span className="input__box">
                     <input
-                        {...this.getControlHandlers()}
                         ref="control"
+                        {...this.getControlHandlers()}
                         className="input__control"
                         id={this.props.id}
                         name={this.props.name}
@@ -38,6 +38,8 @@ class TextInput extends Control {
                         disabled={this.props.disabled}
                         placeholder={this.props.placeholder}
                         autoComplete={this.props.autocomplete}
+                        minLength={this.props.minLength}
+                        maxLength={this.props.maxLength}
                         value={value}
                         onChange={this.onInputChange}
                         onClick={this.props.onClick}
@@ -116,6 +118,8 @@ TextInput.propTypes = {
     value: React.PropTypes.string,
     placeholder: React.PropTypes.string,
     autocomplete: React.PropTypes.string,
+    minLength: React.PropTypes.number,
+    maxLength: React.PropTypes.number,
     disabled: React.PropTypes.bool,
     hasClear: React.PropTypes.bool,
     onChange: React.PropTypes.func,

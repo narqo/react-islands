@@ -91,6 +91,18 @@ describe('TextInput', () => {
         expect(input.find('input')).to.have.attr('autocomplete', 'off');
     });
 
+    it('accepts minLength prop', () => {
+        const input = shallow(<TextInput minLength={3}/>);
+
+        expect(input.find('input')).to.have.attr('minlength', '3');
+    });
+
+    it('accepts maxLength prop', () => {
+        const input = shallow(<TextInput maxLength={3}/>);
+
+        expect(input.find('input')).to.have.attr('maxlength', '3');
+    });
+
     it('accepts focused prop', () => {
         const input = shallow(<TextInput focused/>);
 
