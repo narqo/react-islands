@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+## 0.17.0 - 2016-11-22
+
+### Added
+
+- TextArea, TextInput: Accept max-/minLength props ([#126](https://github.com/narqo/react-islands/pull/126)).
+
+### Fixed
+
+- Popup: Allow to be mounted visible ([#128](https://github.com/narqo/react-islands/pull/128)).
+
+### Other
+
+- Update devDependencies ([#129](https://github.com/narqo/react-islands/pull/129)).
+
 ## 0.16.1 - 2016-10-29
 
 ### Fixed
